@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -175,7 +176,7 @@
         .page-wrapper {
             position: relative;
             background: white;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
         #pdfCanvas {
@@ -186,6 +187,17 @@
             position: absolute;
             inset: 0;
             overflow: hidden;
+        }
+
+        #drawingLayer {
+            position: absolute;
+            inset: 0;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .drawing-active {
+            cursor: crosshair;
         }
 
         .text-item {
@@ -288,624 +300,860 @@
 
 <body>
 
-<header>
+    <header>
 
-    <a href="../index.html" class="logo">
-        Utility<span>Hub</span>
-    </a>
+        <a href="../index.html" class="logo">
+            Utility<span>Hub</span>
+        </a>
 
-    <a href="../index.html" class="back">
-        ← Back to Tools
-    </a>
+        <a href="../index.html" class="back">
+            ← Back to Tools
+        </a>
 
-</header>
+    </header>
 
-<main>
+    <main>
 
-    <div class="title">
+        <div class="title">
 
-        <h1>PDF Editor</h1>
+            <h1>PDF Editor</h1>
 
-        <p>
-            View, annotate and edit your PDF files directly in your browser.
-        </p>
+            <p>
+                View, annotate and edit your PDF files directly in your browser.
+            </p>
 
-    </div>
-
-
-    <!-- Upload -->
-
-    <div class="upload-box" id="uploadBox">
-
-        <div class="upload-icon">📄</div>
-
-        <h2>Upload your PDF</h2>
-
-        <p>
-            Your PDF stays on your device.
-        </p>
-
-        <label class="upload-button" for="pdfInput">
-            Choose PDF
-        </label>
-
-        <input
-            type="file"
-            id="pdfInput"
-            accept="application/pdf"
-        >
-
-    </div>
+        </div>
 
 
-    <!-- Editor -->
+        <!-- Upload -->
 
-    <div class="editor" id="editor">
+        <div class="upload-box" id="uploadBox">
 
-        <div class="toolbar">
+            <div class="upload-icon">📄</div>
 
-            <button id="prevBtn">
-                ← Previous
-            </button>
+            <h2>Upload your PDF</h2>
 
-            <button id="nextBtn">
-                Next →
-            </button>
+            <p>
+                Your PDF stays on your device.
+            </p>
 
-            <div class="separator"></div>
+            <label class="upload-button" for="pdfInput">
+                Choose PDF
+            </label>
 
-            <button id="zoomOut">
-                −
-            </button>
+            <input type="file" id="pdfInput" accept="application/pdf">
 
-            <button id="zoomIn">
-                +
-            </button>
+        </div>
 
-            <button id="resetZoom">
-                Reset
-            </button>
 
-            <div class="separator"></div>
+        <!-- Editor -->
 
-            <button id="addTextBtn">
-                ✏️ Add Text
-            </button>
+        <div class="editor" id="editor">
 
-            <div class="text-controls" id="textControls">
+            <div class="toolbar">
 
-                <label>
-                    Size
-                    <input
-                        type="number"
-                        id="fontSize"
-                        value="18"
-                        min="8"
-                        max="100"
-                    >
-                </label>
+                <button id="prevBtn">
+                    ← Previous
+                </button>
+
+                <button id="nextBtn">
+                    Next →
+                </button>
+
+                <div class="separator"></div>
+
+                <button id="zoomOut">
+                    −
+                </button>
+
+                <button id="zoomIn">
+                    +
+                </button>
+
+                <button id="resetZoom">
+                    Reset
+                </button>
+
+                <div class="separator"></div>
+
+                <button id="addTextBtn">
+                    ✏️ Add Text
+                </button>
+                <button id="drawBtn">
+                    🖊️ Draw
+                </button>
+
+                <button id="highlightBtn">
+                    🖍️ Highlight
+                </button>
+
+                <button id="clearDrawingsBtn">
+                    🗑️ Clear Markings
+                </button>
+
+                <div class="text-controls" id="textControls">
+
+                    <label>
+                        Size
+                        <input type="number" id="fontSize" value="18" min="8" max="100">
+                    </label>
+
+                </div>
+
+                <span class="page-info" id="pageInfo">
+                    Page 1 / 1
+                </span>
 
             </div>
 
-            <span class="page-info" id="pageInfo">
-                Page 1 / 1
-            </span>
 
-        </div>
+            <div class="viewer">
+
+                <div class="page-wrapper" id="pageWrapper">
+
+                    <canvas id="pdfCanvas"></canvas>
+
+                    <div id="textLayer"></div>
+
+                    <canvas id="drawingLayer"></canvas>
+
+                </div>
+
+            </div>
 
 
-        <div class="viewer">
+            <div class="bottom-bar">
 
-            <div class="page-wrapper" id="pageWrapper">
-
-                <canvas id="pdfCanvas"></canvas>
-
-                <div id="textLayer"></div>
+                <button class="download" id="downloadBtn">
+                    ⬇ Download PDF
+                </button>
 
             </div>
 
         </div>
 
 
-        <div class="bottom-bar">
+        <div class="status" id="status"></div>
 
-            <button class="download" id="downloadBtn">
-                ⬇ Download PDF
-            </button>
+    </main>
 
-        </div>
 
-    </div>
+    <script type="module">
 
+        import * as pdfjsLib
+            from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
 
-    <div class="status" id="status"></div>
 
-</main>
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
 
 
-<script type="module">
+        const pdfInput = document.getElementById("pdfInput");
 
-import * as pdfjsLib
-from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
+        const uploadBox = document.getElementById("uploadBox");
 
+        const editor = document.getElementById("editor");
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
+        const canvas = document.getElementById("pdfCanvas");
 
+        const ctx = canvas.getContext("2d");
 
-const pdfInput = document.getElementById("pdfInput");
+        const pageWrapper = document.getElementById("pageWrapper");
 
-const uploadBox = document.getElementById("uploadBox");
+        const textLayer = document.getElementById("textLayer");
+        const drawingLayer =
+            document.getElementById("drawingLayer");
 
-const editor = document.getElementById("editor");
+        const drawingCtx =
+            drawingLayer.getContext("2d");
 
-const canvas = document.getElementById("pdfCanvas");
+        const drawBtn =
+            document.getElementById("drawBtn");
 
-const ctx = canvas.getContext("2d");
+        const highlightBtn =
+            document.getElementById("highlightBtn");
 
-const pageWrapper = document.getElementById("pageWrapper");
+        const clearDrawingsBtn =
+            document.getElementById("clearDrawingsBtn");
 
-const textLayer = document.getElementById("textLayer");
+        let drawingMode = false;
+        let highlightMode = false;
+        let isDrawing = false;
 
-const prevBtn = document.getElementById("prevBtn");
+        const pageDrawings = {};
 
-const nextBtn = document.getElementById("nextBtn");
+        const prevBtn = document.getElementById("prevBtn");
 
-const zoomIn = document.getElementById("zoomIn");
+        const nextBtn = document.getElementById("nextBtn");
 
-const zoomOut = document.getElementById("zoomOut");
+        const zoomIn = document.getElementById("zoomIn");
 
-const resetZoom = document.getElementById("resetZoom");
+        const zoomOut = document.getElementById("zoomOut");
 
-const addTextBtn = document.getElementById("addTextBtn");
+        const resetZoom = document.getElementById("resetZoom");
 
-const textControls = document.getElementById("textControls");
+        const addTextBtn = document.getElementById("addTextBtn");
 
-const fontSizeInput = document.getElementById("fontSize");
+        const textControls = document.getElementById("textControls");
 
-const pageInfo = document.getElementById("pageInfo");
+        const fontSizeInput = document.getElementById("fontSize");
 
-const status = document.getElementById("status");
+        const pageInfo = document.getElementById("pageInfo");
 
+        const status = document.getElementById("status");
 
-let pdfDoc = null;
 
-let currentPage = 1;
+        let pdfDoc = null;
 
-let scale = 1.3;
+        let currentPage = 1;
 
-let addTextMode = false;
+        let scale = 1.3;
 
-let selectedText = null;
+        let addTextMode = false;
 
+        let selectedText = null;
 
-/*
-    Store text objects separately.
-    Each page gets its own array.
-*/
 
-const pageTexts = {};
+        /*
+            Store text objects separately.
+            Each page gets its own array.
+        */
 
+        const pageTexts = {};
 
-/* Upload */
 
-uploadBox.addEventListener("click", function(e) {
+        /* Upload */
 
-    if (e.target.tagName !== "LABEL") {
+        uploadBox.addEventListener("click", function (e) {
 
-        pdfInput.click();
+            if (e.target.tagName !== "LABEL") {
 
-    }
+                pdfInput.click();
 
-});
+            }
 
+        });
 
-/* PDF selected */
 
-pdfInput.addEventListener("change", async function() {
+        /* PDF selected */
 
-    const file = pdfInput.files[0];
+        pdfInput.addEventListener("change", async function () {
 
-    if (!file) return;
+            const file = pdfInput.files[0];
 
-    if (file.type !== "application/pdf") {
+            if (!file) return;
 
-        status.textContent = "Please select a PDF file.";
+            if (file.type !== "application/pdf") {
 
-        return;
-    }
+                status.textContent = "Please select a PDF file.";
 
-    status.textContent = "Loading PDF...";
+                return;
+            }
 
-    try {
+            status.textContent = "Loading PDF...";
 
-        const arrayBuffer = await file.arrayBuffer();
+            try {
 
-        pdfDoc = await pdfjsLib.getDocument({
-            data: arrayBuffer
-        }).promise;
+                const arrayBuffer = await file.arrayBuffer();
 
-        currentPage = 1;
+                pdfDoc = await pdfjsLib.getDocument({
+                    data: arrayBuffer
+                }).promise;
 
-        pageTexts[currentPage] = [];
+                currentPage = 1;
 
-        uploadBox.style.display = "none";
+                pageTexts[currentPage] = [];
 
-        editor.style.display = "block";
+                uploadBox.style.display = "none";
 
-        status.textContent =
-            `${pdfDoc.numPages} page${pdfDoc.numPages > 1 ? "s" : ""} loaded.`;
+                editor.style.display = "block";
 
-        await renderPage(currentPage);
+                status.textContent =
+                    `${pdfDoc.numPages} page${pdfDoc.numPages > 1 ? "s" : ""} loaded.`;
 
-    } catch (error) {
+                await renderPage(currentPage);
 
-        console.error(error);
+            } catch (error) {
 
-        status.textContent =
-            "Could not open this PDF.";
+                console.error(error);
 
-    }
+                status.textContent =
+                    "Could not open this PDF.";
 
-});
+            }
 
+        });
 
-/* Render PDF page */
 
-async function renderPage(pageNumber) {
+        /* Render PDF page */
 
-    if (!pdfDoc) return;
+        async function renderPage(pageNumber) {
 
-    const page = await pdfDoc.getPage(pageNumber);
+            if (!pdfDoc) return;
 
-    const viewport = page.getViewport({
-        scale: scale
-    });
+            const page = await pdfDoc.getPage(pageNumber);
 
-    canvas.width = viewport.width;
+            const viewport = page.getViewport({
+                scale: scale
+            });
 
-    canvas.height = viewport.height;
+            canvas.width = viewport.width;
 
-    pageWrapper.style.width = viewport.width + "px";
+            canvas.height = viewport.height;
 
-    pageWrapper.style.height = viewport.height + "px";
+            pageWrapper.style.width = viewport.width + "px";
 
-    textLayer.style.width = viewport.width + "px";
+            pageWrapper.style.height = viewport.height + "px";
 
-    textLayer.style.height = viewport.height + "px";
+            textLayer.style.width = viewport.width + "px";
 
-    await page.render({
+            textLayer.style.height = viewport.height + "px";
+            drawingLayer.width = viewport.width;
+            drawingLayer.height = viewport.height;
 
-        canvasContext: ctx,
+            drawingLayer.style.width =
+                viewport.width + "px";
 
-        viewport: viewport
+            drawingLayer.style.height =
+                viewport.height + "px";
 
-    }).promise;
+            drawingCtx.clearRect(
+                0,
+                0,
+                drawingLayer.width,
+                drawingLayer.height
+            );
 
+            await page.render({
 
-    pageInfo.textContent =
-        `Page ${currentPage} / ${pdfDoc.numPages}`;
+                canvasContext: ctx,
 
+                viewport: viewport
 
-    prevBtn.disabled = currentPage <= 1;
+            }).promise;
 
-    nextBtn.disabled =
-        currentPage >= pdfDoc.numPages;
 
+            pageInfo.textContent =
+                `Page ${currentPage} / ${pdfDoc.numPages}`;
 
-    renderTexts();
 
-}
+            prevBtn.disabled = currentPage <= 1;
 
+            nextBtn.disabled =
+                currentPage >= pdfDoc.numPages;
 
-/* Render text overlays */
 
-function renderTexts() {
-
-    textLayer.innerHTML = "";
-
-    const texts = pageTexts[currentPage] || [];
-
-    texts.forEach((item, index) => {
-
-        const element = document.createElement("div");
-
-        element.className = "text-item";
-
-        element.textContent = item.text;
-
-        element.style.left = item.x + "px";
-
-        element.style.top = item.y + "px";
-
-        element.style.fontSize =
-            item.size + "px";
-
-
-        if (selectedText === item) {
-
-            element.classList.add("selected");
+            renderTexts();
 
         }
 
 
-        const deleteButton =
-            document.createElement("span");
+        /* Render text overlays */
 
-        deleteButton.className =
-            "delete-text";
+        function renderTexts() {
 
-        deleteButton.textContent = "Delete";
+            textLayer.innerHTML = "";
 
+            const texts = pageTexts[currentPage] || [];
 
-        deleteButton.addEventListener("click", function(e) {
+            texts.forEach((item, index) => {
 
-            e.stopPropagation();
+                const element = document.createElement("div");
 
-            texts.splice(index, 1);
+                element.className = "text-item";
 
-            selectedText = null;
+                element.textContent = item.text;
 
-            renderTexts();
+                element.style.left = item.x + "px";
 
-        });
+                element.style.top = item.y + "px";
 
-
-        element.appendChild(deleteButton);
-
-
-        /* Select text */
-
-        element.addEventListener("click", function(e) {
-
-            e.stopPropagation();
-
-            selectedText = item;
-
-            fontSizeInput.value = item.size;
-
-            renderTexts();
-
-        });
+                element.style.fontSize =
+                    item.size + "px";
 
 
-        /* Drag text */
+                if (selectedText === item) {
 
-        let dragging = false;
+                    element.classList.add("selected");
 
-        let offsetX = 0;
-
-        let offsetY = 0;
+                }
 
 
-        element.addEventListener("mousedown", function(e) {
+                const deleteButton =
+                    document.createElement("span");
 
-            if (e.target.classList.contains("delete-text")) {
-                return;
+                deleteButton.className =
+                    "delete-text";
+
+                deleteButton.textContent = "Delete";
+
+
+                deleteButton.addEventListener("click", function (e) {
+
+                    e.stopPropagation();
+
+                    texts.splice(index, 1);
+
+                    selectedText = null;
+
+                    renderTexts();
+
+                });
+
+
+                element.appendChild(deleteButton);
+
+
+                /* Select text */
+
+                element.addEventListener("click", function (e) {
+
+                    e.stopPropagation();
+
+                    selectedText = item;
+
+                    fontSizeInput.value = item.size;
+
+                    renderTexts();
+
+                });
+
+
+                /* Drag text */
+
+                let dragging = false;
+
+                let offsetX = 0;
+
+                let offsetY = 0;
+
+
+                element.addEventListener("mousedown", function (e) {
+
+                    if (e.target.classList.contains("delete-text")) {
+                        return;
+                    }
+
+                    dragging = true;
+
+                    offsetX =
+                        e.clientX - element.getBoundingClientRect().left;
+
+                    offsetY =
+                        e.clientY - element.getBoundingClientRect().top;
+
+                    selectedText = item;
+
+                });
+
+
+                document.addEventListener("mousemove", function (e) {
+
+                    if (!dragging) return;
+
+                    const rect =
+                        textLayer.getBoundingClientRect();
+
+                    item.x =
+                        e.clientX - rect.left - offsetX;
+
+                    item.y =
+                        e.clientY - rect.top - offsetY;
+
+                    element.style.left =
+                        item.x + "px";
+
+                    element.style.top =
+                        item.y + "px";
+
+                });
+
+
+                document.addEventListener("mouseup", function () {
+
+                    dragging = false;
+
+                });
+
+
+                textLayer.appendChild(element);
+
+            });
+
+        }
+
+
+        /* Add Text mode */
+
+        addTextBtn.addEventListener("click", function () {
+
+            addTextMode = !addTextMode;
+
+            addTextBtn.classList.toggle(
+                "active",
+                addTextMode
+            );
+
+            textControls.style.display =
+                addTextMode ? "flex" : "none";
+
+            if (addTextMode) {
+
+                status.textContent =
+                    "Click anywhere on the PDF to add text.";
+
+            } else {
+
+                status.textContent = "";
+
             }
 
-            dragging = true;
-
-            offsetX =
-                e.clientX - element.getBoundingClientRect().left;
-
-            offsetY =
-                e.clientY - element.getBoundingClientRect().top;
-
-            selectedText = item;
-
         });
 
 
-        document.addEventListener("mousemove", function(e) {
+        /* Click PDF to create text */
 
-            if (!dragging) return;
+        textLayer.addEventListener("click", function (e) {
+
+            if (!addTextMode) return;
+
+            if (e.target !== textLayer) return;
 
             const rect =
                 textLayer.getBoundingClientRect();
 
-            item.x =
-                e.clientX - rect.left - offsetX;
+            const x =
+                e.clientX - rect.left;
 
-            item.y =
-                e.clientY - rect.top - offsetY;
+            const y =
+                e.clientY - rect.top;
 
-            element.style.left =
-                item.x + "px";
 
-            element.style.top =
-                item.y + "px";
+            const text =
+                prompt("Enter text:");
+
+
+            if (!text) return;
+
+
+            const size =
+                parseInt(fontSizeInput.value) || 18;
+
+
+            if (!pageTexts[currentPage]) {
+
+                pageTexts[currentPage] = [];
+
+            }
+
+
+            const item = {
+
+                text: text,
+
+                x: x,
+
+                y: y,
+
+                size: size
+
+            };
+
+
+            pageTexts[currentPage].push(item);
+
+            selectedText = item;
+
+            renderTexts();
 
         });
 
 
-        document.addEventListener("mouseup", function() {
+        /* Font size change */
 
-            dragging = false;
+        fontSizeInput.addEventListener("change", function () {
+
+            if (!selectedText) return;
+
+            selectedText.size =
+                parseInt(fontSizeInput.value) || 18;
+
+            renderTexts();
 
         });
 
 
-        textLayer.appendChild(element);
+        /* Previous */
 
-    });
+        prevBtn.addEventListener("click", async function () {
 
-}
+            if (currentPage <= 1) return;
 
+            currentPage--;
 
-/* Add Text mode */
+            selectedText = null;
 
-addTextBtn.addEventListener("click", function() {
+            await renderPage(currentPage);
 
-    addTextMode = !addTextMode;
+        });
 
-    addTextBtn.classList.toggle(
-        "active",
-        addTextMode
-    );
 
-    textControls.style.display =
-        addTextMode ? "flex" : "none";
+        /* Next */
 
-    if (addTextMode) {
+        nextBtn.addEventListener("click", async function () {
 
-        status.textContent =
-            "Click anywhere on the PDF to add text.";
+            if (currentPage >= pdfDoc.numPages) return;
 
-    } else {
+            currentPage++;
 
-        status.textContent = "";
+            selectedText = null;
 
-    }
+            await renderPage(currentPage);
 
-});
+        });
 
 
-/* Click PDF to create text */
+        /* Zoom */
 
-textLayer.addEventListener("click", function(e) {
+        zoomIn.addEventListener("click", function () {
 
-    if (!addTextMode) return;
+            scale += 0.2;
 
-    if (e.target !== textLayer) return;
+            renderPage(currentPage);
 
-    const rect =
-        textLayer.getBoundingClientRect();
+        });
 
-    const x =
-        e.clientX - rect.left;
 
-    const y =
-        e.clientY - rect.top;
+        zoomOut.addEventListener("click", function () {
 
+            if (scale <= 0.6) return;
 
-    const text =
-        prompt("Enter text:");
+            scale -= 0.2;
 
+            renderPage(currentPage);
 
-    if (!text) return;
+        });
 
 
-    const size =
-        parseInt(fontSizeInput.value) || 18;
+        resetZoom.addEventListener("click", function () {
 
+            scale = 1.3;
 
-    if (!pageTexts[currentPage]) {
+            renderPage(currentPage);
 
-        pageTexts[currentPage] = [];
+        });
 
-    }
 
+        /* Download */
 
-    const item = {
+        document.getElementById("downloadBtn")
+            .addEventListener("click", function () {
 
-        text: text,
+                alert(
+                    "PDF export will be added after the editing tools are completed."
+                );
 
-        x: x,
+            });
+        /* =========================
+           DRAW / HIGHLIGHT
+        ========================= */
 
-        y: y,
+        drawBtn.addEventListener("click", function () {
 
-        size: size
+            drawingMode = !drawingMode;
 
-    };
+            highlightMode = false;
 
+            drawBtn.classList.toggle(
+                "active",
+                drawingMode
+            );
 
-    pageTexts[currentPage].push(item);
+            highlightBtn.classList.remove("active");
 
-    selectedText = item;
+            if (drawingMode) {
 
-    renderTexts();
+                status.textContent =
+                    "Draw anywhere on the PDF.";
 
-});
+            } else {
 
+                status.textContent = "";
 
-/* Font size change */
+            }
 
-fontSizeInput.addEventListener("change", function() {
+        });
 
-    if (!selectedText) return;
 
-    selectedText.size =
-        parseInt(fontSizeInput.value) || 18;
+        /* Highlight mode */
 
-    renderTexts();
+        highlightBtn.addEventListener("click", function () {
 
-});
+            highlightMode = !highlightMode;
 
+            drawingMode = false;
 
-/* Previous */
+            highlightBtn.classList.toggle(
+                "active",
+                highlightMode
+            );
 
-prevBtn.addEventListener("click", async function() {
+            drawBtn.classList.remove("active");
 
-    if (currentPage <= 1) return;
+            if (highlightMode) {
 
-    currentPage--;
+                status.textContent =
+                    "Drag over the PDF to highlight.";
 
-    selectedText = null;
+            } else {
 
-    await renderPage(currentPage);
+                status.textContent = "";
 
-});
+            }
 
+        });
 
-/* Next */
 
-nextBtn.addEventListener("click", async function() {
+        /* Start drawing */
 
-    if (currentPage >= pdfDoc.numPages) return;
+        drawingLayer.addEventListener(
+            "pointerdown",
+            function (e) {
 
-    currentPage++;
+                if (!drawingMode && !highlightMode) {
+                    return;
+                }
 
-    selectedText = null;
+                isDrawing = true;
 
-    await renderPage(currentPage);
+                drawingLayer.setPointerCapture(e.pointerId);
 
-});
+                const rect =
+                    drawingLayer.getBoundingClientRect();
 
+                const x =
+                    e.clientX - rect.left;
 
-/* Zoom */
+                const y =
+                    e.clientY - rect.top;
 
-zoomIn.addEventListener("click", function() {
+                drawingCtx.beginPath();
 
-    scale += 0.2;
+                drawingCtx.moveTo(x, y);
 
-    renderPage(currentPage);
+                if (highlightMode) {
 
-});
+                    drawingCtx.globalAlpha = 0.28;
 
+                    drawingCtx.strokeStyle = "#ffff00";
 
-zoomOut.addEventListener("click", function() {
+                    drawingCtx.lineWidth = 18;
 
-    if (scale <= 0.6) return;
+                    drawingCtx.lineCap = "round";
 
-    scale -= 0.2;
+                    drawingCtx.lineJoin = "round";
 
-    renderPage(currentPage);
+                } else {
 
-});
+                    drawingCtx.globalAlpha = 1;
 
+                    drawingCtx.strokeStyle = "#111111";
 
-resetZoom.addEventListener("click", function() {
+                    drawingCtx.lineWidth = 3;
 
-    scale = 1.3;
+                    drawingCtx.lineCap = "round";
 
-    renderPage(currentPage);
+                    drawingCtx.lineJoin = "round";
 
-});
+                }
 
+            }
+        );
 
-/* Download */
 
-document.getElementById("downloadBtn")
-.addEventListener("click", function() {
+        /* Continue drawing */
 
-    alert(
-        "PDF export will be added after the editing tools are completed."
-    );
+        drawingLayer.addEventListener(
+            "pointermove",
+            function (e) {
 
-});
+                if (!isDrawing) {
+                    return;
+                }
 
-</script>
+                const rect =
+                    drawingLayer.getBoundingClientRect();
+
+                const x =
+                    e.clientX - rect.left;
+
+                const y =
+                    e.clientY - rect.top;
+
+                drawingCtx.lineTo(x, y);
+
+                drawingCtx.stroke();
+
+                drawingCtx.beginPath();
+
+                drawingCtx.moveTo(x, y);
+
+            }
+        );
+
+
+        /* Stop drawing */
+
+        drawingLayer.addEventListener(
+            "pointerup",
+            function () {
+
+                if (!isDrawing) {
+                    return;
+                }
+
+                isDrawing = false;
+
+                drawingCtx.closePath();
+
+                drawingCtx.globalAlpha = 1;
+
+            }
+        );
+
+
+        drawingLayer.addEventListener(
+            "pointercancel",
+            function () {
+
+                isDrawing = false;
+
+                drawingCtx.globalAlpha = 1;
+
+            }
+        );
+
+
+        /* Clear markings */
+
+        clearDrawingsBtn.addEventListener(
+            "click",
+            function () {
+
+                drawingCtx.clearRect(
+                    0,
+                    0,
+                    drawingLayer.width,
+                    drawingLayer.height
+                );
+
+                status.textContent =
+                    "Drawings and highlights cleared from this page.";
+
+            }
+        );
+    </script>
 
 </body>
+
 </html>
