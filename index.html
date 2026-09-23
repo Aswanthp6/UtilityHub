@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>UtilityHub — Simple Tools for Everyday Tasks</title>
+    <meta name="description"
+          content="Free online tools for images, text, calculators, QR codes and more.">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="container nav">
+        <a href="/" class="logo">
+            Utility<span>Hub</span>
+        </a>
+
+        <nav>
+            <a href="#tools">Tools</a>
+            <a href="#categories">Categories</a>
+            <a href="#about">About</a>
+        </nav>
+    </div>
+</header>
+
+
+<main>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container hero-content">
+
+            <div class="badge">
+                ⚡ Free • Fast • No Login
+            </div>
+
+            <h1>
+                Simple tools for<br>
+                <span>everyday tasks.</span>
+            </h1>
+
+            <p>
+                Useful online tools for images, text, calculations,
+                QR codes and more — all in one place.
+            </p>
+
+            <div class="search-box">
+                <span>⌕</span>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search for a tool..."
+                    autocomplete="off">
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- CATEGORIES -->
+    <section class="categories" id="categories">
+        <div class="container">
+
+            <div class="section-heading">
+                <h2>Categories</h2>
+            </div>
+
+            <div class="category-list">
+                <button class="category active" data-category="all">
+                    All Tools
+                </button>
+
+                <button class="category" data-category="image">
+                    🖼️ Image
+                </button>
+
+                <button class="category" data-category="text">
+                    📝 Text
+                </button>
+
+                <button class="category" data-category="calculator">
+                    🧮 Calculators
+                </button>
+
+                <button class="category" data-category="developer">
+                    💻 Developer
+                </button>
+
+                <button class="category" data-category="generator">
+                    ✨ Generators
+                </button>
+
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- TOOLS -->
+    <section class="tools-section" id="tools">
+        <div class="container">
+
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">EXPLORE</p>
+                    <h2>Popular tools</h2>
+                </div>
+
+                <span id="toolCount">10 tools</span>
+            </div>
+
+
+            <div class="tools-grid" id="toolsGrid">
+
+                <!-- Image Compressor -->
+                <a href="#" class="tool-card" data-category="image"
+                   data-name="image compressor compress image">
+
+                    <div class="tool-icon">🗜️</div>
+
+                    <div class="tool-info">
+                        <h3>Image Compressor</h3>
+                        <p>Reduce image file size without unnecessary quality loss.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- Image Resizer -->
+                <a href="#" class="tool-card" data-category="image"
+                   data-name="image resizer resize image">
+
+                    <div class="tool-icon">📐</div>
+
+                    <div class="tool-info">
+                        <h3>Image Resizer</h3>
+                        <p>Resize images to your required dimensions.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- QR Generator -->
+                <a href="#" class="tool-card" data-category="generator"
+                   data-name="qr generator qr code">
+
+                    <div class="tool-icon">▦</div>
+
+                    <div class="tool-info">
+                        <h3>QR Generator</h3>
+                        <p>Create QR codes for links, text and more.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- Word Counter -->
+                <a href="#" class="tool-card" data-category="text"
+                   data-name="word character counter">
+
+                    <div class="tool-icon">🔤</div>
+
+                    <div class="tool-info">
+                        <h3>Word & Character Counter</h3>
+                        <p>Count words, characters, sentences and paragraphs.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- Case Converter -->
+                <a href="#" class="tool-card" data-category="text"
+                   data-name="text case converter uppercase lowercase">
+
+                    <div class="tool-icon">Aa</div>
+
+                    <div class="tool-info">
+                        <h3>Text Case Converter</h3>
+                        <p>Convert text to uppercase, lowercase and more.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- Duplicate Lines -->
+                <a href="#" class="tool-card" data-category="text"
+                   data-name="remove duplicate lines text">
+
+                    <div class="tool-icon">☷</div>
+
+                    <div class="tool-info">
+                        <h3>Remove Duplicate Lines</h3>
+                        <p>Clean text by removing repeated lines.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- Password Generator -->
+                <a href="#" class="tool-card" data-category="generator"
+                   data-name="password generator secure password">
+
+                    <div class="tool-icon">🔐</div>
+
+                    <div class="tool-info">
+                        <h3>Password Generator</h3>
+                        <p>Generate strong random passwords instantly.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- URL Encoder -->
+                <a href="#" class="tool-card" data-category="developer"
+                   data-name="url encoder decoder encode decode">
+
+                    <div class="tool-icon">🔗</div>
+
+                    <div class="tool-info">
+                        <h3>URL Encoder / Decoder</h3>
+                        <p>Encode or decode URLs and special characters.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- Percentage Calculator -->
+                <a href="#" class="tool-card" data-category="calculator"
+                   data-name="percentage calculator percent">
+
+                    <div class="tool-icon">%</div>
+
+                    <div class="tool-info">
+                        <h3>Percentage Calculator</h3>
+                        <p>Quickly calculate percentages and changes.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+
+                <!-- Age Calculator -->
+                <a href="#" class="tool-card" data-category="calculator"
+                   data-name="age calculator date age">
+
+                    <div class="tool-icon">🎂</div>
+
+                    <div class="tool-info">
+                        <h3>Age Calculator</h3>
+                        <p>Calculate your exact age from your date of birth.</p>
+                    </div>
+
+                    <span class="arrow">→</span>
+                </a>
+
+            </div>
+
+            <div class="no-results" id="noResults">
+                No tools found.
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+        <div class="container">
+
+            <div class="about-card">
+                <div>
+                    <p class="eyebrow">UTILITYHUB</p>
+                    <h2>Useful tools.<br>Nothing complicated.</h2>
+                </div>
+
+                <p>
+                    UtilityHub is designed to provide simple,
+                    fast and useful tools without unnecessary
+                    sign-ups or complicated interfaces.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+
+<footer>
+    <div class="container footer-content">
+        <div class="logo">
+            Utility<span>Hub</span>
+        </div>
+
+        <p>Simple tools for everyday tasks.</p>
+
+        <p>© 2026 UtilityHub</p>
+    </div>
+</footer>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
