@@ -179,6 +179,20 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
+        #shapeType {
+            padding: 9px 10px;
+            border: 1px solid #343448;
+            border-radius: 8px;
+            background: #20202d;
+            color: white;
+            cursor: pointer;
+        }
+
+        #shapeType:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
         #pdfCanvas {
             display: block;
         }
@@ -391,6 +405,16 @@
                     🗑️ Clear Markings
                 </button>
 
+                <button id="shapeBtn">
+                    ▢ Shapes
+                </button>
+                <select id="shapeType">
+                    <option value="rectangle">Rectangle</option>
+                    <option value="circle">Circle</option>
+                    <option value="line">Line</option>
+                    <option value="arrow">Arrow</option>
+                </select>S
+
                 <div class="text-controls" id="textControls">
 
                     <label>
@@ -475,6 +499,17 @@
 
         const clearDrawingsBtn =
             document.getElementById("clearDrawingsBtn");
+
+        const shapeBtn =
+            document.getElementById("shapeBtn");
+
+        const shapeType =
+            document.getElementById("shapeType");
+
+        let shapeMode = false;
+        let shapeStartX = 0;
+        let shapeStartY = 0;
+        let previewImage = null;
 
         let drawingMode = false;
         let highlightMode = false;
@@ -1152,6 +1187,299 @@
 
             }
         );
+
+        /* =========================
+   SHAPES
+========================= */
+
+        shapeBtn.addEventListener("click", function () {
+
+            shapeMode = !shapeMode;
+
+            drawingMode = false;
+            highlightMode = false;
+
+            drawBtn.classList.remove("active");
+            highlightBtn.classList.remove("active");
+
+            shapeBtn.classList.toggle(
+                "active",
+                shapeMode
+            );
+
+            if (shapeMode) {
+
+                status.textContent =
+                    "Drag on the PDF to create a shape.";
+
+            } else {
+
+                status.textContent = "";
+
+            }
+
+        });
+
+
+        /* Start shape */
+
+        drawingLayer.addEventListener(
+            "pointerdown",
+            function (e) {
+
+                if (!shapeMode) {
+                    return;
+                }
+
+                const rect =
+                    drawingLayer.getBoundingClientRect();
+
+                shapeStartX =
+                    e.clientX - rect.left;
+
+                shapeStartY =
+                    e.clientY - rect.top;
+
+                isDrawing = true;
+
+                drawingLayer.setPointerCapture(
+                    e.pointerId
+                );
+
+                /*
+                    Save current canvas so the preview
+                    doesn't permanently draw every frame.
+                */
+
+                previewImage =
+                    drawingCtx.getImageData(
+                        0,
+                        0,
+                        drawingLayer.width,
+                        drawingLayer.height
+                    );
+
+            }
+        );
+
+
+        /* Preview shape while dragging */
+
+        drawingLayer.addEventListener(
+            "pointermove",
+            function (e) {
+
+                if (!shapeMode || !isDrawing) {
+                    return;
+                }
+
+                const rect =
+                    drawingLayer.getBoundingClientRect();
+
+                const currentX =
+                    e.clientX - rect.left;
+
+                const currentY =
+                    e.clientY - rect.top;
+
+
+                drawingCtx.putImageData(
+                    previewImage,
+                    0,
+                    0
+                );
+
+
+                drawingCtx.globalAlpha = 1;
+
+                drawingCtx.strokeStyle = "#8b5cf6";
+
+                drawingCtx.lineWidth = 3;
+
+                drawingCtx.lineCap = "round";
+
+
+                const type =
+                    shapeType.value;
+
+
+                if (type === "rectangle") {
+
+                    const width =
+                        currentX - shapeStartX;
+
+                    const height =
+                        currentY - shapeStartY;
+
+                    drawingCtx.strokeRect(
+                        shapeStartX,
+                        shapeStartY,
+                        width,
+                        height
+                    );
+
+                }
+
+
+                else if (type === "circle") {
+
+                    const radiusX =
+                        Math.abs(currentX - shapeStartX) / 2;
+
+                    const radiusY =
+                        Math.abs(currentY - shapeStartY) / 2;
+
+                    const centerX =
+                        Math.min(
+                            shapeStartX,
+                            currentX
+                        ) + radiusX;
+
+                    const centerY =
+                        Math.min(
+                            shapeStartY,
+                            currentY
+                        ) + radiusY;
+
+                    drawingCtx.beginPath();
+
+                    drawingCtx.ellipse(
+                        centerX,
+                        centerY,
+                        radiusX,
+                        radiusY,
+                        0,
+                        0,
+                        Math.PI * 2
+                    );
+
+                    drawingCtx.stroke();
+
+                }
+
+
+                else if (type === "line") {
+
+                    drawingCtx.beginPath();
+
+                    drawingCtx.moveTo(
+                        shapeStartX,
+                        shapeStartY
+                    );
+
+                    drawingCtx.lineTo(
+                        currentX,
+                        currentY
+                    );
+
+                    drawingCtx.stroke();
+
+                }
+
+
+                else if (type === "arrow") {
+
+                    drawArrow(
+                        shapeStartX,
+                        shapeStartY,
+                        currentX,
+                        currentY
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* Finish shape */
+
+        drawingLayer.addEventListener(
+            "pointerup",
+            function () {
+
+                if (!shapeMode || !isDrawing) {
+                    return;
+                }
+
+                isDrawing = false;
+
+                drawingCtx.globalAlpha = 1;
+
+                previewImage = null;
+
+            }
+        );
+
+
+        /* Arrow helper */
+
+        function drawArrow(
+            startX,
+            startY,
+            endX,
+            endY
+        ) {
+
+            const headLength = 14;
+
+            const angle =
+                Math.atan2(
+                    endY - startY,
+                    endX - startX
+                );
+
+
+            drawingCtx.beginPath();
+
+            drawingCtx.moveTo(
+                startX,
+                startY
+            );
+
+            drawingCtx.lineTo(
+                endX,
+                endY
+            );
+
+            drawingCtx.stroke();
+
+
+            drawingCtx.beginPath();
+
+            drawingCtx.moveTo(
+                endX,
+                endY
+            );
+
+            drawingCtx.lineTo(
+                endX -
+                headLength *
+                Math.cos(angle - Math.PI / 6),
+
+                endY -
+                headLength *
+                Math.sin(angle - Math.PI / 6)
+            );
+
+            drawingCtx.moveTo(
+                endX,
+                endY
+            );
+
+            drawingCtx.lineTo(
+                endX -
+                headLength *
+                Math.cos(angle + Math.PI / 6),
+
+                endY -
+                headLength *
+                Math.sin(angle + Math.PI / 6)
+            );
+
+            drawingCtx.stroke();
+
+        }
     </script>
 
 </body>
