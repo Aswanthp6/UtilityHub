@@ -193,6 +193,56 @@
             border-color: #8b5cf6;
         }
 
+        #shapeType:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .drawing-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+        }
+
+        .drawing-controls label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #aaa;
+            font-size: 12px;
+        }
+
+        .drawing-controls input[type="color"] {
+            width: 30px;
+            height: 28px;
+            padding: 2px;
+            border: 1px solid #343448;
+            border-radius: 6px;
+            background: #20202d;
+            cursor: pointer;
+        }
+
+        .drawing-controls input[type="range"] {
+            width: 70px;
+        }
+
+        .control-value {
+            min-width: 34px;
+            color: #ddd;
+        }
+
+        @media (max-width: 900px) {
+            .toolbar {
+                flex-wrap: wrap;
+            }
+
+            .drawing-controls {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+        }
+
         #pdfCanvas {
             display: block;
         }
@@ -472,6 +522,30 @@
                     <option value="arrow">Arrow</option>
                 </select>
 
+                <div class="drawing-controls" id="drawingControls">
+                    <label title="Draw and shape color">
+                        Color
+                        <input type="color" id="drawingColor" value="#111111">
+                    </label>
+
+                    <label title="Brush or shape border width">
+                        Width
+                        <input type="range" id="brushSize" min="1" max="20" value="3">
+                        <span class="control-value" id="brushSizeValue">3</span>
+                    </label>
+
+                    <label title="Highlight color">
+                        Highlight
+                        <input type="color" id="highlightColor" value="#ffff00">
+                    </label>
+
+                    <label title="Highlight opacity">
+                        Opacity
+                        <input type="range" id="highlightOpacity" min="10" max="100" value="28">
+                        <span class="control-value" id="highlightOpacityValue">28%</span>
+                    </label>
+                </div>
+
                 <div class="text-controls" id="textControls">
 
                     <label>
@@ -574,6 +648,19 @@
         const shapeType =
             document.getElementById("shapeType");
 
+        const drawingColor =
+            document.getElementById("drawingColor");
+        const brushSize =
+            document.getElementById("brushSize");
+        const brushSizeValue =
+            document.getElementById("brushSizeValue");
+        const highlightColor =
+            document.getElementById("highlightColor");
+        const highlightOpacity =
+            document.getElementById("highlightOpacity");
+        const highlightOpacityValue =
+            document.getElementById("highlightOpacityValue");
+
         let shapeMode = false;
         let shapeStartX = 0;
         let shapeStartY = 0;
@@ -584,6 +671,8 @@
         let isDrawing = false;
 
         const pageDrawings = {};
+        let drawingPageWidth = 0;
+        let drawingPageHeight = 0;
 
         const prevBtn = document.getElementById("prevBtn");
 
@@ -736,6 +825,16 @@
                 drawingLayer.width,
                 drawingLayer.height
             );
+
+            /* Restore this page's markings when returning to it.
+               Markings are stored as an image snapshot so page changes
+               do not erase them. */
+            const savedDrawing = pageDrawings[currentPage];
+            if (savedDrawing && savedDrawing.width === viewport.width && savedDrawing.height === viewport.height) {
+                drawingCtx.drawImage(savedDrawing.image, 0, 0);
+            }
+            drawingPageWidth = viewport.width;
+            drawingPageHeight = viewport.height;
 
             await page.render({
 
@@ -1061,6 +1160,16 @@
         });
 
 
+        /* Drawing controls */
+
+        brushSize.addEventListener("input", function () {
+            brushSizeValue.textContent = brushSize.value;
+        });
+
+        highlightOpacity.addEventListener("input", function () {
+            highlightOpacityValue.textContent = highlightOpacity.value + "%";
+        });
+
         /* Download */
 
         document.getElementById("downloadBtn")
@@ -1086,6 +1195,7 @@
             drawBtn.classList.toggle("active", drawingMode);
             highlightBtn.classList.toggle("active", highlightMode);
             shapeBtn.classList.toggle("active", shapeMode);
+            shapeType.disabled = !shapeMode;
 
             textControls.style.display = addTextMode ? "flex" : "none";
 
@@ -1170,13 +1280,13 @@
             drawingCtx.moveTo(x, y);
 
             if (highlightMode) {
-                drawingCtx.globalAlpha = 0.28;
-                drawingCtx.strokeStyle = "#ffff00";
-                drawingCtx.lineWidth = 18;
+                drawingCtx.globalAlpha = Number(highlightOpacity.value) / 100;
+                drawingCtx.strokeStyle = highlightColor.value;
+                drawingCtx.lineWidth = Math.max(8, Number(brushSize.value) * 4);
             } else {
                 drawingCtx.globalAlpha = 1;
-                drawingCtx.strokeStyle = "#111111";
-                drawingCtx.lineWidth = 3;
+                drawingCtx.strokeStyle = drawingColor.value;
+                drawingCtx.lineWidth = Number(brushSize.value);
             }
 
             drawingCtx.lineCap = "round";
@@ -1201,8 +1311,8 @@
                 drawingCtx.putImageData(previewImage, 0, 0);
 
                 drawingCtx.globalAlpha = 1;
-                drawingCtx.strokeStyle = "#8b5cf6";
-                drawingCtx.lineWidth = 3;
+                drawingCtx.strokeStyle = drawingColor.value;
+                drawingCtx.lineWidth = Number(brushSize.value);
                 drawingCtx.lineCap = "round";
 
                 const type = shapeType.value;
@@ -1287,6 +1397,17 @@
             drawingCtx.globalAlpha = 1;
             previewImage = null;
 
+            /* Save current page markings. */
+            const savedCanvas = document.createElement("canvas");
+            savedCanvas.width = drawingLayer.width;
+            savedCanvas.height = drawingLayer.height;
+            savedCanvas.getContext("2d").drawImage(drawingLayer, 0, 0);
+            pageDrawings[currentPage] = {
+                image: savedCanvas,
+                width: drawingLayer.width,
+                height: drawingLayer.height
+            };
+
             if (e && drawingLayer.hasPointerCapture(e.pointerId)) {
                 drawingLayer.releasePointerCapture(e.pointerId);
             }
@@ -1308,6 +1429,7 @@
                     drawingLayer.height
                 );
 
+                delete pageDrawings[currentPage];
                 isDrawing = false;
                 previewImage = null;
                 drawingCtx.globalAlpha = 1;
