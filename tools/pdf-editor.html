@@ -201,6 +201,7 @@
             position: absolute;
             inset: 0;
             overflow: hidden;
+            pointer-events: auto;
         }
 
         #drawingLayer {
@@ -208,6 +209,7 @@
             inset: 0;
             cursor: crosshair;
             touch-action: none;
+            pointer-events: none;
         }
 
         .drawing-active {
@@ -413,7 +415,7 @@
                     <option value="circle">Circle</option>
                     <option value="line">Line</option>
                     <option value="arrow">Arrow</option>
-                </select>S
+                </select>
 
                 <div class="text-controls" id="textControls">
 
@@ -556,6 +558,9 @@
 
         const pageTexts = {};
 
+
+        /* Initial interaction state */
+        setMode("none");
 
         /* Upload */
 
@@ -848,59 +853,45 @@
 
         /* Click PDF to create text */
 
-        textLayer.addEventListener("click", function (e) {
-
+        pageWrapper.addEventListener("click", function (e) {
             if (!addTextMode) return;
 
-            if (e.target !== textLayer) return;
+            /*
+                Ignore clicks on existing text items. Those are handled
+                by their own selection/drag events.
+            */
+            if (e.target.closest(".text-item")) {
+                return;
+            }
 
-            const rect =
-                textLayer.getBoundingClientRect();
+            const rect = pageWrapper.getBoundingClientRect();
 
-            const x =
-                e.clientX - rect.left;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-            const y =
-                e.clientY - rect.top;
-
-
-            const text =
-                prompt("Enter text:");
-
+            const text = prompt("Enter text:");
 
             if (!text) return;
-
 
             const size =
                 parseInt(fontSizeInput.value) || 18;
 
-
             if (!pageTexts[currentPage]) {
-
                 pageTexts[currentPage] = [];
-
             }
 
-
             const item = {
-
                 text: text,
-
                 x: x,
-
                 y: y,
-
                 size: size
-
             };
-
 
             pageTexts[currentPage].push(item);
 
             selectedText = item;
 
             renderTexts();
-
         });
 
 
@@ -990,326 +981,144 @@
 
             });
         /* =========================
-           DRAW / HIGHLIGHT
+           DRAW / HIGHLIGHT / SHAPES
+           Unified interaction system
         ========================= */
 
-        drawBtn.addEventListener("click", function () {
+        function setMode(mode) {
+            addTextMode = mode === "text";
+            drawingMode = mode === "draw";
+            highlightMode = mode === "highlight";
+            shapeMode = mode === "shape";
 
-            drawingMode = !drawingMode;
+            addTextBtn.classList.toggle("active", addTextMode);
+            drawBtn.classList.toggle("active", drawingMode);
+            highlightBtn.classList.toggle("active", highlightMode);
+            shapeBtn.classList.toggle("active", shapeMode);
 
-            highlightMode = false;
+            textControls.style.display = addTextMode ? "flex" : "none";
 
-            drawBtn.classList.toggle(
-                "active",
-                drawingMode
-            );
-
-            highlightBtn.classList.remove("active");
-
-            if (drawingMode) {
-
-                status.textContent =
-                    "Draw anywhere on the PDF.";
-
+            if (drawingMode || highlightMode || shapeMode) {
+                drawingLayer.style.pointerEvents = "auto";
+                textLayer.style.pointerEvents = "none";
+                pageWrapper.classList.add("drawing-active");
             } else {
-
-                status.textContent = "";
-
+                drawingLayer.style.pointerEvents = "none";
+                textLayer.style.pointerEvents = "auto";
+                pageWrapper.classList.remove("drawing-active");
             }
 
-        });
-
-
-        /* Highlight mode */
-
-        highlightBtn.addEventListener("click", function () {
-
-            highlightMode = !highlightMode;
-
-            drawingMode = false;
-
-            highlightBtn.classList.toggle(
-                "active",
-                highlightMode
-            );
-
-            drawBtn.classList.remove("active");
-
-            if (highlightMode) {
-
+            if (mode === "text") {
+                status.textContent =
+                    "Click anywhere on the PDF to add text.";
+            } else if (mode === "draw") {
+                status.textContent =
+                    "Drag anywhere on the PDF to draw.";
+            } else if (mode === "highlight") {
                 status.textContent =
                     "Drag over the PDF to highlight.";
-
+            } else if (mode === "shape") {
+                status.textContent =
+                    "Drag on the PDF to create a shape.";
             } else {
-
                 status.textContent = "";
-
             }
+        }
 
+        addTextBtn.addEventListener("click", function () {
+            setMode(addTextMode ? "none" : "text");
         });
 
+        drawBtn.addEventListener("click", function () {
+            setMode(drawingMode ? "none" : "draw");
+        });
 
-        /* Start drawing */
+        highlightBtn.addEventListener("click", function () {
+            setMode(highlightMode ? "none" : "highlight");
+        });
 
-        drawingLayer.addEventListener(
-            "pointerdown",
-            function (e) {
+        shapeBtn.addEventListener("click", function () {
+            setMode(shapeMode ? "none" : "shape");
+        });
 
-                if (!drawingMode && !highlightMode) {
-                    return;
-                }
+        /*
+            The drawing canvas is only an interaction surface while
+            Draw, Highlight, or Shapes is active. All pointer handling
+            is intentionally centralized here so the tools cannot
+            interfere with each other.
+        */
 
-                isDrawing = true;
-
-                drawingLayer.setPointerCapture(e.pointerId);
-
-                const rect =
-                    drawingLayer.getBoundingClientRect();
-
-                const x =
-                    e.clientX - rect.left;
-
-                const y =
-                    e.clientY - rect.top;
-
-                drawingCtx.beginPath();
-
-                drawingCtx.moveTo(x, y);
-
-                if (highlightMode) {
-
-                    drawingCtx.globalAlpha = 0.28;
-
-                    drawingCtx.strokeStyle = "#ffff00";
-
-                    drawingCtx.lineWidth = 18;
-
-                    drawingCtx.lineCap = "round";
-
-                    drawingCtx.lineJoin = "round";
-
-                } else {
-
-                    drawingCtx.globalAlpha = 1;
-
-                    drawingCtx.strokeStyle = "#111111";
-
-                    drawingCtx.lineWidth = 3;
-
-                    drawingCtx.lineCap = "round";
-
-                    drawingCtx.lineJoin = "round";
-
-                }
-
+        drawingLayer.addEventListener("pointerdown", function (e) {
+            if (!drawingMode && !highlightMode && !shapeMode) {
+                return;
             }
-        );
 
+            const rect = drawingLayer.getBoundingClientRect();
 
-        /* Continue drawing */
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-        drawingLayer.addEventListener(
-            "pointermove",
-            function (e) {
+            isDrawing = true;
+            drawingLayer.setPointerCapture(e.pointerId);
 
-                if (!isDrawing) {
-                    return;
-                }
+            if (shapeMode) {
+                shapeStartX = x;
+                shapeStartY = y;
 
-                const rect =
-                    drawingLayer.getBoundingClientRect();
-
-                const x =
-                    e.clientX - rect.left;
-
-                const y =
-                    e.clientY - rect.top;
-
-                drawingCtx.lineTo(x, y);
-
-                drawingCtx.stroke();
-
-                drawingCtx.beginPath();
-
-                drawingCtx.moveTo(x, y);
-
-            }
-        );
-
-
-        /* Stop drawing */
-
-        drawingLayer.addEventListener(
-            "pointerup",
-            function () {
-
-                if (!isDrawing) {
-                    return;
-                }
-
-                isDrawing = false;
-
-                drawingCtx.closePath();
-
-                drawingCtx.globalAlpha = 1;
-
-            }
-        );
-
-
-        drawingLayer.addEventListener(
-            "pointercancel",
-            function () {
-
-                isDrawing = false;
-
-                drawingCtx.globalAlpha = 1;
-
-            }
-        );
-
-
-        /* Clear markings */
-
-        clearDrawingsBtn.addEventListener(
-            "click",
-            function () {
-
-                drawingCtx.clearRect(
+                previewImage = drawingCtx.getImageData(
                     0,
                     0,
                     drawingLayer.width,
                     drawingLayer.height
                 );
 
-                status.textContent =
-                    "Drawings and highlights cleared from this page.";
-
+                return;
             }
-        );
 
-        /* =========================
-   SHAPES
-========================= */
+            drawingCtx.beginPath();
+            drawingCtx.moveTo(x, y);
 
-        shapeBtn.addEventListener("click", function () {
-
-            shapeMode = !shapeMode;
-
-            drawingMode = false;
-            highlightMode = false;
-
-            drawBtn.classList.remove("active");
-            highlightBtn.classList.remove("active");
-
-            shapeBtn.classList.toggle(
-                "active",
-                shapeMode
-            );
-
-            if (shapeMode) {
-
-                status.textContent =
-                    "Drag on the PDF to create a shape.";
-
+            if (highlightMode) {
+                drawingCtx.globalAlpha = 0.28;
+                drawingCtx.strokeStyle = "#ffff00";
+                drawingCtx.lineWidth = 18;
             } else {
-
-                status.textContent = "";
-
+                drawingCtx.globalAlpha = 1;
+                drawingCtx.strokeStyle = "#111111";
+                drawingCtx.lineWidth = 3;
             }
 
+            drawingCtx.lineCap = "round";
+            drawingCtx.lineJoin = "round";
         });
 
-
-        /* Start shape */
-
-        drawingLayer.addEventListener(
-            "pointerdown",
-            function (e) {
-
-                if (!shapeMode) {
-                    return;
-                }
-
-                const rect =
-                    drawingLayer.getBoundingClientRect();
-
-                shapeStartX =
-                    e.clientX - rect.left;
-
-                shapeStartY =
-                    e.clientY - rect.top;
-
-                isDrawing = true;
-
-                drawingLayer.setPointerCapture(
-                    e.pointerId
-                );
-
-                /*
-                    Save current canvas so the preview
-                    doesn't permanently draw every frame.
-                */
-
-                previewImage =
-                    drawingCtx.getImageData(
-                        0,
-                        0,
-                        drawingLayer.width,
-                        drawingLayer.height
-                    );
-
+        drawingLayer.addEventListener("pointermove", function (e) {
+            if (!isDrawing) {
+                return;
             }
-        );
 
+            const rect = drawingLayer.getBoundingClientRect();
 
-        /* Preview shape while dragging */
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
 
-        drawingLayer.addEventListener(
-            "pointermove",
-            function (e) {
-
-                if (!shapeMode || !isDrawing) {
+            if (shapeMode) {
+                if (!previewImage) {
                     return;
                 }
 
-                const rect =
-                    drawingLayer.getBoundingClientRect();
-
-                const currentX =
-                    e.clientX - rect.left;
-
-                const currentY =
-                    e.clientY - rect.top;
-
-
-                drawingCtx.putImageData(
-                    previewImage,
-                    0,
-                    0
-                );
-
+                drawingCtx.putImageData(previewImage, 0, 0);
 
                 drawingCtx.globalAlpha = 1;
-
                 drawingCtx.strokeStyle = "#8b5cf6";
-
                 drawingCtx.lineWidth = 3;
-
                 drawingCtx.lineCap = "round";
 
-
-                const type =
-                    shapeType.value;
-
+                const type = shapeType.value;
 
                 if (type === "rectangle") {
-
-                    const width =
-                        currentX - shapeStartX;
-
-                    const height =
-                        currentY - shapeStartY;
+                    const width = currentX - shapeStartX;
+                    const height = currentY - shapeStartY;
 
                     drawingCtx.strokeRect(
                         shapeStartX,
@@ -1317,12 +1126,7 @@
                         width,
                         height
                     );
-
-                }
-
-
-                else if (type === "circle") {
-
+                } else if (type === "circle") {
                     const radiusX =
                         Math.abs(currentX - shapeStartX) / 2;
 
@@ -1330,16 +1134,10 @@
                         Math.abs(currentY - shapeStartY) / 2;
 
                     const centerX =
-                        Math.min(
-                            shapeStartX,
-                            currentX
-                        ) + radiusX;
+                        Math.min(shapeStartX, currentX) + radiusX;
 
                     const centerY =
-                        Math.min(
-                            shapeStartY,
-                            currentY
-                        ) + radiusY;
+                        Math.min(shapeStartY, currentY) + radiusY;
 
                     drawingCtx.beginPath();
 
@@ -1354,12 +1152,7 @@
                     );
 
                     drawingCtx.stroke();
-
-                }
-
-
-                else if (type === "line") {
-
+                } else if (type === "line") {
                     drawingCtx.beginPath();
 
                     drawingCtx.moveTo(
@@ -1373,44 +1166,65 @@
                     );
 
                     drawingCtx.stroke();
-
-                }
-
-
-                else if (type === "arrow") {
-
+                } else if (type === "arrow") {
                     drawArrow(
                         shapeStartX,
                         shapeStartY,
                         currentX,
                         currentY
                     );
-
                 }
 
+                return;
             }
-        );
 
+            drawingCtx.lineTo(currentX, currentY);
+            drawingCtx.stroke();
 
-        /* Finish shape */
+            drawingCtx.beginPath();
+            drawingCtx.moveTo(currentX, currentY);
+        });
 
-        drawingLayer.addEventListener(
-            "pointerup",
+        function finishDrawing(e) {
+            if (!isDrawing) {
+                return;
+            }
+
+            isDrawing = false;
+
+            drawingCtx.closePath();
+            drawingCtx.globalAlpha = 1;
+            previewImage = null;
+
+            if (e && drawingLayer.hasPointerCapture(e.pointerId)) {
+                drawingLayer.releasePointerCapture(e.pointerId);
+            }
+        }
+
+        drawingLayer.addEventListener("pointerup", finishDrawing);
+
+        drawingLayer.addEventListener("pointercancel", finishDrawing);
+
+        /* Clear markings */
+
+        clearDrawingsBtn.addEventListener(
+            "click",
             function () {
-
-                if (!shapeMode || !isDrawing) {
-                    return;
-                }
+                drawingCtx.clearRect(
+                    0,
+                    0,
+                    drawingLayer.width,
+                    drawingLayer.height
+                );
 
                 isDrawing = false;
-
+                previewImage = null;
                 drawingCtx.globalAlpha = 1;
 
-                previewImage = null;
-
+                status.textContent =
+                    "Drawings and highlights cleared from this page.";
             }
         );
-
 
         /* Arrow helper */
 
