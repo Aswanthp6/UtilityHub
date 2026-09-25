@@ -288,6 +288,61 @@
             color: white;
         }
 
+        .text-dialog {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.65);
+            padding: 20px;
+        }
+
+        .text-dialog.show {
+            display: flex;
+        }
+
+        .text-dialog-box {
+            width: min(420px, 100%);
+            background: #151520;
+            border: 1px solid #343448;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-dialog-box h3 {
+            margin: 0 0 15px;
+        }
+
+        #textInput {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #343448;
+            border-radius: 8px;
+            background: #20202d;
+            color: white;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #textInput:focus {
+            border-color: #8b5cf6;
+        }
+
+        .text-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .dialog-primary {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
         @media (max-width: 700px) {
 
             header {
@@ -459,6 +514,17 @@
         </div>
 
 
+        <div class="text-dialog" id="textDialog">
+            <div class="text-dialog-box">
+                <h3>Add Text</h3>
+                <input type="text" id="textInput" placeholder="Enter text..." autocomplete="off">
+                <div class="text-dialog-actions">
+                    <button id="cancelTextBtn">Cancel</button>
+                    <button id="insertTextBtn" class="dialog-primary">Add Text</button>
+                </div>
+            </div>
+        </div>
+
         <div class="status" id="status"></div>
 
     </main>
@@ -539,6 +605,13 @@
 
         const status = document.getElementById("status");
 
+        const textDialog = document.getElementById("textDialog");
+        const textInput = document.getElementById("textInput");
+        const insertTextBtn = document.getElementById("insertTextBtn");
+        const cancelTextBtn = document.getElementById("cancelTextBtn");
+
+        let pendingTextX = 0;
+        let pendingTextY = 0;
 
         let pdfDoc = null;
 
@@ -823,55 +896,35 @@
         }
 
 
-        /* Add Text mode */
-
-        addTextBtn.addEventListener("click", function () {
-
-            addTextMode = !addTextMode;
-
-            addTextBtn.classList.toggle(
-                "active",
-                addTextMode
-            );
-
-            textControls.style.display =
-                addTextMode ? "flex" : "none";
-
-            if (addTextMode) {
-
-                status.textContent =
-                    "Click anywhere on the PDF to add text.";
-
-            } else {
-
-                status.textContent = "";
-
-            }
-
-        });
-
-
         /* Click PDF to create text */
 
         pageWrapper.addEventListener("click", function (e) {
             if (!addTextMode) return;
 
-            /*
-                Ignore clicks on existing text items. Those are handled
-                by their own selection/drag events.
-            */
             if (e.target.closest(".text-item")) {
                 return;
             }
 
             const rect = pageWrapper.getBoundingClientRect();
 
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            pendingTextX = e.clientX - rect.left;
+            pendingTextY = e.clientY - rect.top;
 
-            const text = prompt("Enter text:");
+            textInput.value = "";
+            textDialog.classList.add("show");
 
-            if (!text) return;
+            setTimeout(function () {
+                textInput.focus();
+            }, 0);
+        });
+
+        insertTextBtn.addEventListener("click", function () {
+            const value = textInput.value.trim();
+
+            if (!value) {
+                textInput.focus();
+                return;
+            }
 
             const size =
                 parseInt(fontSizeInput.value) || 18;
@@ -881,19 +934,57 @@
             }
 
             const item = {
-                text: text,
-                x: x,
-                y: y,
+                text: value,
+                x: pendingTextX,
+                y: pendingTextY,
                 size: size
             };
 
             pageTexts[currentPage].push(item);
-
             selectedText = item;
+
+            textDialog.classList.remove("show");
+
+            /* Finish the one-time Add Text action.
+               Further PDF clicks should not create another text box. */
+            setMode("none");
 
             renderTexts();
         });
 
+        cancelTextBtn.addEventListener("click", function () {
+            textDialog.classList.remove("show");
+        });
+
+        textDialog.addEventListener("click", function (e) {
+            if (e.target === textDialog) {
+                textDialog.classList.remove("show");
+            }
+        });
+
+        textInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                insertTextBtn.click();
+            }
+
+            if (e.key === "Escape") {
+                textDialog.classList.remove("show");
+            }
+        });
+
+        /* Click elsewhere to apply settings / deselect text */
+
+        pageWrapper.addEventListener("click", function (e) {
+            if (e.target.closest(".text-item")) {
+                return;
+            }
+
+            if (selectedText) {
+                selectedText = null;
+                renderTexts();
+            }
+        });
 
         /* Font size change */
 
