@@ -489,6 +489,17 @@
 
         <!-- Tool Properties Controls -->
         <div class="flex items-center space-x-3 bg-slate-900/60 px-3 py-1 rounded-lg border border-slate-700/50">
+            <!-- Eraser Mode -->
+            <div id="eraser-mode-control" class="hidden items-center space-x-1.5">
+                <label class="text-[11px] text-slate-400 font-medium">Eraser</label>
+                <select id="eraser-mode"
+                    class="bg-slate-800 text-white text-[11px] border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none">
+                    <option value="partial">Partial erase</option>
+                    <option value="stroke">Erase whole stroke</option>
+                    <option value="last">Erase last touched</option>
+                </select>
+            </div>
+
             <!-- Color Picker -->
             <div class="flex items-center space-x-1.5">
                 <label class="text-[11px] text-slate-400 font-medium">Color</label>
@@ -680,6 +691,7 @@
         let brushSize = 3;
         let highlightOpacity = 0.35;
         let strokeWidth = 3;
+        let eraserMode = 'partial';
 
         // Page Elements & Undo/Redo History
         let pageElements = {}; // { pageNum: [ elements ] }
@@ -768,6 +780,10 @@
             document.getElementById('brush-size').addEventListener('input', (e) => {
                 brushSize = parseInt(e.target.value) || 3;
                 document.getElementById('brush-size-value').textContent = brushSize;
+            });
+
+            document.getElementById('eraser-mode').addEventListener('change', (e) => {
+                eraserMode = e.target.value;
             });
 
             document.getElementById('highlight-opacity').addEventListener('input', (e) => {
@@ -992,6 +1008,11 @@
 
             // Adjust pointer events & z-index so pen/highlighter canvas receives input
             const isDrawingTool = (tool === 'pen' || tool === 'highlighter' || tool === 'eraser');
+            const eraserModeControl = document.getElementById('eraser-mode-control');
+            if (eraserModeControl) {
+                eraserModeControl.classList.toggle('hidden', tool !== 'eraser');
+                eraserModeControl.classList.toggle('flex', tool === 'eraser');
+            }
             const drawCanvases = document.querySelectorAll('.drawing-canvas');
             const overlayLayers = document.querySelectorAll('.overlay-layer');
 
@@ -1613,11 +1634,44 @@
                     if (currentTool === 'eraser') {
                         const radius = Math.max(8, brushSize * 4);
                         const paths = pageDrawings[pageNum] || [];
-                        pageDrawings[pageNum] = paths.filter(path => {
-                            return !path.points.some(a =>
-                                currentPath.some(b => Math.hypot(a.x - b.x, a.y - b.y) <= radius)
-                            );
-                        });
+
+                        if (eraserMode === 'partial') {
+                            // Remove only the portion actually crossed by the eraser.
+                            const updatedPaths = [];
+
+                            for (const path of paths) {
+                                if (!path.points || path.points.length < 2) {
+                                    const touched = path.points && path.points.length === 1 &&
+                                        currentPath.some(ep => Math.hypot(path.points[0].x - ep.x, path.points[0].y - ep.y) <= radius);
+                                    if (!touched) updatedPaths.push(path);
+                                    continue;
+                                }
+
+                                const pieces = splitPathByEraser(path, currentPath, radius);
+                                updatedPaths.push(...pieces);
+                            }
+
+                            pageDrawings[pageNum] = updatedPaths;
+                        } else {
+                            // Whole-stroke modes use the same intersection test, but preserve
+                            // the original stroke objects and remove complete strokes.
+                            const touchedIndexes = [];
+                            paths.forEach((path, index) => {
+                                if (!path.points || path.points.length === 0) return;
+                                const touched = path.points.some(a =>
+                                    currentPath.some(b => Math.hypot(a.x - b.x, a.y - b.y) <= radius)
+                                );
+                                if (touched) touchedIndexes.push(index);
+                            });
+
+                            if (eraserMode === 'last') {
+                                const removeIndex = touchedIndexes.length ? touchedIndexes[touchedIndexes.length - 1] : -1;
+                                pageDrawings[pageNum] = paths.filter((_, index) => index !== removeIndex);
+                            } else {
+                                // Erase whole stroke: every stroke touched by the eraser is removed.
+                                pageDrawings[pageNum] = paths.filter((_, index) => !touchedIndexes.includes(index));
+                            }
+                        }
                     } else {
                         if (!pageDrawings[pageNum]) pageDrawings[pageNum] = [];
                         pageDrawings[pageNum].push({
@@ -1644,6 +1698,96 @@
             canvas.addEventListener('touchstart', (e) => { startDraw(e); e.preventDefault(); }, { passive: false });
             canvas.addEventListener('touchmove', (e) => { draw(e); e.preventDefault(); }, { passive: false });
             canvas.addEventListener('touchend', (e) => { stopDraw(); e.preventDefault(); }, { passive: false });
+        }
+
+        function distancePointToSegment(p, a, b) {
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            if (dx === 0 && dy === 0) return Math.hypot(p.x - a.x, p.y - a.y);
+
+            const t = Math.max(0, Math.min(1,
+                ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy)
+            ));
+            const projection = {
+                x: a.x + t * dx,
+                y: a.y + t * dy
+            };
+            return Math.hypot(p.x - projection.x, p.y - projection.y);
+        }
+
+        function orientation(a, b, c) {
+            const value = (b.y - a.y) * (c.x - b.x) -
+                (b.x - a.x) * (c.y - b.y);
+            if (Math.abs(value) < 1e-9) return 0;
+            return value > 0 ? 1 : 2;
+        }
+
+        function onSegment(a, b, c) {
+            return b.x <= Math.max(a.x, c.x) + 1e-9 &&
+                b.x >= Math.min(a.x, c.x) - 1e-9 &&
+                b.y <= Math.max(a.y, c.y) + 1e-9 &&
+                b.y >= Math.min(a.y, c.y) - 1e-9;
+        }
+
+        function segmentsIntersect(a, b, c, d) {
+            const o1 = orientation(a, b, c);
+            const o2 = orientation(a, b, d);
+            const o3 = orientation(c, d, a);
+            const o4 = orientation(c, d, b);
+
+            if (o1 !== o2 && o3 !== o4) return true;
+            if (o1 === 0 && onSegment(a, c, b)) return true;
+            if (o2 === 0 && onSegment(a, d, b)) return true;
+            if (o3 === 0 && onSegment(c, a, d)) return true;
+            if (o4 === 0 && onSegment(c, b, d)) return true;
+            return false;
+        }
+
+        function distanceBetweenSegments(a, b, c, d) {
+            if (segmentsIntersect(a, b, c, d)) return 0;
+            return Math.min(
+                distancePointToSegment(a, c, d),
+                distancePointToSegment(b, c, d),
+                distancePointToSegment(c, a, b),
+                distancePointToSegment(d, a, b)
+            );
+        }
+
+        function splitPathByEraser(path, eraserPoints, radius) {
+            const points = path.points || [];
+            const pieces = [];
+            let current = [];
+
+            for (let i = 0; i < points.length - 1; i++) {
+                const a = points[i];
+                const b = points[i + 1];
+                let touched = false;
+
+                for (let j = 0; j < eraserPoints.length - 1; j++) {
+                    const ea = eraserPoints[j];
+                    const eb = eraserPoints[j + 1];
+                    if (distanceBetweenSegments(a, b, ea, eb) <= radius) {
+                        touched = true;
+                        break;
+                    }
+                }
+
+                if (touched) {
+                    if (current.length >= 2) {
+                        pieces.push({ ...path, points: current });
+                    }
+                    current = [];
+                } else {
+                    if (current.length === 0) current.push(a);
+                    current.push(b);
+                }
+            }
+
+            if (current.length >= 2) {
+                pieces.push({ ...path, points: current });
+            }
+
+            return pieces;
         }
 
         function redrawCanvasPaths(canvas, pageNum) {
