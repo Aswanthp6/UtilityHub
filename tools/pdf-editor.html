@@ -253,6 +253,28 @@
                 padding: 8px 10px !important;
             }
         }
+
+        .text-format-btn {
+            min-width: 26px;
+            height: 24px;
+            padding: 0 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+        }
+
+        .text-format-btn.is-active {
+            background: rgba(139, 92, 246, 0.28) !important;
+            color: #fff !important;
+            border-color: rgba(139, 92, 246, 0.8) !important;
+        }
+
+        .text-format-btn:disabled,
+        #text-align:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -520,6 +542,29 @@
                 </select>
             </div>
 
+            <!-- Text Formatting -->
+            <div class="flex items-center space-x-1 border-l border-slate-700 pl-3">
+                <button id="font-bold-btn" type="button"
+                    class="text-format-btn text-slate-300 border border-slate-700 hover:bg-slate-700" title="Bold">
+                    <strong>B</strong>
+                </button>
+                <button id="font-italic-btn" type="button"
+                    class="text-format-btn text-slate-300 border border-slate-700 hover:bg-slate-700" title="Italic">
+                    <em>I</em>
+                </button>
+                <button id="font-underline-btn" type="button"
+                    class="text-format-btn text-slate-300 border border-slate-700 hover:bg-slate-700" title="Underline">
+                    <u>U</u>
+                </button>
+                <select id="text-align"
+                    class="bg-slate-800 text-white text-xs border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none"
+                    title="Text alignment">
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                </select>
+            </div>
+
             <!-- Delete Selected Element Button -->
             <button id="btn-delete-selected"
                 class="p-1 px-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white rounded text-xs transition flex items-center space-x-1 border border-red-500/30"
@@ -628,6 +673,10 @@
         let primaryColor = '#8b5cf6';
         let fontSize = 16;
         let fontFamily = 'sans-serif';
+        let fontBold = false;
+        let fontItalic = false;
+        let fontUnderline = false;
+        let textAlign = 'left';
         let brushSize = 3;
         let highlightOpacity = 0.35;
         let strokeWidth = 3;
@@ -694,6 +743,26 @@
                 if (selectedElementId) {
                     updateSelectedElementProperty('fontFamily', fontFamily);
                 }
+            });
+
+            [
+                ['font-bold-btn', 'fontBold'],
+                ['font-italic-btn', 'fontItalic'],
+                ['font-underline-btn', 'fontUnderline']
+            ].forEach(([id, prop]) => {
+                document.getElementById(id).addEventListener('click', () => {
+                    const newValue = !({ fontBold, fontItalic, fontUnderline }[prop]);
+                    if (prop === 'fontBold') fontBold = newValue;
+                    if (prop === 'fontItalic') fontItalic = newValue;
+                    if (prop === 'fontUnderline') fontUnderline = newValue;
+                    if (selectedElementId) updateSelectedElementProperty(prop, newValue);
+                    syncTextFormatUI();
+                });
+            });
+
+            document.getElementById('text-align').addEventListener('change', (e) => {
+                textAlign = e.target.value;
+                if (selectedElementId) updateSelectedElementProperty('textAlign', textAlign);
             });
 
             document.getElementById('brush-size').addEventListener('input', (e) => {
@@ -822,6 +891,26 @@
 
             // Image Upload
             document.getElementById('image-upload-input').addEventListener('change', handleImageUpload);
+        }
+
+        function syncTextFormatUI() {
+            document.getElementById('font-bold-btn')?.classList.toggle('is-active', fontBold);
+            document.getElementById('font-italic-btn')?.classList.toggle('is-active', fontItalic);
+            document.getElementById('font-underline-btn')?.classList.toggle('is-active', fontUnderline);
+            const align = document.getElementById('text-align');
+            if (align) align.value = textAlign;
+        }
+
+        function syncTextFormatFromElement(el) {
+            if (!el || el.type !== 'text') {
+                syncTextFormatUI();
+                return;
+            }
+            fontBold = !!el.fontBold;
+            fontItalic = !!el.fontItalic;
+            fontUnderline = !!el.fontUnderline;
+            textAlign = el.textAlign || 'left';
+            syncTextFormatUI();
         }
 
         function setupGlobalKeyListeners() {
@@ -1119,7 +1208,11 @@
                 text: 'Type text here...',
                 color: primaryColor,
                 fontSize: fontSize,
-                fontFamily: fontFamily
+                fontFamily: fontFamily,
+                fontBold: fontBold,
+                fontItalic: fontItalic,
+                fontUnderline: fontUnderline,
+                textAlign: textAlign
             };
 
             if (!pageElements[pageNum]) pageElements[pageNum] = [];
@@ -1225,6 +1318,10 @@
             textarea.style.color = el.color;
             textarea.style.fontSize = `${el.fontSize * scale}px`;
             textarea.style.fontFamily = el.fontFamily;
+            textarea.style.fontWeight = el.fontBold ? '700' : '400';
+            textarea.style.fontStyle = el.fontItalic ? 'italic' : 'normal';
+            textarea.style.textDecoration = el.fontUnderline ? 'underline' : 'none';
+            textarea.style.textAlign = el.textAlign || 'left';
             textarea.value = el.text;
 
             // Stop propagation on inputs so typing keys work cleanly
@@ -1667,6 +1764,7 @@
                     if (el.color) document.getElementById('primary-color').value = el.color;
                     if (el.fontSize) document.getElementById('font-size').value = el.fontSize;
                     if (el.fontFamily) document.getElementById('font-family').value = el.fontFamily;
+                    if (el.type === 'text') syncTextFormatFromElement(el);
                     if (el.strokeWidth) {
                         document.getElementById('stroke-width').value = el.strokeWidth;
                         document.getElementById('stroke-width-value').textContent = el.strokeWidth;
@@ -1849,9 +1947,9 @@
                 };
 
                 const fontMap = {
-                    'sans-serif': PDFLib.StandardFonts.Helvetica,
-                    'serif': PDFLib.StandardFonts.TimesRoman,
-                    'monospace': PDFLib.StandardFonts.Courier
+                    'sans-serif': { normal: PDFLib.StandardFonts.Helvetica, bold: PDFLib.StandardFonts.HelveticaBold, italic: PDFLib.StandardFonts.HelveticaOblique, boldItalic: PDFLib.StandardFonts.HelveticaBoldOblique },
+                    'serif': { normal: PDFLib.StandardFonts.TimesRoman, bold: PDFLib.StandardFonts.TimesRomanBold, italic: PDFLib.StandardFonts.TimesRomanItalic, boldItalic: PDFLib.StandardFonts.TimesRomanBoldItalic },
+                    'monospace': { normal: PDFLib.StandardFonts.Courier, bold: PDFLib.StandardFonts.CourierBold, italic: PDFLib.StandardFonts.CourierOblique, boldItalic: PDFLib.StandardFonts.CourierBoldOblique }
                 };
 
                 for (let pageIdx = 0; pageIdx < pages.length; pageIdx++) {
@@ -1867,19 +1965,30 @@
                         if (el.type === 'text') {
                             const text = el.text || '';
                             const size = el.fontSize || 16;
-                            const font = await pdfDocLib.embedFont(
-                                fontMap[el.fontFamily] || PDFLib.StandardFonts.Helvetica
-                            );
+                            const family = fontMap[el.fontFamily] || fontMap['sans-serif'];
+                            const fontKey = el.fontBold && el.fontItalic ? 'boldItalic' : (el.fontBold ? 'bold' : (el.fontItalic ? 'italic' : 'normal'));
+                            const font = await pdfDocLib.embedFont(family[fontKey]);
                             const lines = text.split(/\r?\n/);
                             const lineHeight = size * 1.2;
                             lines.forEach((line, i) => {
-                                page.drawText(line, {
-                                    x: el.x,
-                                    y: height - el.y - size - (i * lineHeight),
-                                    size,
-                                    font,
-                                    color
-                                });
+                                const lineWidth = font.widthOfTextAtSize(line, size);
+                                let drawX = el.x;
+                                const align = el.textAlign || 'left';
+                                if (align === 'center') drawX = el.x + Math.max(0, (el.width - lineWidth) / 2);
+                                else if (align === 'right') drawX = el.x + Math.max(0, el.width - lineWidth);
+
+                                const drawY = height - el.y - size - (i * lineHeight);
+                                page.drawText(line, { x: drawX, y: drawY, size, font, color });
+
+                                if (el.fontUnderline && line.length) {
+                                    const underlineY = drawY - Math.max(1, size * 0.08);
+                                    page.drawLine({
+                                        start: { x: drawX, y: underlineY },
+                                        end: { x: drawX + lineWidth, y: underlineY },
+                                        thickness: Math.max(0.8, size * 0.06),
+                                        color
+                                    });
+                                }
                             });
 
                         } else if (el.type === 'shape') {
