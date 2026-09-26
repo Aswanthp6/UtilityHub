@@ -1205,6 +1205,506 @@
         .extract-confirm:hover {
             background: #7c3aed;
         }
+
+        /* UtilityHub Local Autosave */
+        #autosave-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border: 1px solid #343448;
+            border-radius: 7px;
+            background: #151520;
+            color: #94a3b8;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        #autosave-indicator.saving {
+            color: #fbbf24;
+        }
+
+        #autosave-indicator.saved {
+            color: #86efac;
+        }
+
+        #autosave-indicator.error {
+            color: #fca5a5;
+        }
+
+        #autosave-indicator i {
+            font-size: 9px;
+        }
+
+        #autosave-restore-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 16000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .72);
+            backdrop-filter: blur(5px);
+        }
+
+        #autosave-restore-modal.show {
+            display: flex;
+        }
+
+        .autosave-restore-dialog {
+            width: min(460px, 100%);
+            background: #151520;
+            border: 1px solid #343448;
+            border-radius: 16px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
+            overflow: hidden;
+        }
+
+        .autosave-restore-head {
+            padding: 18px;
+            border-bottom: 1px solid #2b2b3a;
+        }
+
+        .autosave-restore-head h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .autosave-restore-head p {
+            margin: 5px 0 0;
+            color: #94a3b8;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .autosave-restore-body {
+            padding: 18px;
+        }
+
+        .autosave-restore-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid #343448;
+            border-radius: 10px;
+            background: #1b1b28;
+        }
+
+        .autosave-restore-meta .icon {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: rgba(139, 92, 246, .14);
+            color: #a78bfa;
+        }
+
+        .autosave-restore-meta strong {
+            display: block;
+            color: #f8fafc;
+            font-size: 12px;
+            max-width: 320px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .autosave-restore-meta span {
+            display: block;
+            color: #94a3b8;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .autosave-restore-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 18px;
+            border-top: 1px solid #2b2b3a;
+            background: #12121b;
+        }
+
+        .autosave-restore-actions button {
+            padding: 9px 14px;
+            border-radius: 9px;
+            border: 1px solid #3a3a4d;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #autosave-discard {
+            background: #20202d;
+            color: #e2e8f0;
+        }
+
+        #autosave-restore {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: #fff;
+        }
+
+
+        /* v31 stability polish */
+        .history-disabled {
+            opacity: .42 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+
+        #uh-toast-container {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 22000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .uh-toast {
+            min-width: 220px;
+            max-width: min(380px, calc(100vw - 36px));
+            padding: 10px 12px;
+            border: 1px solid #343448;
+            border-radius: 10px;
+            background: #151520;
+            color: #e5e7eb;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, .45);
+            font-size: 12px;
+            line-height: 1.35;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity .16s ease, transform .16s ease;
+        }
+
+        .uh-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .uh-toast.success {
+            border-color: rgba(139, 92, 246, .55);
+        }
+
+        .uh-toast.error {
+            border-color: rgba(239, 68, 68, .55);
+        }
+
+        .uh-toast.info {
+            border-color: rgba(96, 165, 250, .45);
+        }
+
+        /* v30 responsive polish + zoom presets */
+        .zoom-preset-wrap {
+            position: relative;
+            flex: 0 0 auto;
+        }
+
+        #zoom-presets-menu {
+            position: fixed;
+            min-width: 150px;
+            padding: 4px;
+        }
+
+        #zoom-presets-menu button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 0;
+            background: transparent;
+            color: #d1d5db;
+            padding: 7px 9px;
+            border-radius: 7px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        #zoom-presets-menu button:hover {
+            background: rgba(139, 92, 246, .18);
+            color: #fff;
+        }
+
+        #zoom-presets-menu .zoom-divider {
+            height: 1px;
+            background: #343448;
+            margin: 4px 2px;
+        }
+
+        @media (max-width:850px) {
+            .utilityhub-pdf-editor>header {
+                grid-template-columns: auto minmax(150px, 205px) minmax(0, 1fr) !important;
+            }
+
+            .header-actions-wrap {
+                min-width: 0;
+                overflow: hidden;
+            }
+
+            .header-actions-scroll {
+                display: flex !important;
+                overflow-x: auto !important;
+                min-width: 0;
+                justify-content: flex-start !important;
+            }
+
+            .header-actions-scroll::-webkit-scrollbar {
+                display: none;
+            }
+
+            .header-actions-compact .action-label {
+                display: none !important;
+            }
+
+            .header-pinned-open .pinned-label,
+            .header-pinned-export .pinned-export-label {
+                display: none !important;
+            }
+
+            .header-pinned-action {
+                flex: 0 0 auto;
+            }
+
+            .header-pinned-open,
+            .header-pinned-export {
+                padding: 6px 8px !important;
+            }
+
+            #main-toolbar {
+                overflow-x: auto !important;
+                flex-wrap: nowrap !important;
+                white-space: nowrap;
+                min-height: 52px;
+            }
+
+            #main-toolbar>div {
+                flex-wrap: nowrap !important;
+            }
+
+            #main-toolbar::-webkit-scrollbar {
+                height: 5px;
+            }
+
+            #main-toolbar::-webkit-scrollbar-thumb {
+                background: #343448;
+                border-radius: 10px;
+            }
+
+            #viewport {
+                padding: 12px !important;
+            }
+
+            #sidebar {
+                width: 160px !important;
+                padding: 8px !important;
+            }
+        }
+
+        @media (max-width:600px) {
+            .utilityhub-pdf-editor>header {
+                grid-template-columns: auto minmax(132px, 165px) minmax(0, 1fr) !important;
+                gap: 5px !important;
+                padding: 0 7px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) {
+                min-width: 132px !important;
+                padding: 3px 5px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) .w-10 {
+                width: 28px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) .w-12 {
+                width: 34px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:first-child .text-base {
+                font-size: 12px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:first-child .text-\[11px\] {
+                display: none !important;
+            }
+
+            #main-toolbar {
+                padding: 7px 8px !important;
+            }
+
+            #btn-sidebar-toggle span {
+                display: none;
+            }
+
+            #btn-sidebar-toggle {
+                padding: 6px 8px !important;
+            }
+        }
+
+
+        /* v32 header + responsive alignment fix */
+        .utilityhub-pdf-editor>header {
+            grid-template-columns: auto max-content minmax(0, 1fr) !important;
+        }
+
+        .utilityhub-pdf-editor>header>div:nth-child(2) {
+            min-width: max-content !important;
+            width: max-content !important;
+            max-width: none !important;
+            overflow: visible !important;
+            white-space: nowrap !important;
+        }
+
+        #zoom-presets-menu {
+            z-index: 22000 !important;
+        }
+
+        .header-actions-wrap {
+            min-width: 0 !important;
+            width: 100% !important;
+        }
+
+        .header-actions-scroll {
+            min-width: 0 !important;
+        }
+
+        @media (max-width: 850px) {
+            .utilityhub-pdf-editor>header {
+                display: grid !important;
+                grid-template-columns: auto minmax(0, 1fr) !important;
+                grid-template-rows: 42px 38px !important;
+                height: 88px !important;
+                min-height: 88px !important;
+                padding: 5px 8px !important;
+                gap: 3px 6px !important;
+                align-items: center !important;
+                overflow: hidden !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:first-child {
+                grid-column: 1 !important;
+                grid-row: 1 !important;
+                min-width: 0 !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) {
+                grid-column: 2 !important;
+                grid-row: 1 !important;
+                justify-self: end !important;
+                min-width: 0 !important;
+                width: auto !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+                padding: 3px 5px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(3) {
+                grid-column: 1 / -1 !important;
+                grid-row: 2 !important;
+                min-width: 0 !important;
+                width: 100% !important;
+                overflow: hidden !important;
+            }
+
+            .header-actions-wrap {
+                width: 100% !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
+            }
+
+            .header-actions-scroll {
+                width: 100% !important;
+                min-width: 0 !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                justify-content: flex-start !important;
+            }
+
+            .header-actions-compact {
+                flex: 0 0 auto !important;
+            }
+
+            .header-pinned-action {
+                flex: 0 0 auto !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:first-child .text-base {
+                font-size: 13px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:first-child .text-\\[11px\\] {
+                display: none !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:first-child .w-9 {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 14px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) button {
+                padding: 4px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) .w-10 {
+                width: 30px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) .w-12 {
+                width: 34px !important;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .utilityhub-pdf-editor>header {
+                grid-template-columns: auto minmax(0, 1fr) !important;
+                grid-template-rows: 40px 38px !important;
+                height: 82px !important;
+                min-height: 82px !important;
+                padding: 4px 6px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) {
+                max-width: calc(100vw - 88px) !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) .font-mono {
+                font-size: 9px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) .w-10 {
+                width: 27px !important;
+            }
+
+            .utilityhub-pdf-editor>header>div:nth-child(2) .w-12 {
+                width: 31px !important;
+            }
+
+            #btn-zoom-fit {
+                display: none !important;
+            }
+
+            .header-pinned-open .pinned-label,
+            .header-pinned-export .pinned-export-label {
+                display: none !important;
+            }
+
+            .header-pinned-open,
+            .header-pinned-export {
+                padding: 6px 8px !important;
+                min-width: 32px !important;
+            }
+
+            #main-toolbar {
+                min-height: 50px !important;
+            }
+        }
     </style>
 </head>
 
@@ -1257,6 +1757,25 @@
                 title="Fit to Width">
                 <i class="fas fa-expand text-xs"></i>
             </button>
+            <div class="zoom-preset-wrap">
+                <button id="btn-zoom-presets"
+                    class="p-1.5 hover:bg-slate-700 rounded text-slate-300 hover:text-white transition"
+                    title="Zoom presets" type="button">
+                    <i class="fas fa-caret-down text-xs"></i>
+                </button>
+                <div id="zoom-presets-menu"
+                    class="hidden fixed z-[12000] bg-[#151520] border border-[#343448] rounded-xl shadow-2xl py-1 min-w-[150px]">
+                    <button type="button" data-zoom="0.5">50%</button>
+                    <button type="button" data-zoom="0.75">75%</button>
+                    <button type="button" data-zoom="1">100%</button>
+                    <button type="button" data-zoom="1.25">125%</button>
+                    <button type="button" data-zoom="1.5">150%</button>
+                    <button type="button" data-zoom="2">200%</button>
+                    <div class="zoom-divider"></div>
+                    <button type="button" data-zoom-action="fit-width">Fit width</button>
+                    <button type="button" data-zoom-action="fit-page">Fit page</button>
+                </div>
+            </div>
         </div>
 
         <!-- Header Right Actions: scrollable operations + pinned Open/Export -->
@@ -1358,6 +1877,9 @@
                         <i class="fas fa-keyboard text-violet-400"></i><span
                             class="action-label hidden xl:inline">Shortcuts</span>
                     </button>
+                </div>
+                <div id="autosave-indicator" title="Your current PDF and edits are saved locally in this browser">
+                    <i class="fas fa-cloud"></i><span>Local</span>
                 </div>
                 <div class="header-pinned-action">
                     <label
@@ -1778,6 +2300,32 @@
         </div>
     </div>
 
+
+    <!-- Local Autosave Restore -->
+    <div id="autosave-restore-modal" aria-hidden="true">
+        <div class="autosave-restore-dialog" role="dialog" aria-modal="true" aria-labelledby="autosave-restore-title">
+            <div class="autosave-restore-head">
+                <h3 id="autosave-restore-title"><i class="fas fa-clock-rotate-left text-violet-400 mr-2"></i>Restore
+                    previous session?</h3>
+                <p>UtilityHub found a PDF editing session saved locally in this browser. Nothing was uploaded to a
+                    server.</p>
+            </div>
+            <div class="autosave-restore-body">
+                <div class="autosave-restore-meta">
+                    <div class="icon"><i class="fas fa-file-pdf"></i></div>
+                    <div><strong id="autosave-document-name">Edited document.pdf</strong><span
+                            id="autosave-document-time">Saved recently</span></div>
+                </div>
+            </div>
+            <div class="autosave-restore-actions">
+                <button type="button" id="autosave-discard">Discard</button>
+                <button type="button" id="autosave-restore">Restore Session</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="uh-toast-container" aria-live="polite" aria-atomic="true"></div>
+
     <script>
         // Initialize PDF.js Worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -1833,11 +2381,23 @@
         let searchCurrentIndex = -1;
         let searchQuery = '';
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // Browser-local autosave (IndexedDB)
+        const AUTOSAVE_DB_NAME = 'utilityhub-pdf-editor';
+        const AUTOSAVE_STORE = 'sessions';
+        const AUTOSAVE_KEY = 'current';
+        let autosaveTimer = null;
+        let autosaveDBPromise = null;
+        let currentDocumentName = 'edited_document.pdf';
+        let pendingRestoreSession = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
             initUI();
             setupGlobalKeyListeners();
             setupPDFDrop();
             setupSignaturePad();
+            setupAutosaveUI();
+            syncHistoryButtons();
+            await offerAutosaveRestore();
         });
 
         function initUI() {
@@ -2046,6 +2606,46 @@
             document.getElementById('btn-zoom-out').addEventListener('click', () => adjustZoom(-0.15));
             document.getElementById('btn-zoom-fit').addEventListener('click', () => setZoom(1.0));
 
+            // Zoom Presets
+            const zoomPresetButton = document.getElementById('btn-zoom-presets');
+            const zoomPresetMenu = document.getElementById('zoom-presets-menu');
+            function positionZoomPresetMenu() {
+                if (!zoomPresetMenu || zoomPresetMenu.classList.contains('hidden') || !zoomPresetButton) return;
+                const rect = zoomPresetButton.getBoundingClientRect();
+                zoomPresetMenu.style.left = `${Math.max(8, rect.right - 150)}px`;
+                zoomPresetMenu.style.top = `${rect.bottom + 6}px`;
+            }
+            zoomPresetButton?.addEventListener('click', (e) => {
+                e.preventDefault(); e.stopPropagation();
+                zoomPresetMenu.classList.toggle('hidden');
+                positionZoomPresetMenu();
+            });
+            zoomPresetMenu?.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-zoom], [data-zoom-action]');
+                if (!btn) return;
+                if (btn.dataset.zoom) {
+                    setZoom(parseFloat(btn.dataset.zoom));
+                } else if (btn.dataset.zoomAction === 'fit-width') {
+                    setZoom(1.0);
+                } else if (btn.dataset.zoomAction === 'fit-page') {
+                    const viewport = document.getElementById('viewport');
+                    if (viewport && pdfDoc) {
+                        pdfDoc.getPage(currentPageNum).then(page => {
+                            const base = page.getViewport({ scale: 1 });
+                            const availableWidth = Math.max(260, viewport.clientWidth - 48);
+                            const availableHeight = Math.max(300, viewport.clientHeight - 48);
+                            setZoom(Math.min(availableWidth / base.width, availableHeight / base.height));
+                        });
+                    }
+                }
+                zoomPresetMenu.classList.add('hidden');
+            });
+            document.addEventListener('click', (e) => {
+                if (!zoomPresetMenu?.contains(e.target) && !zoomPresetButton?.contains(e.target)) zoomPresetMenu?.classList.add('hidden');
+            });
+            window.addEventListener('resize', positionZoomPresetMenu);
+            window.addEventListener('scroll', positionZoomPresetMenu, true);
+
             // Navigation Controls
             document.getElementById('btn-prev').addEventListener('click', () => changePage(-1));
             document.getElementById('btn-next').addEventListener('click', () => changePage(1));
@@ -2117,6 +2717,158 @@
 
             // Image Upload
             document.getElementById('image-upload-input').addEventListener('change', handleImageUpload);
+        }
+
+        function setupAutosaveUI() {
+            const discardBtn = document.getElementById('autosave-discard');
+            const restoreBtn = document.getElementById('autosave-restore');
+            const modal = document.getElementById('autosave-restore-modal');
+            discardBtn?.addEventListener('click', async () => {
+                await clearAutosaveSession();
+                closeAutosaveRestore();
+                setAutosaveStatus('local', 'Local');
+            });
+            restoreBtn?.addEventListener('click', async () => {
+                if (pendingRestoreSession) await restoreAutosaveSession(pendingRestoreSession);
+            });
+            modal?.addEventListener('click', (e) => { if (e.target === modal) closeAutosaveRestore(); });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden' && originalPdfBytes) void writeAutosaveSession();
+            });
+        }
+
+        function setAutosaveStatus(mode, text) {
+            const indicator = document.getElementById('autosave-indicator');
+            if (!indicator) return;
+            indicator.classList.remove('saving', 'saved', 'error');
+            if (mode === 'saving') indicator.classList.add('saving');
+            if (mode === 'saved') indicator.classList.add('saved');
+            if (mode === 'error') indicator.classList.add('error');
+            const span = indicator.querySelector('span');
+            const icon = indicator.querySelector('i');
+            if (span) span.textContent = text;
+            if (icon) icon.className = mode === 'saving' ? 'fas fa-spinner fa-spin' : (mode === 'saved' ? 'fas fa-cloud-check' : (mode === 'error' ? 'fas fa-triangle-exclamation' : 'fas fa-cloud'));
+        }
+
+        function openAutosaveDB() {
+            if (autosaveDBPromise) return autosaveDBPromise;
+            autosaveDBPromise = new Promise((resolve, reject) => {
+                if (!('indexedDB' in window)) { reject(new Error('IndexedDB unavailable')); return; }
+                const request = indexedDB.open(AUTOSAVE_DB_NAME, 1);
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains(AUTOSAVE_STORE)) db.createObjectStore(AUTOSAVE_STORE);
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error('Could not open autosave storage'));
+            });
+            return autosaveDBPromise;
+        }
+
+        async function writeAutosaveSession() {
+            if (!originalPdfBytes) return;
+            setAutosaveStatus('saving', 'Saving');
+            try {
+                const db = await openAutosaveDB();
+                const session = {
+                    version: 1, savedAt: Date.now(), documentName: currentDocumentName || 'edited_document.pdf',
+                    currentPageNum, pageElements: JSON.parse(JSON.stringify(pageElements)),
+                    pageDrawings: JSON.parse(JSON.stringify(pageDrawings)), pageNumberOptions: JSON.parse(JSON.stringify(pageNumberOptions)),
+                    pdfBlob: new Blob([originalPdfBytes], { type: 'application/pdf' })
+                };
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction(AUTOSAVE_STORE, 'readwrite');
+                    tx.objectStore(AUTOSAVE_STORE).put(session, AUTOSAVE_KEY);
+                    tx.oncomplete = resolve;
+                    tx.onerror = () => reject(tx.error || new Error('Autosave failed'));
+                    tx.onabort = () => reject(tx.error || new Error('Autosave aborted'));
+                });
+                setAutosaveStatus('saved', 'Saved');
+            } catch (error) {
+                console.warn('Local autosave failed:', error);
+                setAutosaveStatus('error', 'Not saved');
+            }
+        }
+
+        function scheduleAutosave() {
+            if (!originalPdfBytes) return;
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => { void writeAutosaveSession(); }, 650);
+        }
+
+        async function getAutosaveSession() {
+            try {
+                const db = await openAutosaveDB();
+                return await new Promise((resolve, reject) => {
+                    const tx = db.transaction(AUTOSAVE_STORE, 'readonly');
+                    const req = tx.objectStore(AUTOSAVE_STORE).get(AUTOSAVE_KEY);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => reject(req.error || new Error('Could not read autosave'));
+                });
+            } catch (error) { console.warn('Could not read local autosave:', error); return null; }
+        }
+
+        async function clearAutosaveSession() {
+            try {
+                const db = await openAutosaveDB();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction(AUTOSAVE_STORE, 'readwrite');
+                    tx.objectStore(AUTOSAVE_STORE).delete(AUTOSAVE_KEY);
+                    tx.oncomplete = resolve;
+                    tx.onerror = () => reject(tx.error || new Error('Could not clear autosave'));
+                });
+            } catch (error) { console.warn('Could not clear local autosave:', error); }
+        }
+
+        function formatAutosaveTime(timestamp) {
+            return timestamp ? `Saved ${new Date(timestamp).toLocaleString()}` : 'Saved recently';
+        }
+
+        async function offerAutosaveRestore() {
+            const session = await getAutosaveSession();
+            if (!session || !session.pdfBlob) return;
+            pendingRestoreSession = session;
+            const name = document.getElementById('autosave-document-name');
+            const time = document.getElementById('autosave-document-time');
+            if (name) name.textContent = session.documentName || 'Edited document.pdf';
+            if (time) time.textContent = formatAutosaveTime(session.savedAt);
+            const modal = document.getElementById('autosave-restore-modal');
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeAutosaveRestore() {
+            const modal = document.getElementById('autosave-restore-modal');
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            pendingRestoreSession = null;
+        }
+
+        async function restoreAutosaveSession(session) {
+            try {
+                setAutosaveStatus('saving', 'Restoring');
+                originalPdfBytes = await session.pdfBlob.arrayBuffer();
+                currentDocumentName = session.documentName || 'edited_document.pdf';
+                currentPageNum = Math.max(1, Number(session.currentPageNum) || 1);
+                pageElements = session.pageElements || {};
+                pageDrawings = session.pageDrawings || {};
+                pageNumberOptions = session.pageNumberOptions || pageNumberOptions;
+                historyStack = []; historyStep = -1; selectedElementId = null;
+                searchTextCache = {}; searchMatches = []; searchCurrentIndex = -1; searchQuery = '';
+                const searchInput = document.getElementById('pdf-search-input');
+                const searchCount = document.getElementById('pdf-search-count');
+                if (searchInput) searchInput.value = '';
+                if (searchCount) searchCount.textContent = '0 matches';
+                await loadPDFFromArrayBuffer(originalPdfBytes, true);
+                renderPage(currentPageNum);
+                saveState();
+                closeAutosaveRestore();
+                setAutosaveStatus('saved', 'Restored');
+            } catch (error) {
+                console.error('Restore session failed:', error);
+                setAutosaveStatus('error', 'Restore failed');
+                alert('Could not restore the previous editing session.');
+            }
         }
 
         function syncTextFormatUI() {
@@ -2306,11 +3058,27 @@
         }
 
         function handleFileUpload(file) {
+            if (!file) return;
+            if (file.type && file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('Please choose a PDF file.', 'error');
+                return;
+            }
             const reader = new FileReader();
-            reader.onload = function (evt) {
-                originalPdfBytes = evt.target.result;
-                loadPDFFromArrayBuffer(originalPdfBytes);
+            reader.onload = async function (evt) {
+                try {
+                    originalPdfBytes = evt.target.result;
+                    currentDocumentName = file.name || 'edited_document.pdf';
+                    searchTextCache = {}; searchMatches = []; searchCurrentIndex = -1; searchQuery = '';
+                    setAutosaveStatus('saving', 'Loading');
+                    await loadPDFFromArrayBuffer(originalPdfBytes);
+                    syncHistoryButtons();
+                    showToast(`${currentDocumentName} opened.`, 'success');
+                } catch (error) {
+                    console.error('Failed to open PDF:', error);
+                    showToast('Could not open this PDF.', 'error', 3200);
+                }
             };
+            reader.onerror = () => showToast('Could not read the selected file.', 'error', 3200);
             reader.readAsArrayBuffer(file);
         }
 
@@ -2337,6 +3105,7 @@
 
                     originalPdfBytes = await primaryPdfDocLib.save();
                     await loadPDFFromArrayBuffer(originalPdfBytes, true);
+                    saveState();
                 } catch (err) {
                     console.error("Failed to merge PDF: ", err);
                 }
@@ -2555,6 +3324,7 @@
 
                 originalPdfBytes = await pdfDocLib.save();
                 await loadPDFFromArrayBuffer(originalPdfBytes, true);
+                saveState();
 
                 // Jump to newly added page
                 currentPageNum = totalPages;
@@ -3476,6 +4246,34 @@
             });
         }
 
+        function syncHistoryButtons() {
+            const undoBtn = document.getElementById('btn-undo');
+            const redoBtn = document.getElementById('btn-redo');
+            const canUndo = historyStep > 0;
+            const canRedo = historyStep >= 0 && historyStep < historyStack.length - 1;
+            [[undoBtn, canUndo, 'Undo (Ctrl+Z)'], [redoBtn, canRedo, 'Redo (Ctrl+Y)']].forEach(([btn, enabled, title]) => {
+                if (!btn) return;
+                btn.disabled = !enabled;
+                btn.classList.toggle('history-disabled', !enabled);
+                btn.setAttribute('aria-disabled', String(!enabled));
+                btn.title = enabled ? title : (title.split(' ')[0] + ' unavailable');
+            });
+        }
+
+        function showToast(message, type = 'info', duration = 2200) {
+            const container = document.getElementById('uh-toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `uh-toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            window.setTimeout(() => {
+                toast.classList.remove('show');
+                window.setTimeout(() => toast.remove(), 180);
+            }, duration);
+        }
+
         function saveState() {
             if (historyStep < historyStack.length - 1) {
                 historyStack = historyStack.slice(0, historyStep + 1);
@@ -3487,12 +4285,15 @@
                 pageNumbers: JSON.parse(JSON.stringify(pageNumberOptions))
             });
             historyStep++;
+            syncHistoryButtons();
+            scheduleAutosave();
         }
 
         function undo() {
             if (historyStep > 0) {
                 historyStep--;
                 restoreState(historyStack[historyStep]);
+                syncHistoryButtons();
             }
         }
 
@@ -3500,6 +4301,7 @@
             if (historyStep < historyStack.length - 1) {
                 historyStep++;
                 restoreState(historyStack[historyStep]);
+                syncHistoryButtons();
             }
         }
 
@@ -4240,7 +5042,13 @@
             await exportPDF({ range, includeEdits, filename });
         }
 
+        let exportInProgress = false;
+
         async function exportPDF({ range = 'all', includeEdits = true, filename = 'edited_document.pdf', pageNumbers = null } = {}) {
+            if (exportInProgress) return;
+            exportInProgress = true;
+            const exportButton = document.getElementById('btn-export');
+            exportButton?.classList.add('history-disabled');
             try {
                 let sourcePdf;
                 if (originalPdfBytes) {
@@ -4412,9 +5220,13 @@
                 link.click();
                 link.remove();
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showToast(`Exported ${filename}.`, 'success', 2600);
             } catch (err) {
                 console.error('Export PDF failed:', err);
-                alert('Could not export the PDF. Please try again.');
+                showToast('Could not export the PDF. Please try again.', 'error', 3500);
+            } finally {
+                exportInProgress = false;
+                exportButton?.classList.remove('history-disabled');
             }
         }
 
