@@ -129,6 +129,31 @@
             color: #fff;
         }
 
+        .crop-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 70;
+            pointer-events: none;
+        }
+
+        .crop-overlay.active {
+            pointer-events: auto;
+            cursor: crosshair;
+        }
+
+        .crop-selection {
+            position: absolute;
+            display: none;
+            border: 2px dashed #8b5cf6;
+            background: rgba(139, 92, 246, 0.10);
+            box-shadow: 0 0 0 99999px rgba(0, 0, 0, 0.45);
+            pointer-events: none;
+        }
+
+        .crop-selection.show {
+            display: block;
+        }
+
         .selection-hint {
             font-size: 10px;
             color: #9ca3af;
@@ -376,6 +401,28 @@
                 <span class="hidden md:inline">Delete Page</span>
             </button>
 
+            <!-- Rotate Current Page -->
+            <button id="btn-rotate-left"
+                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
+                title="Rotate Current Page Left 90°">
+                <i class="fas fa-rotate-left text-cyan-400"></i>
+                <span class="hidden lg:inline">Rotate Left</span>
+            </button>
+            <button id="btn-rotate-right"
+                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
+                title="Rotate Current Page Right 90°">
+                <i class="fas fa-rotate-right text-cyan-400"></i>
+                <span class="hidden lg:inline">Rotate Right</span>
+            </button>
+
+            <!-- Crop Current Page -->
+            <button id="btn-crop-page"
+                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
+                title="Crop Current Page">
+                <i class="fas fa-crop-alt text-fuchsia-400"></i>
+                <span class="hidden md:inline">Crop</span>
+            </button>
+
             <!-- Merge PDF -->
             <label
                 class="cursor-pointer px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
@@ -405,6 +452,15 @@
     <!-- Secondary Action Toolbar -->
     <div id="main-toolbar"
         class="h-12 bg-slate-800/90 border-b border-slate-700/80 px-4 flex items-center justify-between shrink-0 overflow-x-auto gap-2 z-30">
+        <div id="crop-action-bar"
+            class="hidden fixed left-1/2 top-[7.2rem] -translate-x-1/2 z-[12000] items-center gap-2 bg-[#151520] border border-[#343448] rounded-xl shadow-2xl px-2 py-2">
+            <span class="text-[11px] text-slate-300 px-1">Drag an area to crop</span>
+            <button id="btn-apply-crop" type="button"
+                class="px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg text-xs font-medium">Apply
+                Crop</button>
+            <button id="btn-cancel-crop" type="button"
+                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium">Cancel</button>
+        </div>
         <!-- Annotation Tools -->
         <div class="flex items-center space-x-1">
             <button data-tool="select"
@@ -721,6 +777,10 @@
         let shapeFillColor = '#8b5cf6';
         let shapeFillEnabled = false;
         let eraserMode = 'partial';
+        let cropMode = false;
+        let cropSelection = null;
+        let cropStart = null;
+        let cropDragging = false;
 
         // Page Elements & Undo/Redo History
         let pageElements = {}; // { pageNum: [ elements ] }
@@ -757,6 +817,11 @@
             document.getElementById('btn-add-blank-page').addEventListener('click', addBlankPage);
             document.getElementById('btn-duplicate-page').addEventListener('click', duplicateCurrentPage);
             document.getElementById('btn-delete-page').addEventListener('click', deleteCurrentPage);
+            document.getElementById('btn-rotate-left').addEventListener('click', () => rotateCurrentPage(-90));
+            document.getElementById('btn-rotate-right').addEventListener('click', () => rotateCurrentPage(90));
+            document.getElementById('btn-crop-page').addEventListener('click', toggleCropMode);
+            document.getElementById('btn-apply-crop').addEventListener('click', applyCrop);
+            document.getElementById('btn-cancel-crop').addEventListener('click', () => exitCropMode(true));
             document.getElementById('btn-create-blank-start').addEventListener('click', createBlankDocument);
 
             // Tool Switching buttons
@@ -1042,6 +1107,7 @@
 
 
         function setTool(tool) {
+            if (cropMode) exitCropMode(true);
             currentTool = tool;
             document.querySelectorAll('.tool-btn').forEach(btn => {
                 btn.classList.remove('tool-active');
@@ -1241,6 +1307,92 @@
             }
         }
 
+        async function rotateCurrentPage(degrees) {
+            if (!originalPdfBytes || !pdfDoc || !totalPages) return;
+            if (degrees !== 90 && degrees !== -90) return;
+
+            try {
+                const pageNumber = currentPageNum;
+                const page = await pdfDoc.getPage(pageNumber);
+                const viewport = page.getViewport({ scale: scale });
+                const oldWidth = viewport.width / scale;
+                const oldHeight = viewport.height / scale;
+
+                // Transform editor objects from the current on-screen coordinate system
+                // into the coordinate system of the page after a 90° rotation.
+                const transformPoint = (pt) => {
+                    if (degrees === 90) {
+                        return { x: oldHeight - pt.y, y: pt.x };
+                    }
+                    return { x: pt.y, y: oldWidth - pt.x };
+                };
+
+                const transformBox = (el) => {
+                    const x = Number(el.x) || 0;
+                    const y = Number(el.y) || 0;
+                    const w = Math.max(0, Number(el.width) || 0);
+                    const h = Math.max(0, Number(el.height) || 0);
+
+                    if (degrees === 90) {
+                        return {
+                            x: oldHeight - (y + h),
+                            y: x,
+                            width: h,
+                            height: w
+                        };
+                    }
+
+                    return {
+                        x: y,
+                        y: oldWidth - (x + w),
+                        width: h,
+                        height: w
+                    };
+                };
+
+                if (pageElements[pageNumber]) {
+                    pageElements[pageNumber] = pageElements[pageNumber].map(el => {
+                        if (!el || el.type === 'text' || el.type === 'shape' || el.type === 'image' || el.type === 'signature') {
+                            const box = transformBox(el);
+                            return { ...el, ...box };
+                        }
+                        return el;
+                    });
+                }
+
+                if (pageDrawings[pageNumber]) {
+                    pageDrawings[pageNumber] = pageDrawings[pageNumber].map(path => ({
+                        ...path,
+                        points: (path.points || []).map(transformPoint)
+                    }));
+                }
+
+                const pdfDocLib = await PDFLib.PDFDocument.load(originalPdfBytes);
+                const pdfPage = pdfDocLib.getPage(pageNumber - 1);
+                const currentRotation = pdfPage.getRotation().angle || 0;
+                const nextRotation = (currentRotation + degrees + 360) % 360;
+                pdfPage.setRotation(PDFLib.degrees(nextRotation));
+                originalPdfBytes = await pdfDocLib.save();
+
+                selectedElementId = null;
+                await loadPDFFromArrayBuffer(originalPdfBytes, true);
+                saveState();
+
+                const direction = degrees === 90 ? 'right' : 'left';
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = `Page ${pageNumber} rotated ${direction} 90°. `;
+                    window.setTimeout(() => {
+                        if (status.textContent === `Page ${pageNumber} rotated ${direction} 90°. `) {
+                            status.textContent = '';
+                        }
+                    }, 2200);
+                }
+            } catch (err) {
+                console.error('Failed to rotate page:', err);
+            }
+        }
+
         async function addBlankPage() {
             try {
                 let pdfDocLib;
@@ -1335,8 +1487,72 @@
             const overlayLayer = document.createElement('div');
             overlayLayer.id = `overlay-layer-${pageNum}`;
             overlayLayer.className = 'overlay-layer';
-            overlayLayer.style.pointerEvents = isDrawingTool ? 'none' : 'auto';
+            overlayLayer.style.pointerEvents = isDrawingTool || cropMode ? 'none' : 'auto';
             pageContainer.appendChild(overlayLayer);
+
+            // Crop interaction layer. It sits above the PDF/annotation layers but only captures input in crop mode.
+            const cropOverlay = document.createElement('div');
+            cropOverlay.className = `crop-overlay ${cropMode ? 'active' : ''}`;
+            const cropBox = document.createElement('div');
+            cropBox.className = `crop-selection ${cropMode && cropSelection ? 'show' : ''}`;
+            cropOverlay.appendChild(cropBox);
+            pageContainer.appendChild(cropOverlay);
+
+            if (cropMode) {
+                const updateCropBox = (point) => {
+                    if (!cropStart) return;
+                    const left = Math.min(cropStart.x, point.x);
+                    const top = Math.min(cropStart.y, point.y);
+                    const width = Math.abs(point.x - cropStart.x);
+                    const height = Math.abs(point.y - cropStart.y);
+                    cropSelection = { x: left, y: top, width, height };
+                    cropBox.style.left = `${left}px`;
+                    cropBox.style.top = `${top}px`;
+                    cropBox.style.width = `${width}px`;
+                    cropBox.style.height = `${height}px`;
+                    cropBox.classList.toggle('show', width > 2 && height > 2);
+                    updateCropActionBar();
+                };
+
+                const getPoint = (e) => {
+                    const rect = cropOverlay.getBoundingClientRect();
+                    return {
+                        x: Math.max(0, Math.min(rect.width, e.clientX - rect.left)),
+                        y: Math.max(0, Math.min(rect.height, e.clientY - rect.top))
+                    };
+                };
+
+                cropOverlay.addEventListener('pointerdown', (e) => {
+                    if (e.button !== 0) return;
+                    cropDragging = true;
+                    cropStart = getPoint(e);
+                    cropSelection = { ...cropStart, width: 0, height: 0 };
+                    cropOverlay.setPointerCapture?.(e.pointerId);
+                    updateCropBox(cropStart);
+                    e.preventDefault();
+                });
+
+                cropOverlay.addEventListener('pointermove', (e) => {
+                    if (!cropDragging) return;
+                    updateCropBox(getPoint(e));
+                    e.preventDefault();
+                });
+
+                const finishCropDrag = (e) => {
+                    if (!cropDragging) return;
+                    cropDragging = false;
+                    updateCropBox(getPoint(e));
+                    cropOverlay.releasePointerCapture?.(e.pointerId);
+                    if (!cropSelection || cropSelection.width < 8 || cropSelection.height < 8) {
+                        cropSelection = null;
+                        cropBox.classList.remove('show');
+                    }
+                    updateCropActionBar();
+                };
+
+                cropOverlay.addEventListener('pointerup', finishCropDrag);
+                cropOverlay.addEventListener('pointercancel', finishCropDrag);
+            }
 
             renderWrapper.appendChild(pageContainer);
 
@@ -2279,6 +2495,117 @@
                 renderPageElements(currentPageNum);
             };
             reader.readAsDataURL(file);
+        }
+
+        function updateCropActionBar() {
+            const bar = document.getElementById('crop-action-bar');
+            if (!bar) return;
+            bar.classList.toggle('hidden', !cropMode);
+            bar.classList.toggle('flex', cropMode);
+            const applyBtn = document.getElementById('btn-apply-crop');
+            if (applyBtn) applyBtn.disabled = !(cropSelection && cropSelection.width >= 8 && cropSelection.height >= 8);
+        }
+
+        function toggleCropMode() {
+            if (cropMode) {
+                exitCropMode(true);
+                return;
+            }
+            selectedElementId = null;
+            deselectAllElements();
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('tool-active'));
+            const cropBtn = document.getElementById('btn-crop-page');
+            cropBtn?.classList.add('bg-violet-600', 'border-violet-500', 'text-white');
+            cropMode = true;
+            cropSelection = null;
+            cropStart = null;
+            cropDragging = false;
+            updateCropActionBar();
+            renderPage(currentPageNum);
+        }
+
+        function exitCropMode(refresh = true) {
+            cropMode = false;
+            cropSelection = null;
+            cropStart = null;
+            cropDragging = false;
+            const cropBtn = document.getElementById('btn-crop-page');
+            cropBtn?.classList.remove('bg-violet-600', 'border-violet-500', 'text-white');
+            updateCropActionBar();
+            if (refresh && pdfDoc) renderPage(currentPageNum);
+        }
+
+        async function applyCrop() {
+            if (!cropSelection || cropSelection.width < 8 || cropSelection.height < 8 || !pdfDoc || !originalPdfBytes) return;
+
+            const selection = { ...cropSelection };
+            try {
+                const page = await pdfDoc.getPage(currentPageNum);
+                const viewport = page.getViewport({ scale });
+
+                const corners = [
+                    viewport.convertToPdfPoint(selection.x, selection.y),
+                    viewport.convertToPdfPoint(selection.x + selection.width, selection.y),
+                    viewport.convertToPdfPoint(selection.x, selection.y + selection.height),
+                    viewport.convertToPdfPoint(selection.x + selection.width, selection.y + selection.height)
+                ];
+
+                const xs = corners.map(p => p[0]);
+                const ys = corners.map(p => p[1]);
+                const leftPdf = Math.min(...xs);
+                const rightPdf = Math.max(...xs);
+                const bottomPdf = Math.min(...ys);
+                const topPdf = Math.max(...ys);
+
+                const pdfDocLib = await PDFLib.PDFDocument.load(originalPdfBytes);
+                const pdfPage = pdfDocLib.getPage(currentPageNum - 1);
+                const pageWidth = pdfPage.getWidth();
+                const pageHeight = pdfPage.getHeight();
+
+                const clampedLeft = Math.max(0, Math.min(pageWidth, leftPdf));
+                const clampedBottom = Math.max(0, Math.min(pageHeight, bottomPdf));
+                const clampedRight = Math.max(clampedLeft + 1, Math.min(pageWidth, rightPdf));
+                const clampedTop = Math.max(clampedBottom + 1, Math.min(pageHeight, topPdf));
+
+                const cropLeftDisplay = selection.x / scale;
+                const cropTopDisplay = selection.y / scale;
+
+                const oldElements = pageElements[currentPageNum] || [];
+                pageElements[currentPageNum] = oldElements.map(el => ({
+                    ...el,
+                    x: (Number(el.x) || 0) - cropLeftDisplay,
+                    y: (Number(el.y) || 0) - cropTopDisplay
+                }));
+
+                const oldDrawings = pageDrawings[currentPageNum] || [];
+                pageDrawings[currentPageNum] = oldDrawings.map(path => ({
+                    ...path,
+                    points: (path.points || []).map(pt => ({
+                        ...pt,
+                        x: (Number(pt.x) || 0) - cropLeftDisplay,
+                        y: (Number(pt.y) || 0) - cropTopDisplay
+                    }))
+                }));
+
+                pdfPage.setCropBox(clampedLeft, clampedBottom, clampedRight - clampedLeft, clampedTop - clampedBottom);
+                originalPdfBytes = await pdfDocLib.save();
+
+                selectedElementId = null;
+                exitCropMode(false);
+                await loadPDFFromArrayBuffer(originalPdfBytes, true);
+                saveState();
+
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = `Page ${currentPageNum} cropped.`;
+                    window.setTimeout(() => {
+                        if (status.textContent === `Page ${currentPageNum} cropped.`) status.textContent = '';
+                    }, 2200);
+                }
+            } catch (err) {
+                console.error('Failed to crop page:', err);
+                alert('Could not crop this page. Please try again.');
+            }
         }
 
         async function exportPDF() {
