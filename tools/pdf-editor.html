@@ -73,6 +73,32 @@
             border-color: #a78bfa !important;
         }
 
+        .shortcut-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 9px 10px;
+            border: 1px solid rgba(71, 85, 105, .55);
+            background: rgba(30, 41, 59, .45);
+            border-radius: 10px;
+            color: #cbd5e1;
+        }
+
+        .shortcut-row kbd {
+            display: inline-flex;
+            align-items: center;
+            min-height: 24px;
+            padding: 3px 7px;
+            border: 1px solid #475569;
+            border-bottom-color: #334155;
+            border-radius: 6px;
+            background: #0f172a;
+            color: #f8fafc;
+            font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+            white-space: nowrap;
+        }
+
         .modal-backdrop {
             background-color: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(4px);
@@ -251,6 +277,25 @@
 
         #thumbnail-container>div:hover {
             border-color: var(--uh-accent) !important;
+        }
+
+        #thumbnail-container>div.page-thumb-dragging {
+            opacity: 0.45;
+            transform: scale(0.98);
+        }
+
+        #thumbnail-container>div.page-thumb-drag-over {
+            border-color: var(--uh-accent) !important;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, .35);
+            background: rgba(139, 92, 246, .08);
+        }
+
+        #thumbnail-container>div[draggable="true"] {
+            cursor: grab;
+        }
+
+        #thumbnail-container>div[draggable="true"]:active {
+            cursor: grabbing;
         }
 
         #btn-export {
@@ -439,6 +484,14 @@
                 <span class="hidden sm:inline">Open PDF</span>
                 <input type="file" id="file-input" accept="application/pdf" class="hidden">
             </label>
+
+            <!-- Keyboard Shortcuts -->
+            <button id="btn-shortcuts"
+                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
+                title="Keyboard Shortcuts (?)">
+                <i class="fas fa-keyboard text-violet-400"></i>
+                <span class="hidden lg:inline">Shortcuts</span>
+            </button>
 
             <!-- Export PDF -->
             <button id="btn-export"
@@ -677,9 +730,13 @@
         <aside id="sidebar"
             class="w-48 bg-slate-800/50 border-r border-slate-700/80 p-3 flex flex-col hidden md:flex shrink-0">
             <div
-                class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
                 <span>Thumbnails</span>
                 <i class="fas fa-th-large text-slate-500"></i>
+            </div>
+            <div class="text-[10px] text-slate-500 mb-2 flex items-center gap-1">
+                <i class="fas fa-grip-vertical text-violet-400"></i>
+                <span>Drag pages to reorder</span>
             </div>
             <div id="thumbnail-container" class="flex-1 overflow-y-auto space-y-3 pr-1">
                 <!-- Dynamic Page Thumbnails inserted here -->
@@ -721,30 +778,107 @@
     </div>
 
     <!-- Signature Modal -->
+    <div id="shortcuts-modal" class="fixed inset-0 modal-backdrop hidden z-[80] flex items-center justify-center p-4">
+        <div class="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+                <div>
+                    <h3 class="text-sm font-semibold text-white">Keyboard Shortcuts</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Use these shortcuts when the PDF editor is focused.</p>
+                </div>
+                <button id="btn-close-shortcuts" type="button" class="text-slate-400 hover:text-white" title="Close">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div class="shortcut-row"><span>Select</span><kbd>V</kbd></div>
+                <div class="shortcut-row"><span>Text</span><kbd>T</kbd></div>
+                <div class="shortcut-row"><span>Pen</span><kbd>P</kbd></div>
+                <div class="shortcut-row"><span>Highlight</span><kbd>H</kbd></div>
+                <div class="shortcut-row"><span>Eraser</span><kbd>E</kbd></div>
+                <div class="shortcut-row"><span>Shapes</span><kbd>S</kbd></div>
+                <div class="shortcut-row"><span>Undo</span><kbd>Ctrl / Cmd + Z</kbd></div>
+                <div class="shortcut-row"><span>Redo</span><kbd>Ctrl / Cmd + Y</kbd></div>
+                <div class="shortcut-row"><span>Delete selected</span><kbd>Delete</kbd></div>
+                <div class="shortcut-row"><span>Export PDF</span><kbd>Ctrl / Cmd + S</kbd></div>
+                <div class="shortcut-row"><span>Close tool / deselect</span><kbd>Esc</kbd></div>
+                <div class="shortcut-row"><span>Show shortcuts</span><kbd>?</kbd></div>
+            </div>
+            <div class="px-5 pb-5 text-[11px] text-slate-500">Shortcuts are disabled while typing in a text or form
+                field.</div>
+        </div>
+    </div>
+
     <div id="signature-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
             <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
                 <h3 class="font-semibold text-white text-sm flex items-center space-x-2">
                     <i class="fas fa-signature text-amber-400"></i>
-                    <span>Draw Signature</span>
+                    <span>Add Signature</span>
                 </h3>
-                <button id="btn-close-sig-modal" class="text-slate-400 hover:text-white">
+                <button id="btn-close-sig-modal" type="button" class="text-slate-400 hover:text-white">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="p-4">
-                <div class="border border-slate-600 rounded-lg bg-white overflow-hidden mb-3">
-                    <canvas id="signature-pad" width="400" height="160" class="w-full h-40 cursor-crosshair"></canvas>
+
+            <div class="p-4 space-y-3">
+                <div class="flex rounded-lg border border-slate-700 bg-slate-900/60 p-1 gap-1">
+                    <button type="button" id="sig-mode-draw"
+                        class="sig-mode-btn flex-1 px-3 py-2 text-xs rounded-md bg-violet-600 text-white">Draw</button>
+                    <button type="button" id="sig-mode-type"
+                        class="sig-mode-btn flex-1 px-3 py-2 text-xs rounded-md text-slate-300 hover:bg-slate-700">Type</button>
+                    <button type="button" id="sig-mode-upload"
+                        class="sig-mode-btn flex-1 px-3 py-2 text-xs rounded-md text-slate-300 hover:bg-slate-700">Upload</button>
                 </div>
-                <div class="flex items-center justify-between">
-                    <button id="btn-clear-sig"
-                        class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded transition">
-                        Clear
-                    </button>
-                    <button id="btn-save-sig"
-                        class="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded shadow transition">
-                        Apply Signature
-                    </button>
+
+                <div id="sig-panel-draw">
+                    <div class="border border-slate-600 rounded-lg bg-white overflow-hidden mb-3">
+                        <canvas id="signature-pad" width="400" height="160"
+                            class="w-full h-40 cursor-crosshair"></canvas>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button id="btn-clear-sig" type="button"
+                            class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded transition">Clear</button>
+                        <button id="btn-save-sig" type="button"
+                            class="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded shadow transition">Apply
+                            Signature</button>
+                    </div>
+                </div>
+
+                <div id="sig-panel-type" class="hidden space-y-3">
+                    <input id="typed-signature" type="text" placeholder="Type your name"
+                        class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm outline-none focus:border-violet-500">
+                    <select id="typed-signature-font"
+                        class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm">
+                        <option value="cursive">Cursive</option>
+                        <option value="serif">Serif</option>
+                        <option value="sans-serif">Sans Serif</option>
+                    </select>
+                    <div
+                        class="border border-slate-700 rounded-lg bg-white p-4 min-h-24 flex items-center justify-center overflow-hidden">
+                        <span id="typed-signature-preview" class="text-black text-4xl whitespace-nowrap"
+                            style="font-family:cursive">Your Signature</span>
+                    </div>
+                    <div class="flex justify-end">
+                        <button id="btn-save-typed-sig" type="button"
+                            class="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded shadow transition">Apply
+                            Signature</button>
+                    </div>
+                </div>
+
+                <div id="sig-panel-upload" class="hidden space-y-3">
+                    <input id="signature-image-input" type="file" accept="image/png,image/jpeg,image/webp"
+                        class="hidden">
+                    <div id="signature-upload-preview"
+                        class="border border-dashed border-slate-600 rounded-lg bg-slate-900/50 min-h-32 flex items-center justify-center text-slate-400 text-xs p-4 text-center">
+                        Choose a PNG/JPG signature image.</div>
+                    <div class="flex justify-end gap-2">
+                        <button id="btn-choose-sig-image" type="button"
+                            class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded transition">Choose
+                            Image</button>
+                        <button id="btn-save-uploaded-sig" type="button"
+                            class="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded shadow transition">Apply
+                            Signature</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -781,6 +915,8 @@
         let cropSelection = null;
         let cropStart = null;
         let cropDragging = false;
+        let draggedThumbPage = null;
+        let thumbDragMoved = false;
 
         // Page Elements & Undo/Redo History
         let pageElements = {}; // { pageNum: [ elements ] }
@@ -1023,6 +1159,14 @@
             // Export Button
             document.getElementById('btn-export').addEventListener('click', exportPDF);
 
+            // Keyboard Shortcuts modal
+            const shortcutsModal = document.getElementById('shortcuts-modal');
+            document.getElementById('btn-shortcuts').addEventListener('click', () => shortcutsModal.classList.remove('hidden'));
+            document.getElementById('btn-close-shortcuts').addEventListener('click', () => shortcutsModal.classList.add('hidden'));
+            shortcutsModal.addEventListener('click', (e) => {
+                if (e.target === shortcutsModal) shortcutsModal.classList.add('hidden');
+            });
+
             // Image Upload
             document.getElementById('image-upload-input').addEventListener('change', handleImageUpload);
         }
@@ -1049,30 +1193,75 @@
 
         function setupGlobalKeyListeners() {
             document.addEventListener('keydown', (e) => {
-                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-                const isContentEditable = document.activeElement && document.activeElement.isContentEditable;
+                const activeEl = document.activeElement;
+                const activeTag = activeEl ? activeEl.tagName.toLowerCase() : '';
+                const isContentEditable = !!(activeEl && activeEl.isContentEditable);
+                const shortcutsModal = document.getElementById('shortcuts-modal');
 
-                if (activeTag === 'input' || activeTag === 'textarea' || isContentEditable) {
+                // Do not hijack shortcuts while the user is typing in a form field.
+                if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || isContentEditable) {
                     return;
                 }
 
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                const key = e.key.toLowerCase();
+                const mod = e.ctrlKey || e.metaKey;
+
+                if (mod && key === 'z') {
                     e.preventDefault();
                     if (e.shiftKey) redo(); else undo();
-                } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+                    return;
+                }
+
+                if (mod && key === 'y') {
                     e.preventDefault();
                     redo();
-                } else if (e.key === 'Delete' || e.key === 'Backspace') {
+                    return;
+                }
+
+                if (mod && key === 's') {
+                    e.preventDefault();
+                    exportPDF();
+                    return;
+                }
+
+                if (key === '?') {
+                    e.preventDefault();
+                    shortcutsModal?.classList.toggle('hidden');
+                    return;
+                }
+
+                if (key === 'escape') {
+                    if (shortcutsModal && !shortcutsModal.classList.contains('hidden')) {
+                        shortcutsModal.classList.add('hidden');
+                    } else if (cropMode) {
+                        exitCropMode(true);
+                    } else {
+                        deselectAllElements();
+                        setTool('select');
+                    }
+                    return;
+                }
+
+                if (key === 'delete' || key === 'backspace') {
                     if (selectedElementId) {
                         e.preventDefault();
                         deleteSelectedElement();
                     }
-                } else if (e.key.toLowerCase() === 'v') setTool('select');
-                else if (e.key.toLowerCase() === 't') setTool('text');
-                else if (e.key.toLowerCase() === 'p') setTool('pen');
+                    return;
+                }
+
+                // Single-key tool shortcuts.
+                if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+                    if (key === 'v') setTool('select');
+                    else if (key === 't') setTool('text');
+                    else if (key === 'p') setTool('pen');
+                    else if (key === 'h') setTool('highlighter');
+                    else if (key === 'e') setTool('eraser');
+                    else if (key === 's') setTool('shape');
+                }
             });
 
-            // Deselect when clicking empty background space
+            // Deselect when clicking empty background space.
             document.addEventListener('mousedown', (e) => {
                 const isInsideElement = e.target.closest('.pdf-interactive-element');
                 const isInsideToolbar = e.target.closest('#main-toolbar') || e.target.closest('header') || e.target.closest('.modal-backdrop');
@@ -2394,24 +2583,71 @@
         async function renderSidebarThumbnails() {
             const container = document.getElementById('thumbnail-container');
             container.innerHTML = '';
+            if (!pdfDoc || !totalPages) return;
 
             for (let i = 1; i <= totalPages; i++) {
                 const page = await pdfDoc.getPage(i);
                 const vp = page.getViewport({ scale: 0.2 });
 
                 const thumbBox = document.createElement('div');
-                thumbBox.className = `p-1 bg-slate-900 rounded border cursor-pointer hover:border-violet-500 transition ${i === currentPageNum ? 'border-blue-500 ring-1 ring-violet-500' : 'border-slate-700'}`;
+                thumbBox.draggable = true;
+                thumbBox.dataset.page = String(i);
+                thumbBox.className = `p-1 bg-slate-900 rounded border cursor-grab hover:border-violet-500 transition ${i === currentPageNum ? 'border-violet-500 ring-1 ring-violet-500' : 'border-slate-700'}`;
+                thumbBox.title = 'Click to open • Drag to reorder';
+
+                const pageLabel = document.createElement('div');
+                pageLabel.className = 'flex items-center justify-between px-1 pb-1 text-[9px] text-slate-500';
+                pageLabel.innerHTML = `<span>Page ${i}</span><i class="fas fa-grip-vertical text-slate-600"></i>`;
+                thumbBox.appendChild(pageLabel);
 
                 const canvas = document.createElement('canvas');
                 canvas.width = vp.width;
                 canvas.height = vp.height;
-                canvas.className = 'w-full h-auto rounded';
+                canvas.className = 'w-full h-auto rounded pointer-events-none';
 
                 await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-
                 thumbBox.appendChild(canvas);
+
+                thumbBox.addEventListener('dragstart', (e) => {
+                    draggedThumbPage = i;
+                    thumbDragMoved = false;
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', String(i));
+                    requestAnimationFrame(() => thumbBox.classList.add('page-thumb-dragging'));
+                });
+
+                thumbBox.addEventListener('dragover', (e) => {
+                    if (!draggedThumbPage || draggedThumbPage === i) return;
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    thumbDragMoved = true;
+                    thumbBox.classList.add('page-thumb-drag-over');
+                });
+
+                thumbBox.addEventListener('dragleave', () => {
+                    thumbBox.classList.remove('page-thumb-drag-over');
+                });
+
+                thumbBox.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    thumbBox.classList.remove('page-thumb-drag-over');
+                    const from = draggedThumbPage;
+                    const to = i;
+                    if (!from || from === to) return;
+                    await movePageOrder(from, to);
+                });
+
+                thumbBox.addEventListener('dragend', () => {
+                    thumbBox.classList.remove('page-thumb-dragging');
+                    container.querySelectorAll('.page-thumb-drag-over').forEach(el => el.classList.remove('page-thumb-drag-over'));
+                    draggedThumbPage = null;
+                    window.setTimeout(() => { thumbDragMoved = false; }, 0);
+                });
+
                 thumbBox.addEventListener('click', () => {
+                    if (thumbDragMoved) return;
                     currentPageNum = i;
+                    selectedElementId = null;
                     renderPage(currentPageNum);
                 });
 
@@ -2419,27 +2655,121 @@
             }
         }
 
+        async function movePageOrder(fromPage, toPage) {
+            if (!originalPdfBytes || !pdfDoc || !totalPages) return;
+            if (fromPage < 1 || fromPage > totalPages || toPage < 1 || toPage > totalPages || fromPage === toPage) return;
+
+            try {
+                const pageOrder = Array.from({ length: totalPages }, (_, index) => index + 1);
+                const [movedPage] = pageOrder.splice(fromPage - 1, 1);
+                pageOrder.splice(toPage - 1, 0, movedPage);
+
+                const sourceDoc = await PDFLib.PDFDocument.load(originalPdfBytes);
+                const reorderedDoc = await PDFLib.PDFDocument.create();
+                const copiedPages = await reorderedDoc.copyPages(sourceDoc, pageOrder.map(pageNum => pageNum - 1));
+                copiedPages.forEach(page => reorderedDoc.addPage(page));
+                originalPdfBytes = await reorderedDoc.save();
+
+                const oldElements = pageElements;
+                const oldDrawings = pageDrawings;
+                const newElements = {};
+                const newDrawings = {};
+
+                pageOrder.forEach((oldPageNum, newIndex) => {
+                    const newPageNum = newIndex + 1;
+                    newElements[newPageNum] = JSON.parse(JSON.stringify(oldElements[oldPageNum] || []));
+                    newDrawings[newPageNum] = JSON.parse(JSON.stringify(oldDrawings[oldPageNum] || []));
+                });
+
+                pageElements = newElements;
+                pageDrawings = newDrawings;
+
+                const newCurrentIndex = pageOrder.indexOf(currentPageNum);
+                currentPageNum = newCurrentIndex >= 0 ? newCurrentIndex + 1 : 1;
+                selectedElementId = null;
+
+                await loadPDFFromArrayBuffer(originalPdfBytes, true);
+                saveState();
+
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = 'Page order updated.';
+                    window.setTimeout(() => {
+                        if (status.textContent === 'Page order updated.') status.textContent = '';
+                    }, 1800);
+                }
+            } catch (err) {
+                console.error('Failed to reorder pages:', err);
+                alert('Could not reorder the pages. Please try again.');
+            }
+        }
+
         function setupSignaturePad() {
             const modal = document.getElementById('signature-modal');
             const pad = document.getElementById('signature-pad');
             const ctx = pad.getContext('2d');
+            const drawModeBtn = document.getElementById('sig-mode-draw');
+            const typeModeBtn = document.getElementById('sig-mode-type');
+            const uploadModeBtn = document.getElementById('sig-mode-upload');
+            const drawPanel = document.getElementById('sig-panel-draw');
+            const typePanel = document.getElementById('sig-panel-type');
+            const uploadPanel = document.getElementById('sig-panel-upload');
+            const typedInput = document.getElementById('typed-signature');
+            const typedFont = document.getElementById('typed-signature-font');
+            const typedPreview = document.getElementById('typed-signature-preview');
+            const imageInput = document.getElementById('signature-image-input');
+            const uploadPreview = document.getElementById('signature-upload-preview');
             let drawing = false;
+            let uploadDataUrl = null;
 
-            document.getElementById('btn-signature-modal').addEventListener('click', () => {
+            function setSigMode(mode) {
+                [drawModeBtn, typeModeBtn, uploadModeBtn].forEach(btn => btn.classList.remove('bg-violet-600', 'text-white'));
+                [drawModeBtn, typeModeBtn, uploadModeBtn].forEach(btn => btn.classList.add('text-slate-300'));
+                [drawPanel, typePanel, uploadPanel].forEach(panel => panel.classList.add('hidden'));
+                if (mode === 'draw') { drawModeBtn.classList.add('bg-violet-600', 'text-white'); drawModeBtn.classList.remove('text-slate-300'); drawPanel.classList.remove('hidden'); }
+                if (mode === 'type') { typeModeBtn.classList.add('bg-violet-600', 'text-white'); typeModeBtn.classList.remove('text-slate-300'); typePanel.classList.remove('hidden'); typedInput.focus(); }
+                if (mode === 'upload') { uploadModeBtn.classList.add('bg-violet-600', 'text-white'); uploadModeBtn.classList.remove('text-slate-300'); uploadPanel.classList.remove('hidden'); }
+            }
+
+            function openModal() {
                 modal.classList.remove('hidden');
                 ctx.clearRect(0, 0, pad.width, pad.height);
-            });
+                typedInput.value = '';
+                typedPreview.textContent = 'Your Signature';
+                typedPreview.style.fontFamily = typedFont.value;
+                uploadDataUrl = null;
+                uploadPreview.innerHTML = 'Choose a PNG/JPG signature image.';
+                setSigMode('draw');
+            }
 
-            document.getElementById('btn-close-sig-modal').addEventListener('click', () => {
-                modal.classList.add('hidden');
-            });
+            function addSignatureElement(dataUrl, width = 160, height = 64) {
+                if (!dataUrl) return;
+                const newEl = {
+                    id: 'el_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+                    type: 'signature',
+                    dataUrl,
+                    x: 100,
+                    y: 100,
+                    width,
+                    height
+                };
+                if (!pageElements[currentPageNum]) pageElements[currentPageNum] = [];
+                pageElements[currentPageNum].push(newEl);
+                selectedElementId = newEl.id;
+                saveState();
+                renderPageElements(currentPageNum);
+            }
 
-            document.getElementById('btn-clear-sig').addEventListener('click', () => {
-                ctx.clearRect(0, 0, pad.width, pad.height);
-            });
+            document.getElementById('btn-signature-modal').addEventListener('click', openModal);
+            document.getElementById('btn-close-sig-modal').addEventListener('click', () => modal.classList.add('hidden'));
+            drawModeBtn.addEventListener('click', () => setSigMode('draw'));
+            typeModeBtn.addEventListener('click', () => setSigMode('type'));
+            uploadModeBtn.addEventListener('click', () => setSigMode('upload'));
 
+            document.getElementById('btn-clear-sig').addEventListener('click', () => ctx.clearRect(0, 0, pad.width, pad.height));
             pad.addEventListener('mousedown', () => { drawing = true; ctx.beginPath(); });
-            pad.addEventListener('mouseup', () => drawing = false);
+            pad.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
+            pad.addEventListener('mouseleave', () => { drawing = false; ctx.beginPath(); });
             pad.addEventListener('mousemove', (e) => {
                 if (!drawing) return;
                 const rect = pad.getBoundingClientRect();
@@ -2448,27 +2778,53 @@
                 ctx.strokeStyle = '#000000';
                 ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
                 ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
             });
 
             document.getElementById('btn-save-sig').addEventListener('click', () => {
-                const dataUrl = pad.toDataURL('image/png');
+                addSignatureElement(pad.toDataURL('image/png'));
                 modal.classList.add('hidden');
+            });
 
-                const newEl = {
-                    id: 'el_' + Date.now(),
-                    type: 'signature',
-                    dataUrl: dataUrl,
-                    x: 100,
-                    y: 100,
-                    width: 160,
-                    height: 64
+            function updateTypedPreview() {
+                const value = typedInput.value.trim();
+                typedPreview.textContent = value || 'Your Signature';
+                typedPreview.style.fontFamily = typedFont.value;
+            }
+            typedInput.addEventListener('input', updateTypedPreview);
+            typedFont.addEventListener('change', updateTypedPreview);
+            document.getElementById('btn-save-typed-sig').addEventListener('click', () => {
+                const text = typedInput.value.trim();
+                if (!text) { typedInput.focus(); return; }
+                const canvas = document.createElement('canvas');
+                canvas.width = 700; canvas.height = 180;
+                const c = canvas.getContext('2d');
+                c.fillStyle = 'transparent';
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                c.fillStyle = '#000';
+                c.textBaseline = 'middle';
+                c.font = `64px ${typedFont.value}`;
+                c.fillText(text, 20, 90);
+                addSignatureElement(canvas.toDataURL('image/png'), 220, 70);
+                modal.classList.add('hidden');
+            });
+
+            document.getElementById('btn-choose-sig-image').addEventListener('click', () => imageInput.click());
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    uploadDataUrl = evt.target.result;
+                    uploadPreview.innerHTML = `<img src="${uploadDataUrl}" alt="Signature preview" class="max-h-28 max-w-full object-contain rounded">`;
                 };
-
-                if (!pageElements[currentPageNum]) pageElements[currentPageNum] = [];
-                pageElements[currentPageNum].push(newEl);
-
-                saveState();
-                renderPageElements(currentPageNum);
+                reader.readAsDataURL(file);
+            });
+            document.getElementById('btn-save-uploaded-sig').addEventListener('click', () => {
+                if (!uploadDataUrl) return;
+                addSignatureElement(uploadDataUrl, 180, 72);
+                modal.classList.add('hidden');
             });
         }
 
