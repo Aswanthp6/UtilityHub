@@ -314,6 +314,243 @@
             border-color: #343448 !important;
         }
 
+        /* Compact UtilityHub header */
+        .utilityhub-pdf-editor>header {
+            height: 58px !important;
+            padding: 0 10px !important;
+            gap: 8px;
+        }
+
+        .utilityhub-pdf-editor>header>div:first-child {
+            flex: 0 0 auto;
+        }
+
+        .utilityhub-pdf-editor>header>div:first-child .w-9 {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 15px !important;
+        }
+
+        .utilityhub-pdf-editor>header>div:first-child .text-base {
+            font-size: 14px !important;
+        }
+
+        .utilityhub-pdf-editor>header>div:first-child .text-\[11px\] {
+            font-size: 9px !important;
+        }
+
+        .utilityhub-pdf-editor>header>div:nth-child(2) {
+            padding: 4px 8px !important;
+            gap: 2px !important;
+            min-width: 170px;
+            flex: 0 1 auto;
+        }
+
+        .utilityhub-pdf-editor>header>div:nth-child(2) button {
+            padding: 5px !important;
+        }
+
+        .utilityhub-pdf-editor>header>div:nth-child(2) .w-10 {
+            width: 34px !important;
+        }
+
+        .utilityhub-pdf-editor>header>div:nth-child(2) .w-12 {
+            width: 38px !important;
+        }
+
+        .header-actions-compact {
+            flex: 0 1 auto !important;
+            max-width: none !important;
+            overflow: visible !important;
+            gap: 4px !important;
+            margin-left: auto;
+        }
+
+        .header-actions-compact>* {
+            flex: 0 0 auto;
+        }
+
+        .header-actions-compact .top-action {
+            padding: 5px 8px !important;
+            min-height: 30px;
+            border-radius: 7px !important;
+            gap: 4px !important;
+        }
+
+        .header-actions-compact .top-action i {
+            font-size: 11px;
+        }
+
+        .header-actions-compact .export-action {
+            padding: 6px 10px !important;
+            min-height: 32px;
+        }
+
+        @media (max-width: 1200px) {
+            .header-actions-compact .top-action .action-label {
+                display: none !important;
+            }
+
+            .header-actions-compact .export-action .action-label {
+                display: inline !important;
+            }
+
+            .header-actions-compact .back-tools {
+                display: none !important;
+            }
+        }
+
+        /* v25.3 stable header layout: scrollable page actions + pinned Open/Export */
+        .utilityhub-pdf-editor>header {
+            display: grid !important;
+            grid-template-columns: auto minmax(170px, 260px) minmax(0, 1fr) !important;
+            gap: 8px !important;
+            align-items: center !important;
+            overflow: hidden !important;
+        }
+
+        .utilityhub-pdf-editor>header>div:first-child {
+            min-width: 0;
+        }
+
+        .utilityhub-pdf-editor>header>div:nth-child(2) {
+            justify-self: center;
+            min-width: 170px;
+        }
+
+        .header-actions-wrap {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+        }
+
+        .header-actions-scroll {
+            min-width: 0;
+            flex: 1 1 auto;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            display: flex;
+            justify-content: flex-start;
+            overscroll-behavior-x: contain;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .header-actions-scroll {
+            cursor: grab;
+        }
+
+        .header-actions-scroll:active {
+            cursor: grabbing;
+        }
+
+        .header-actions-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header-actions-compact {
+            flex: 0 0 auto !important;
+            max-width: none !important;
+            overflow: visible !important;
+            margin-left: 0 !important;
+            justify-content: flex-end;
+        }
+
+        .header-pinned-action {
+            flex: 0 0 auto;
+        }
+
+        .header-pinned-open {
+            background: #20202d !important;
+            border: 1px solid #343448 !important;
+        }
+
+        .header-pinned-export {
+            background: #8b5cf6 !important;
+            border: 1px solid #8b5cf6 !important;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, .20) !important;
+        }
+
+        .header-pinned-export:hover {
+            background: #7c3aed !important;
+        }
+
+        @media (min-width: 1201px) {
+            .header-actions-compact .action-label {
+                display: inline !important;
+            }
+
+            .header-actions-compact .back-tools .action-label {
+                display: inline !important;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .header-actions-compact .action-label {
+                display: none !important;
+            }
+        }
+
+        /* Thumbnail sidebar toggle */
+        #btn-sidebar-toggle {
+            background: #20202d;
+            border: 1px solid #343448;
+            color: #cbd5e1;
+            border-radius: 8px;
+            padding: 6px 9px;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #btn-sidebar-toggle:hover {
+            background: #2b2b3d;
+            color: #fff;
+        }
+
+        .sidebar-collapsed #sidebar {
+            display: none !important;
+        }
+
+        @media (max-width: 1200px) {
+            .utilityhub-pdf-editor>header {
+                grid-template-columns: auto minmax(160px, 215px) minmax(0, 1fr) !important;
+            }
+
+            .header-actions-scroll {
+                justify-content: flex-start;
+            }
+
+            .header-pinned-open .pinned-label {
+                display: none;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .utilityhub-pdf-editor>header {
+                grid-template-columns: auto minmax(0, 180px) auto !important;
+            }
+
+            .header-actions-wrap {
+                justify-content: flex-end;
+            }
+
+            .header-actions-scroll {
+                display: none;
+            }
+
+            .header-pinned-open .pinned-label {
+                display: none;
+            }
+
+            .header-pinned-export .pinned-export-label {
+                display: none;
+            }
+        }
+
         @media (max-width: 900px) {
             .utilityhub-pdf-editor>header {
                 padding: 0 15px !important;
@@ -344,6 +581,629 @@
         #text-align:disabled {
             opacity: 0.45;
             cursor: not-allowed;
+        }
+
+
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        /* UtilityHub Page Numbers Modal */
+        #page-numbers-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 15000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .68);
+            backdrop-filter: blur(4px);
+        }
+
+        #page-numbers-modal.show {
+            display: flex;
+        }
+
+        .page-numbers-dialog {
+            width: min(500px, 100%);
+            background: #151520;
+            border: 1px solid #343448;
+            border-radius: 16px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
+            overflow: hidden;
+        }
+
+        .page-numbers-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-bottom: 1px solid #2b2b3a;
+        }
+
+        .page-numbers-header h3 {
+            margin: 0;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .page-numbers-close {
+            border: 0;
+            background: transparent;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 4px 6px;
+            border-radius: 7px;
+        }
+
+        .page-numbers-close:hover {
+            background: #222232;
+            color: #fff;
+        }
+
+        .page-numbers-body {
+            padding: 18px;
+        }
+
+        .pn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .pn-field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .pn-field input[type="number"],
+        .pn-field select {
+            width: 100%;
+            padding: 9px 10px;
+            border-radius: 9px;
+            border: 1px solid #3a3a4d;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+        }
+
+        .pn-field input[type="number"]:focus,
+        .pn-field select:focus {
+            border-color: #8b5cf6;
+        }
+
+        .pn-color-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pn-color-row input[type="color"] {
+            width: 40px;
+            height: 34px;
+            padding: 2px;
+            border: 1px solid #3a3a4d;
+            border-radius: 8px;
+            background: #20202d;
+        }
+
+        .pn-preview {
+            margin-top: 14px;
+            padding: 13px 14px;
+            border: 1px solid #343448;
+            border-radius: 10px;
+            background: #1b1b28;
+            color: #cbd5e1;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .pn-enable {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .pn-enable input {
+            accent-color: #8b5cf6;
+        }
+
+        .pn-enable strong {
+            color: #f8fafc;
+            font-size: 12px;
+        }
+
+        .pn-enable span span {
+            display: block;
+            color: #94a3b8;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .page-numbers-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 18px;
+            border-top: 1px solid #2b2b3a;
+            background: #12121b;
+        }
+
+        .pn-cancel,
+        .pn-remove,
+        .pn-apply {
+            padding: 9px 14px;
+            border-radius: 9px;
+            border: 1px solid #3a3a4d;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .pn-cancel {
+            background: #20202d;
+            color: #e2e8f0;
+        }
+
+        .pn-remove {
+            background: #2b1b22;
+            color: #fda4af;
+            border-color: #5b2832;
+            margin-right: auto;
+        }
+
+        .pn-apply {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: #fff;
+        }
+
+        @media (max-width:600px) {
+            .pn-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* PDF Search */
+        .pdf-search-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 25;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .pdf-search-highlight {
+            position: absolute;
+            border-radius: 3px;
+            background: rgba(250, 204, 21, .34);
+            box-shadow: 0 0 0 1px rgba(234, 179, 8, .28);
+        }
+
+        .pdf-search-highlight.current {
+            background: rgba(139, 92, 246, .38);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, .78), 0 0 12px rgba(139, 92, 246, .25);
+        }
+
+        #pdf-search-panel {
+            display: none;
+            position: fixed;
+            top: 74px;
+            right: 18px;
+            z-index: 16000;
+            width: min(420px, calc(100vw - 36px));
+            background: #151520;
+            border: 1px solid #343448;
+            border-radius: 12px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
+            padding: 9px;
+        }
+
+        #pdf-search-panel.show {
+            display: block;
+        }
+
+        .pdf-search-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        #pdf-search-input {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 10px;
+            border: 1px solid #3a3a4d;
+            border-radius: 8px;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+            font-size: 12px;
+        }
+
+        #pdf-search-input:focus {
+            border-color: #8b5cf6;
+        }
+
+        .pdf-search-count {
+            min-width: 52px;
+            text-align: center;
+            font-size: 11px;
+            color: #a1a1b5;
+        }
+
+        .pdf-search-btn {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #343448;
+            border-radius: 7px;
+            background: #20202d;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .pdf-search-btn:hover {
+            background: #2a2a3a;
+            color: #fff;
+        }
+
+        .pdf-search-hint {
+            margin-top: 6px;
+            font-size: 10px;
+            color: #717184;
+        }
+
+        /* UtilityHub Export Modal */
+        #export-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 15000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .68);
+            backdrop-filter: blur(4px);
+        }
+
+        #export-modal.show {
+            display: flex;
+        }
+
+        .export-dialog {
+            width: min(480px, 100%);
+            background: #151520;
+            border: 1px solid #343448;
+            border-radius: 16px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
+            overflow: hidden;
+        }
+
+        .export-dialog-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-bottom: 1px solid #2b2b3a;
+        }
+
+        .export-dialog-header h3 {
+            margin: 0;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .export-dialog-close {
+            border: 0;
+            background: transparent;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 4px 6px;
+            border-radius: 7px;
+        }
+
+        .export-dialog-close:hover {
+            background: #222232;
+            color: #fff;
+        }
+
+        .export-dialog-body {
+            padding: 18px;
+        }
+
+        .export-field {
+            margin-bottom: 15px;
+        }
+
+        .export-field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .export-field input[type="text"],
+        .export-field select {
+            width: 100%;
+            padding: 10px 11px;
+            border-radius: 9px;
+            border: 1px solid #3a3a4d;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+        }
+
+        .export-field input[type="text"]:focus,
+        .export-field select:focus {
+            border-color: #8b5cf6;
+        }
+
+        .export-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 11px 12px;
+            border: 1px solid #343448;
+            border-radius: 10px;
+            background: #1b1b28;
+        }
+
+        .export-check input {
+            margin-top: 2px;
+            accent-color: #8b5cf6;
+        }
+
+        .export-check strong {
+            display: block;
+            font-size: 12px;
+            color: #f8fafc;
+        }
+
+        .export-check span {
+            display: block;
+            margin-top: 3px;
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .export-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 18px;
+            border-top: 1px solid #2b2b3a;
+            background: #12121b;
+        }
+
+        .export-cancel-btn,
+        .export-confirm-btn {
+            padding: 9px 14px;
+            border-radius: 9px;
+            border: 1px solid #3a3a4d;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .export-cancel-btn {
+            background: #20202d;
+            color: #e2e8f0;
+        }
+
+        .export-cancel-btn:hover {
+            background: #2a2a3a;
+        }
+
+        .export-confirm-btn {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: #fff;
+        }
+
+        .export-confirm-btn:hover {
+            background: #7c3aed;
+        }
+
+        .extract-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 15000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .68);
+            backdrop-filter: blur(4px);
+        }
+
+        .extract-modal.show {
+            display: flex;
+        }
+
+        .extract-dialog {
+            width: min(500px, 100%);
+            background: #151520;
+            border: 1px solid #343448;
+            border-radius: 16px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
+            overflow: hidden;
+        }
+
+        .extract-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-bottom: 1px solid #2b2b3a;
+        }
+
+        .extract-header h3 {
+            margin: 0;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .extract-close {
+            border: 0;
+            background: transparent;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 4px 6px;
+            border-radius: 7px;
+        }
+
+        .extract-close:hover {
+            background: #222232;
+            color: #fff;
+        }
+
+        .extract-body {
+            padding: 18px;
+        }
+
+        .extract-field {
+            margin-bottom: 15px;
+        }
+
+        .extract-field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .extract-field input[type="text"] {
+            width: 100%;
+            padding: 10px 11px;
+            border-radius: 9px;
+            border: 1px solid #3a3a4d;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+        }
+
+        .extract-field input[type="text"]:focus {
+            border-color: #8b5cf6;
+        }
+
+        .extract-hint {
+            margin-top: 6px;
+            font-size: 11px;
+            line-height: 1.45;
+            color: #94a3b8;
+        }
+
+        .extract-summary {
+            margin-top: 10px;
+            padding: 9px 11px;
+            border: 1px solid #343448;
+            border-radius: 10px;
+            background: #1b1b28;
+            color: #cbd5e1;
+            font-size: 11px;
+        }
+
+        .extract-summary.error {
+            border-color: #7f1d1d;
+            background: #2a1117;
+            color: #fca5a5;
+        }
+
+        .extract-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 11px 12px;
+            border: 1px solid #343448;
+            border-radius: 10px;
+            background: #1b1b28;
+        }
+
+        .extract-check input {
+            margin-top: 2px;
+            accent-color: #8b5cf6;
+        }
+
+        .extract-check strong {
+            display: block;
+            font-size: 12px;
+            color: #f8fafc;
+        }
+
+        .extract-check span {
+            display: block;
+            margin-top: 3px;
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .extract-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 18px;
+            border-top: 1px solid #2b2b3a;
+            background: #12121b;
+        }
+
+        .extract-cancel,
+        .extract-confirm {
+            padding: 9px 14px;
+            border-radius: 9px;
+            border: 1px solid #3a3a4d;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .extract-cancel {
+            background: #20202d;
+            color: #e2e8f0;
+        }
+
+        .extract-cancel:hover {
+            background: #2a2a3a;
+        }
+
+        .extract-confirm {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: #fff;
+        }
+
+        .extract-confirm:hover {
+            background: #7c3aed;
         }
     </style>
 </head>
@@ -399,112 +1259,129 @@
             </button>
         </div>
 
-        <!-- Header Right Actions: History, Page Operations, Open & Export -->
-        <div class="flex items-center space-x-2">
-            <a href="../index.html"
-                class="hidden lg:flex items-center px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition border border-transparent hover:border-slate-600"
-                title="Back to UtilityHub">
-                <i class="fas fa-arrow-left mr-1.5"></i> Back to Tools
-            </a>
-            <!-- Undo / Redo -->
-            <button id="btn-undo"
-                class="p-2 bg-slate-700/60 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600/50"
-                title="Undo (Ctrl+Z)">
-                <i class="fas fa-undo"></i>
-                <span class="hidden sm:inline">Undo</span>
-            </button>
-            <button id="btn-redo"
-                class="p-2 bg-slate-700/60 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600/50"
-                title="Redo (Ctrl+Y)">
-                <i class="fas fa-redo"></i>
-                <span class="hidden sm:inline">Redo</span>
-            </button>
+        <!-- Header Right Actions: scrollable operations + pinned Open/Export -->
+        <div class="header-actions-wrap">
+            <div class="header-actions-scroll">
+                <div class="header-actions-compact flex items-center space-x-1 min-w-0">
 
-            <div class="h-4 w-px bg-slate-700 mx-0.5"></div>
+                    <a href="../index.html"
+                        class="back-tools flex items-center top-action px-2 py-1 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition border border-transparent hover:border-slate-600"
+                        title="Back to UtilityHub">
+                        <i class="fas fa-arrow-left"></i><span class="action-label hidden lg:inline">Back</span>
+                    </a>
 
-            <!-- Add Blank Page -->
-            <button id="btn-add-blank-page"
-                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
-                title="Add New Blank Page">
-                <i class="fas fa-file-circle-plus text-emerald-400"></i>
-                <span class="hidden md:inline">Blank Page</span>
-            </button>
+                    <button id="btn-undo"
+                        class="top-action p-2 bg-slate-700/60 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600/50"
+                        title="Undo (Ctrl+Z)">
+                        <i class="fas fa-undo"></i><span class="action-label hidden lg:inline">Undo</span>
+                    </button>
+                    <button id="btn-redo"
+                        class="top-action p-2 bg-slate-700/60 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600/50"
+                        title="Redo (Ctrl+Y)">
+                        <i class="fas fa-redo"></i><span class="action-label hidden lg:inline">Redo</span>
+                    </button>
 
-            <!-- Duplicate Current Page -->
-            <button id="btn-duplicate-page"
-                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
-                title="Duplicate Current Page">
-                <i class="fas fa-copy text-violet-400"></i>
-                <span class="hidden md:inline">Duplicate</span>
-            </button>
+                    <div class="h-4 w-px bg-slate-700 mx-0.5"></div>
 
-            <!-- Delete Current Page -->
-            <button id="btn-delete-page"
-                class="px-3 py-1.5 bg-red-950/40 hover:bg-red-900/70 text-red-300 hover:text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-red-900/50"
-                title="Delete Current Page">
-                <i class="fas fa-trash text-red-400"></i>
-                <span class="hidden md:inline">Delete Page</span>
-            </button>
+                    <button id="btn-add-blank-page"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Add New Blank Page">
+                        <i class="fas fa-file-circle-plus text-emerald-400"></i><span
+                            class="action-label hidden xl:inline">Blank</span>
+                    </button>
 
-            <!-- Rotate Current Page -->
-            <button id="btn-rotate-left"
-                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
-                title="Rotate Current Page Left 90°">
-                <i class="fas fa-rotate-left text-cyan-400"></i>
-                <span class="hidden lg:inline">Rotate Left</span>
-            </button>
-            <button id="btn-rotate-right"
-                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
-                title="Rotate Current Page Right 90°">
-                <i class="fas fa-rotate-right text-cyan-400"></i>
-                <span class="hidden lg:inline">Rotate Right</span>
-            </button>
+                    <button id="btn-duplicate-page"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Duplicate Current Page">
+                        <i class="fas fa-copy text-violet-400"></i><span
+                            class="action-label hidden xl:inline">Duplicate</span>
+                    </button>
 
-            <!-- Crop Current Page -->
-            <button id="btn-crop-page"
-                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
-                title="Crop Current Page">
-                <i class="fas fa-crop-alt text-fuchsia-400"></i>
-                <span class="hidden md:inline">Crop</span>
-            </button>
+                    <button id="btn-delete-page"
+                        class="top-action px-2 py-1.5 bg-red-950/40 hover:bg-red-900/70 text-red-300 hover:text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-red-900/50"
+                        title="Delete Current Page">
+                        <i class="fas fa-trash text-red-400"></i><span
+                            class="action-label hidden xl:inline">Delete</span>
+                    </button>
 
-            <!-- Merge PDF -->
-            <label
-                class="cursor-pointer px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
-                title="Merge additional PDF file">
-                <i class="fas fa-file-import text-amber-400"></i>
-                <span class="hidden md:inline">Merge PDF</span>
-                <input type="file" id="merge-file-input" accept="application/pdf" class="hidden">
-            </label>
+                    <button id="btn-rotate-left"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Rotate Current Page Left 90°">
+                        <i class="fas fa-rotate-left text-cyan-400"></i><span
+                            class="action-label hidden xl:inline">Rotate L</span>
+                    </button>
+                    <button id="btn-rotate-right"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Rotate Current Page Right 90°">
+                        <i class="fas fa-rotate-right text-cyan-400"></i><span
+                            class="action-label hidden xl:inline">Rotate R</span>
+                    </button>
 
-            <!-- Open PDF -->
-            <label
-                class="cursor-pointer px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600">
-                <i class="fas fa-folder-open text-violet-400"></i>
-                <span class="hidden sm:inline">Open PDF</span>
-                <input type="file" id="file-input" accept="application/pdf" class="hidden">
-            </label>
+                    <button id="btn-crop-page"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Crop Current Page">
+                        <i class="fas fa-crop-alt text-fuchsia-400"></i><span
+                            class="action-label hidden xl:inline">Crop</span>
+                    </button>
 
-            <!-- Keyboard Shortcuts -->
-            <button id="btn-shortcuts"
-                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
-                title="Keyboard Shortcuts (?)">
-                <i class="fas fa-keyboard text-violet-400"></i>
-                <span class="hidden lg:inline">Shortcuts</span>
-            </button>
+                    <button id="btn-page-numbers"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Add Page Numbers">
+                        <i class="fas fa-list-ol text-amber-400"></i><span class="action-label hidden xl:inline">Page
+                            #</span>
+                    </button>
+                    <button id="btn-extract-pages"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Split / Extract Pages">
+                        <i class="fas fa-scissors text-emerald-400"></i><span
+                            class="action-label hidden xl:inline">Extract</span>
+                    </button>
 
-            <!-- Export PDF -->
-            <button id="btn-export"
-                class="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg text-xs transition shadow-md shadow-violet-900/30 flex items-center space-x-1.5">
-                <i class="fas fa-download"></i>
-                <span>Export</span>
-            </button>
-        </div>
+                    <label
+                        class="top-action cursor-pointer px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Merge additional PDF file">
+                        <i class="fas fa-file-import text-amber-400"></i><span
+                            class="action-label hidden xl:inline">Merge</span>
+                        <input type="file" id="merge-file-input" accept="application/pdf" class="hidden">
+                    </label>
+
+                    <button id="btn-search-pdf"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Search PDF (Ctrl+F)">
+                        <i class="fas fa-search text-cyan-400"></i><span
+                            class="action-label hidden lg:inline">Search</span>
+                    </button>
+
+                    <button id="btn-shortcuts"
+                        class="top-action px-2 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1 border border-slate-600"
+                        title="Keyboard Shortcuts (?)">
+                        <i class="fas fa-keyboard text-violet-400"></i><span
+                            class="action-label hidden xl:inline">Shortcuts</span>
+                    </button>
+                </div>
+                <div class="header-pinned-action">
+                    <label
+                        class="top-action header-pinned-open cursor-pointer px-2 py-1.5 rounded-lg text-xs font-medium text-slate-200 transition flex items-center space-x-1"
+                        title="Open PDF">
+                        <i class="fas fa-folder-open text-violet-400"></i><span class="pinned-label">Open PDF</span>
+                        <input type="file" id="file-input" accept="application/pdf" class="hidden">
+                    </label>
+                </div>
+                <div class="header-pinned-action">
+                    <button id="btn-export"
+                        class="header-pinned-export top-action px-3 py-1.5 text-white font-medium rounded-lg text-xs transition flex items-center space-x-1.5 flex-shrink-0"
+                        title="Export PDF">
+                        <i class="fas fa-file-export"></i><span class="pinned-export-label">Export PDF</span>
+                    </button>
+                </div>
+            </div>
     </header>
 
     <!-- Secondary Action Toolbar -->
     <div id="main-toolbar"
         class="h-12 bg-slate-800/90 border-b border-slate-700/80 px-4 flex items-center justify-between shrink-0 overflow-x-auto gap-2 z-30">
+        <button id="btn-sidebar-toggle" type="button" title="Show or hide page thumbnails"><i
+                class="fas fa-columns"></i><span>Pages</span></button>
         <div id="crop-action-bar"
             class="hidden fixed left-1/2 top-[7.2rem] -translate-x-1/2 z-[12000] items-center gap-2 bg-[#151520] border border-[#343448] rounded-xl shadow-2xl px-2 py-2">
             <span class="text-[11px] text-slate-300 px-1">Drag an area to crop</span>
@@ -777,6 +1654,22 @@
         </main>
     </div>
 
+    <!-- PDF Search Panel -->
+    <div id="pdf-search-panel" aria-hidden="true">
+        <div class="pdf-search-row">
+            <input id="pdf-search-input" type="search" autocomplete="off" placeholder="Search in PDF..."
+                aria-label="Search PDF text">
+            <span id="pdf-search-count" class="pdf-search-count">0 matches</span>
+            <button type="button" id="pdf-search-prev" class="pdf-search-btn" title="Previous match"><i
+                    class="fas fa-chevron-up"></i></button>
+            <button type="button" id="pdf-search-next" class="pdf-search-btn" title="Next match"><i
+                    class="fas fa-chevron-down"></i></button>
+            <button type="button" id="pdf-search-close" class="pdf-search-btn" title="Close search"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        <div class="pdf-search-hint">Searches PDF text. Press Enter / Shift+Enter for next / previous.</div>
+    </div>
+
     <!-- Signature Modal -->
     <div id="shortcuts-modal" class="fixed inset-0 modal-backdrop hidden z-[80] flex items-center justify-center p-4">
         <div class="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
@@ -802,6 +1695,7 @@
                 <div class="shortcut-row"><span>Export PDF</span><kbd>Ctrl / Cmd + S</kbd></div>
                 <div class="shortcut-row"><span>Close tool / deselect</span><kbd>Esc</kbd></div>
                 <div class="shortcut-row"><span>Show shortcuts</span><kbd>?</kbd></div>
+                <div class="shortcut-row"><span>Search PDF</span><kbd>Ctrl / Cmd + F</kbd></div>
             </div>
             <div class="px-5 pb-5 text-[11px] text-slate-500">Shortcuts are disabled while typing in a text or form
                 field.</div>
@@ -917,6 +1811,10 @@
         let cropDragging = false;
         let draggedThumbPage = null;
         let thumbDragMoved = false;
+        let pageNumberOptions = {
+            enabled: false, position: 'bottom-center', format: 'page-of', startNumber: 1,
+            fontSize: 10, color: '#555555', margin: 24
+        };
 
         // Page Elements & Undo/Redo History
         let pageElements = {}; // { pageNum: [ elements ] }
@@ -928,6 +1826,12 @@
         let isDrawing = false;
         let currentPath = [];
         let pageDrawings = {}; // { pageNum: [ pathObjects ] }
+
+        // PDF text search state
+        let searchTextCache = {};
+        let searchMatches = [];
+        let searchCurrentIndex = -1;
+        let searchQuery = '';
 
         document.addEventListener('DOMContentLoaded', () => {
             initUI();
@@ -956,6 +1860,7 @@
             document.getElementById('btn-rotate-left').addEventListener('click', () => rotateCurrentPage(-90));
             document.getElementById('btn-rotate-right').addEventListener('click', () => rotateCurrentPage(90));
             document.getElementById('btn-crop-page').addEventListener('click', toggleCropMode);
+            document.getElementById('btn-page-numbers').addEventListener('click', openPageNumbersModal);
             document.getElementById('btn-apply-crop').addEventListener('click', applyCrop);
             document.getElementById('btn-cancel-crop').addEventListener('click', () => exitCropMode(true));
             document.getElementById('btn-create-blank-start').addEventListener('click', createBlankDocument);
@@ -1157,7 +2062,45 @@
             document.getElementById('btn-redo').addEventListener('click', redo);
 
             // Export Button
-            document.getElementById('btn-export').addEventListener('click', exportPDF);
+            document.getElementById('btn-export').addEventListener('click', openExportModal);
+            document.getElementById('page-numbers-close').addEventListener('click', closePageNumbersModal);
+            document.getElementById('page-numbers-cancel').addEventListener('click', closePageNumbersModal);
+            document.getElementById('page-numbers-apply').addEventListener('click', applyPageNumbers);
+            document.getElementById('page-numbers-remove').addEventListener('click', removePageNumbers);
+            document.getElementById('btn-extract-pages').addEventListener('click', openExtractModal);
+
+            // PDF Search
+            document.getElementById('btn-search-pdf').addEventListener('click', openSearchPanel);
+            document.getElementById('pdf-search-input').addEventListener('input', (e) => runPDFSearch(e.target.value));
+            document.getElementById('pdf-search-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (e.shiftKey) goToSearchMatch(-1); else goToSearchMatch(1);
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeSearchPanel();
+                }
+            });
+            document.getElementById('pdf-search-prev').addEventListener('click', () => goToSearchMatch(-1));
+            document.getElementById('pdf-search-next').addEventListener('click', () => goToSearchMatch(1));
+            document.getElementById('pdf-search-close').addEventListener('click', closeSearchPanel);
+            document.getElementById('extract-close').addEventListener('click', closeExtractModal);
+            document.getElementById('extract-cancel').addEventListener('click', closeExtractModal);
+            document.getElementById('extract-confirm').addEventListener('click', confirmExtract);
+            document.getElementById('extract-pages-input').addEventListener('input', updateExtractSummary);
+            document.getElementById('extract-modal').addEventListener('click', (e) => { if (e.target.id === 'extract-modal') closeExtractModal(); });
+            document.getElementById('page-numbers-modal').addEventListener('click', (e) => { if (e.target.id === 'page-numbers-modal') closePageNumbersModal(); });
+            ['page-numbers-enabled', 'page-number-position', 'page-number-format', 'page-number-start', 'page-number-size', 'page-number-color', 'page-number-margin'].forEach(id => {
+                document.getElementById(id).addEventListener('input', refreshPageNumberModalPreview);
+                document.getElementById(id).addEventListener('change', refreshPageNumberModalPreview);
+            });
+            document.getElementById('export-close').addEventListener('click', closeExportModal);
+            document.getElementById('export-cancel').addEventListener('click', closeExportModal);
+            document.getElementById('export-confirm').addEventListener('click', confirmExport);
+            document.getElementById('export-range').addEventListener('change', updateExportRangeUI);
+            document.getElementById('export-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'export-modal') closeExportModal();
+            });
 
             // Keyboard Shortcuts modal
             const shortcutsModal = document.getElementById('shortcuts-modal');
@@ -1165,6 +2108,11 @@
             document.getElementById('btn-close-shortcuts').addEventListener('click', () => shortcutsModal.classList.add('hidden'));
             shortcutsModal.addEventListener('click', (e) => {
                 if (e.target === shortcutsModal) shortcutsModal.classList.add('hidden');
+            });
+
+            // Thumbnail sidebar toggle
+            document.getElementById('btn-sidebar-toggle').addEventListener('click', () => {
+                document.body.classList.toggle('sidebar-collapsed');
             });
 
             // Image Upload
@@ -1206,6 +2154,12 @@
                 const key = e.key.toLowerCase();
                 const mod = e.ctrlKey || e.metaKey;
 
+                if (mod && key === 'f') {
+                    e.preventDefault();
+                    openSearchPanel();
+                    return;
+                }
+
                 if (mod && key === 'z') {
                     e.preventDefault();
                     if (e.shiftKey) redo(); else undo();
@@ -1220,7 +2174,12 @@
 
                 if (mod && key === 's') {
                     e.preventDefault();
-                    exportPDF();
+                    openExportModal();
+                    return;
+                }
+                if (mod && e.shiftKey && key === 'e') {
+                    e.preventDefault();
+                    openExtractModal();
                     return;
                 }
 
@@ -1620,7 +2579,13 @@
                     currentPageNum = 1;
                     pageElements = {};
                     pageDrawings = {};
+                    searchTextCache = {};
+                    searchMatches = [];
+                    searchCurrentIndex = -1;
+                    searchQuery = '';
+                    pageNumberOptions = { enabled: false, position: 'bottom-center', format: 'page-of', startNumber: 1, fontSize: 10, color: '#555555', margin: 24 };
                     historyStack = [];
+                    updateSearchCount();
                     historyStep = -1;
                 } else if (currentPageNum > totalPages) {
                     currentPageNum = totalPages;
@@ -1661,6 +2626,12 @@
 
             // Render PDF page into base canvas
             await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+            // 1.5 Search highlight layer
+            const searchLayer = document.createElement('div');
+            searchLayer.className = 'pdf-search-layer';
+            pageContainer.appendChild(searchLayer);
+            await renderSearchHighlights(searchLayer, pageNum, viewport);
 
             // 2. Freehand Drawing Canvas Layer
             const isDrawingTool = (currentTool === 'pen' || currentTool === 'highlighter' || currentTool === 'eraser');
@@ -1767,7 +2738,86 @@
 
             renderPageElements(pageNum);
             redrawCanvasPaths(drawCanvas, pageNum);
+            renderPageNumberPreview(pageContainer, pageNum, viewport);
             updateNavControls();
+        }
+
+        async function getPageSearchItems(pageNum) {
+            if (searchTextCache[pageNum]) return searchTextCache[pageNum];
+            if (!pdfDoc) return [];
+            const page = await pdfDoc.getPage(pageNum);
+            const content = await page.getTextContent();
+            const items = (content.items || [])
+                .filter(item => typeof item.str === 'string' && item.str.trim())
+                .map(item => ({ str: item.str, transform: item.transform, width: item.width || 0, height: item.height || 0 }));
+            searchTextCache[pageNum] = items;
+            return items;
+        }
+
+        async function runPDFSearch(value) {
+            const query = String(value || '').trim().toLowerCase();
+            searchQuery = query;
+            searchMatches = [];
+            searchCurrentIndex = -1;
+            if (!query) { updateSearchCount(); if (pdfDoc) renderPage(currentPageNum); return; }
+            if (!pdfDoc) { updateSearchCount(); return; }
+            try {
+                for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                    const items = await getPageSearchItems(pageNum);
+                    items.forEach((item, itemIndex) => {
+                        if (item.str.toLowerCase().includes(query)) searchMatches.push({ pageNum, itemIndex });
+                    });
+                }
+                searchMatches.sort((a, b) => a.pageNum - b.pageNum || a.itemIndex - b.itemIndex);
+                if (searchMatches.length) { searchCurrentIndex = 0; await jumpToSearchMatch(); }
+                else { updateSearchCount(); renderPage(currentPageNum); }
+            } catch (err) { console.error('PDF search failed:', err); updateSearchCount('Search error'); }
+        }
+
+        function updateSearchCount(customText = null) {
+            const el = document.getElementById('pdf-search-count'); if (!el) return;
+            if (customText) el.textContent = customText;
+            else if (searchMatches.length) el.textContent = `${searchCurrentIndex + 1} / ${searchMatches.length}`;
+            else el.textContent = '0 matches';
+        }
+
+        async function jumpToSearchMatch(delta = 0) {
+            if (!searchMatches.length) { updateSearchCount(); return; }
+            if (delta) searchCurrentIndex = (searchCurrentIndex + delta + searchMatches.length) % searchMatches.length;
+            const match = searchMatches[searchCurrentIndex]; if (!match) return;
+            currentPageNum = match.pageNum; updateSearchCount();
+            await renderPage(currentPageNum);
+        }
+
+        function goToSearchMatch(delta) { if (searchMatches.length) jumpToSearchMatch(delta); }
+
+        function openSearchPanel() {
+            const panel = document.getElementById('pdf-search-panel');
+            panel.classList.add('show'); panel.setAttribute('aria-hidden', 'false');
+            const input = document.getElementById('pdf-search-input'); input.focus(); input.select(); updateSearchCount();
+        }
+
+        function closeSearchPanel() {
+            const panel = document.getElementById('pdf-search-panel');
+            panel.classList.remove('show'); panel.setAttribute('aria-hidden', 'true');
+            searchQuery = ''; searchMatches = []; searchCurrentIndex = -1; updateSearchCount();
+            if (pdfDoc) renderPage(currentPageNum);
+        }
+
+        async function renderSearchHighlights(layer, pageNum, viewport) {
+            if (!searchQuery || !searchMatches.length) return;
+            const pageMatches = searchMatches.filter(m => m.pageNum === pageNum); if (!pageMatches.length) return;
+            const items = await getPageSearchItems(pageNum); const current = searchMatches[searchCurrentIndex];
+            pageMatches.forEach(match => {
+                const item = items[match.itemIndex]; if (!item || !item.transform) return;
+                const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                const fontHeight = Math.max(8, Math.hypot(tx[2], tx[3]));
+                const width = Math.max(8, Math.abs((item.width || 0) * viewport.scale));
+                const hl = document.createElement('div');
+                hl.className = `pdf-search-highlight ${current && current.pageNum === match.pageNum && current.itemIndex === match.itemIndex ? 'current' : ''}`;
+                hl.style.left = `${tx[4]}px`; hl.style.top = `${Math.max(0, tx[5] - fontHeight)}px`; hl.style.width = `${width}px`; hl.style.height = `${fontHeight + 2}px`;
+                layer.appendChild(hl);
+            });
         }
 
         function updateNavControls() {
@@ -2433,7 +3483,8 @@
 
             historyStack.push({
                 elements: JSON.parse(JSON.stringify(pageElements)),
-                drawings: JSON.parse(JSON.stringify(pageDrawings))
+                drawings: JSON.parse(JSON.stringify(pageDrawings)),
+                pageNumbers: JSON.parse(JSON.stringify(pageNumberOptions))
             });
             historyStep++;
         }
@@ -2455,6 +3506,7 @@
         function restoreState(state) {
             pageElements = JSON.parse(JSON.stringify(state.elements));
             pageDrawings = JSON.parse(JSON.stringify(state.drawings));
+            if (state.pageNumbers) pageNumberOptions = JSON.parse(JSON.stringify(state.pageNumbers));
             renderPage(currentPageNum);
         }
 
@@ -2964,13 +4016,260 @@
             }
         }
 
-        async function exportPDF() {
+        function formatPageNumber(pageNum, total) {
+            const n = Math.max(0, Number(pageNumberOptions.startNumber) || 0) + (pageNum - 1);
+            switch (pageNumberOptions.format) {
+                case 'number': return String(n);
+                case 'page-number': return `Page ${n}`;
+                case 'number-of': return `${n} of ${total}`;
+                default: return `Page ${n} of ${total}`;
+            }
+        }
+
+        function renderPageNumberPreview(pageContainer, pageNum, viewport) {
+            const old = pageContainer.querySelector('.page-number-preview');
+            if (old) old.remove();
+            if (!pageNumberOptions.enabled) return;
+            const el = document.createElement('div');
+            el.className = 'page-number-preview';
+            el.textContent = formatPageNumber(pageNum, totalPages || 1);
+            Object.assign(el.style, {
+                position: 'absolute', zIndex: '25', pointerEvents: 'none', fontFamily: 'Helvetica,Arial,sans-serif',
+                fontSize: `${pageNumberOptions.fontSize * scale}px`, lineHeight: '1', color: pageNumberOptions.color,
+                whiteSpace: 'nowrap', background: 'rgba(255,255,255,.55)', padding: '2px 4px', borderRadius: '3px'
+            });
+            const m = pageNumberOptions.margin * scale;
+            const approxW = Math.max(24, el.textContent.length * pageNumberOptions.fontSize * 0.58 * scale + 8);
+            el.style.top = pageNumberOptions.position.startsWith('top') ? `${m}px` : 'auto';
+            el.style.bottom = pageNumberOptions.position.startsWith('top') ? 'auto' : `${m}px`;
+            if (pageNumberOptions.position.endsWith('left')) el.style.left = `${m}px`;
+            else if (pageNumberOptions.position.endsWith('right')) el.style.right = `${m}px`;
+            else el.style.left = `${Math.max(0, (viewport.width - approxW) / 2)}px`;
+            pageContainer.appendChild(el);
+        }
+
+        function syncPageNumberModalUI() {
+            document.getElementById('page-numbers-enabled').checked = pageNumberOptions.enabled;
+            document.getElementById('page-number-position').value = pageNumberOptions.position;
+            document.getElementById('page-number-format').value = pageNumberOptions.format;
+            document.getElementById('page-number-start').value = pageNumberOptions.startNumber;
+            document.getElementById('page-number-size').value = String(pageNumberOptions.fontSize);
+            document.getElementById('page-number-color').value = pageNumberOptions.color;
+            document.getElementById('page-number-margin').value = String(pageNumberOptions.margin);
+            document.getElementById('page-number-color-value').textContent = pageNumberOptions.color.toUpperCase();
+            document.getElementById('page-number-preview-text').textContent = `Preview: ${formatPageNumber(currentPageNum, totalPages || 1)}`;
+        }
+
+        function readPageNumberModalUI() {
+            pageNumberOptions.enabled = document.getElementById('page-numbers-enabled').checked;
+            pageNumberOptions.position = document.getElementById('page-number-position').value;
+            pageNumberOptions.format = document.getElementById('page-number-format').value;
+            pageNumberOptions.startNumber = Math.max(0, parseInt(document.getElementById('page-number-start').value, 10) || 0);
+            pageNumberOptions.fontSize = parseInt(document.getElementById('page-number-size').value, 10) || 10;
+            pageNumberOptions.color = document.getElementById('page-number-color').value || '#555555';
+            pageNumberOptions.margin = parseInt(document.getElementById('page-number-margin').value, 10) || 24;
+        }
+
+        function refreshPageNumberModalPreview() {
+            readPageNumberModalUI();
+            document.getElementById('page-number-color-value').textContent = pageNumberOptions.color.toUpperCase();
+            document.getElementById('page-number-preview-text').textContent = `Preview: ${formatPageNumber(currentPageNum, totalPages || 1)}`;
+        }
+
+        function openPageNumbersModal() {
+            if (!pdfDoc && !originalPdfBytes) { alert('Please open or create a PDF first.'); return; }
+            syncPageNumberModalUI();
+            const modal = document.getElementById('page-numbers-modal');
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closePageNumbersModal() {
+            const modal = document.getElementById('page-numbers-modal');
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function applyPageNumbers() {
+            readPageNumberModalUI();
+            closePageNumbersModal();
+            renderPage(currentPageNum);
+            saveState();
+        }
+
+        function removePageNumbers() {
+            pageNumberOptions.enabled = false;
+            closePageNumbersModal();
+            renderPage(currentPageNum);
+            saveState();
+        }
+
+        function parsePageRangeInput(value, total) {
+            const input = String(value || '').trim();
+            if (!input) return { ok: false, message: 'Enter at least one page number or range.' };
+            const pages = new Set();
+            const parts = input.split(',').map(p => p.trim()).filter(Boolean);
+
+            for (const part of parts) {
+                if (/^\\d+$/.test(part)) {
+                    const n = parseInt(part, 10);
+                    if (n < 1 || n > total) return { ok: false, message: `Page ${n} is outside the document (1-${total}).` };
+                    pages.add(n);
+                    continue;
+                }
+
+                const m = part.match(/^(\\d+)\\s*-\\s*(\\d+)$/);
+                if (!m) return { ok: false, message: `Invalid range: "${part}". Use formats like 1-3,5,7-9.` };
+                let start = parseInt(m[1], 10);
+                let end = parseInt(m[2], 10);
+                if (start > end) [start, end] = [end, start];
+                if (start < 1 || end > total) return { ok: false, message: `Range ${part} is outside the document (1-${total}).` };
+                for (let n = start; n <= end; n++) pages.add(n);
+            }
+
+            const ordered = [...pages].sort((a, b) => a - b);
+            if (!ordered.length) return { ok: false, message: 'No valid pages were selected.' };
+            return { ok: true, pages: ordered };
+        }
+
+        function formatSelectedPages(pages) {
+            if (!pages.length) return '';
+            const runs = [];
+            let start = pages[0];
+            let prev = pages[0];
+            for (let i = 1; i < pages.length; i++) {
+                const n = pages[i];
+                if (n === prev + 1) { prev = n; continue; }
+                runs.push(start === prev ? String(start) : `${start}-${prev}`);
+                start = prev = n;
+            }
+            runs.push(start === prev ? String(start) : `${start}-${prev}`);
+            return runs.join(',');
+        }
+
+        function updateExtractSummary() {
+            const input = document.getElementById('extract-pages-input');
+            const summary = document.getElementById('extract-pages-summary');
+            if (!input || !summary) return;
+            const result = parsePageRangeInput(input.value, totalPages || 0);
+            summary.classList.toggle('error', !result.ok);
+            summary.textContent = result.ok
+                ? `${result.pages.length} page${result.pages.length === 1 ? '' : 's'} selected: ${formatSelectedPages(result.pages)}`
+                : result.message;
+        }
+
+        function openExtractModal() {
+            if (!pdfDoc || !originalPdfBytes || !totalPages) {
+                alert('Please open or create a PDF first.');
+                return;
+            }
+            const modal = document.getElementById('extract-modal');
+            const input = document.getElementById('extract-pages-input');
+            const filename = document.getElementById('extract-filename');
+            const includeEdits = document.getElementById('extract-include-edits');
+            input.value = String(currentPageNum);
+            filename.value = 'extracted_pages.pdf';
+            includeEdits.checked = true;
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+            updateExtractSummary();
+            setTimeout(() => { input.focus(); input.select(); }, 0);
+        }
+
+        function closeExtractModal() {
+            const modal = document.getElementById('extract-modal');
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        async function confirmExtract() {
+            const result = parsePageRangeInput(document.getElementById('extract-pages-input').value, totalPages);
+            if (!result.ok) {
+                updateExtractSummary();
+                return;
+            }
+
+            const includeEdits = document.getElementById('extract-include-edits').checked;
+            let filename = (document.getElementById('extract-filename').value || 'extracted_pages.pdf').trim();
+            if (!filename.toLowerCase().endsWith('.pdf')) filename += '.pdf';
+            filename = filename.replace(/[\\/:*?"<>|]+/g, '_').replace(/^\.+$/, 'extracted_pages.pdf');
+
+            closeExtractModal();
+            await exportPDF({ pageNumbers: result.pages, includeEdits, filename });
+        }
+
+        function openExportModal() {
+            if (!pdfDoc && !originalPdfBytes) {
+                alert('Please open or create a PDF first.');
+                return;
+            }
+            const modal = document.getElementById('export-modal');
+            const filename = document.getElementById('export-filename');
+            const range = document.getElementById('export-range');
+            const flatten = document.getElementById('export-flatten');
+            filename.value = filename.value || 'edited_document.pdf';
+            range.value = 'all';
+            flatten.checked = true;
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+            setTimeout(() => {
+                filename.focus();
+                filename.select();
+            }, 0);
+        }
+
+        function closeExportModal() {
+            const modal = document.getElementById('export-modal');
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function updateExportRangeUI() {
+            // Reserved for future page-range expansion.
+        }
+
+        async function confirmExport() {
+            const filenameInput = document.getElementById('export-filename');
+            const range = document.getElementById('export-range').value;
+            const includeEdits = document.getElementById('export-flatten').checked;
+            let filename = (filenameInput.value || 'edited_document.pdf').trim();
+            if (!filename.toLowerCase().endsWith('.pdf')) filename += '.pdf';
+            filename = filename.replace(/[\\/:*?"<>|]+/g, '_').replace(/^\.+$/, 'edited_document.pdf');
+
+            closeExportModal();
+            await exportPDF({ range, includeEdits, filename });
+        }
+
+        async function exportPDF({ range = 'all', includeEdits = true, filename = 'edited_document.pdf', pageNumbers = null } = {}) {
             try {
-                let pdfDocLib;
+                let sourcePdf;
                 if (originalPdfBytes) {
-                    pdfDocLib = await PDFLib.PDFDocument.load(originalPdfBytes);
+                    sourcePdf = await PDFLib.PDFDocument.load(originalPdfBytes);
                 } else {
-                    pdfDocLib = await PDFLib.PDFDocument.create();
+                    sourcePdf = await PDFLib.PDFDocument.create();
+                }
+
+                let pdfDocLib = sourcePdf;
+                let exportPageNumbers = [];
+
+                if (Array.isArray(pageNumbers) && pageNumbers.length) {
+                    const validPages = [...new Set(pageNumbers)]
+                        .filter(n => Number.isInteger(n) && n >= 1 && n <= sourcePdf.getPageCount());
+                    const out = await PDFLib.PDFDocument.create();
+                    const indices = validPages.map(n => n - 1);
+                    const copiedPages = await out.copyPages(sourcePdf, indices);
+                    copiedPages.forEach(page => out.addPage(page));
+                    pdfDocLib = out;
+                    exportPageNumbers = validPages;
+                } else if (range === 'current' && sourcePdf.getPageCount() > 0) {
+                    const sourceIndex = Math.max(0, Math.min(currentPageNum - 1, sourcePdf.getPageCount() - 1));
+                    const out = await PDFLib.PDFDocument.create();
+                    const [copied] = await out.copyPages(sourcePdf, [sourceIndex]);
+                    out.addPage(copied);
+                    pdfDocLib = out;
+                    exportPageNumbers = [currentPageNum];
+                } else {
+                    exportPageNumbers = Array.from({ length: sourcePdf.getPageCount() }, (_, i) => i + 1);
                 }
 
                 const pages = pdfDocLib.getPages();
@@ -2991,11 +4290,12 @@
                 };
 
                 for (let pageIdx = 0; pageIdx < pages.length; pageIdx++) {
-                    const pageNum = pageIdx + 1;
+                    const pageNum = exportPageNumbers[pageIdx];
                     const page = pages[pageIdx];
                     const { width, height } = page.getSize();
 
-                    // Interactive elements
+                    if (!includeEdits) continue;
+
                     const elements = pageElements[pageNum] || [];
                     for (const el of elements) {
                         const color = hexToRgb(el.color);
@@ -3028,91 +4328,46 @@
                                     });
                                 }
                             });
-
                         } else if (el.type === 'shape') {
                             const stroke = el.strokeWidth || 3;
                             const pdfY = height - el.y - el.height;
 
                             if (el.shapeType === 'redact') {
-                                page.drawRectangle({
-                                    x: el.x, y: pdfY,
-                                    width: el.width, height: el.height,
-                                    color: PDFLib.rgb(1, 1, 1)
-                                });
+                                page.drawRectangle({ x: el.x, y: pdfY, width: el.width, height: el.height, color: PDFLib.rgb(1, 1, 1) });
                             } else if (el.shapeType === 'rectangle') {
                                 const fillColor = el.fillEnabled ? hexToRgb(el.fillColor || '#8b5cf6') : undefined;
-                                const options = {
-                                    x: el.x, y: pdfY,
-                                    width: el.width, height: el.height,
-                                    borderColor: color, borderWidth: stroke
-                                };
+                                const options = { x: el.x, y: pdfY, width: el.width, height: el.height, borderColor: color, borderWidth: stroke };
                                 if (fillColor) options.color = fillColor;
                                 page.drawRectangle(options);
                             } else if (el.shapeType === 'circle') {
                                 const fillColor = el.fillEnabled ? hexToRgb(el.fillColor || '#8b5cf6') : undefined;
-                                const options = {
-                                    x: el.x + el.width / 2,
-                                    y: pdfY + el.height / 2,
-                                    xScale: el.width / 2,
-                                    yScale: el.height / 2,
-                                    borderColor: color,
-                                    borderWidth: stroke
-                                };
+                                const options = { x: el.x + el.width / 2, y: pdfY + el.height / 2, xScale: el.width / 2, yScale: el.height / 2, borderColor: color, borderWidth: stroke };
                                 if (fillColor) options.color = fillColor;
                                 page.drawEllipse(options);
                             } else if (el.shapeType === 'line' || el.shapeType === 'arrow') {
                                 const start = { x: el.x, y: height - el.y - el.height / 2 };
                                 const end = { x: el.x + el.width, y: height - el.y - el.height / 2 };
-                                page.drawLine({
-                                    start, end,
-                                    thickness: stroke,
-                                    color
-                                });
+                                page.drawLine({ start, end, thickness: stroke, color });
                                 if (el.shapeType === 'arrow') {
                                     const angle = Math.atan2(end.y - start.y, end.x - start.x);
                                     const len = Math.max(8, stroke * 3);
                                     const wing = Math.PI / 6;
-                                    page.drawLine({
-                                        start: end,
-                                        end: {
-                                            x: end.x - len * Math.cos(angle - wing),
-                                            y: end.y - len * Math.sin(angle - wing)
-                                        },
-                                        thickness: stroke,
-                                        color
-                                    });
-                                    page.drawLine({
-                                        start: end,
-                                        end: {
-                                            x: end.x - len * Math.cos(angle + wing),
-                                            y: end.y - len * Math.sin(angle + wing)
-                                        },
-                                        thickness: stroke,
-                                        color
-                                    });
+                                    page.drawLine({ start: end, end: { x: end.x - len * Math.cos(angle - wing), y: end.y - len * Math.sin(angle - wing) }, thickness: stroke, color });
+                                    page.drawLine({ start: end, end: { x: end.x - len * Math.cos(angle + wing), y: end.y - len * Math.sin(angle + wing) }, thickness: stroke, color });
                                 }
                             }
-
                         } else if (el.type === 'image' || el.type === 'signature') {
                             const img = await pdfDocLib.embedPng(el.dataUrl);
-                            page.drawImage(img, {
-                                x: el.x,
-                                y: height - el.y - el.height,
-                                width: el.width,
-                                height: el.height
-                            });
+                            page.drawImage(img, { x: el.x, y: height - el.y - el.height, width: el.width, height: el.height });
                         }
                     }
 
-                    // Freehand annotations
                     const paths = pageDrawings[pageNum] || [];
                     for (const path of paths) {
                         if (!path.points || path.points.length < 2) continue;
-
                         const color = hexToRgb(path.color);
                         const thickness = path.width || 3;
                         const opacity = path.opacity ?? (path.tool === 'highlighter' ? 0.35 : 1);
-
                         for (let i = 1; i < path.points.length; i++) {
                             const a = path.points[i - 1];
                             const b = path.points[i];
@@ -3127,22 +4382,191 @@
                     }
                 }
 
+                if (pageNumberOptions.enabled) {
+                    const pnFont = await pdfDocLib.embedFont(PDFLib.StandardFonts.Helvetica);
+                    for (let pageIdx = 0; pageIdx < pages.length; pageIdx++) {
+                        const pageNum = exportPageNumbers[pageIdx];
+                        const page = pages[pageIdx];
+                        const { width, height } = page.getSize();
+                        const text = formatPageNumber(pageNum, totalPages || pages.length);
+                        const size = pageNumberOptions.fontSize || 10;
+                        const margin = pageNumberOptions.margin || 24;
+                        const color = hexToRgb(pageNumberOptions.color || '#555555');
+                        const textWidth = pnFont.widthOfTextAtSize(text, size);
+                        const isTop = pageNumberOptions.position.startsWith('top');
+                        const isLeft = pageNumberOptions.position.endsWith('left');
+                        const isRight = pageNumberOptions.position.endsWith('right');
+                        const x = isLeft ? margin : (isRight ? Math.max(margin, width - margin - textWidth) : Math.max(margin, (width - textWidth) / 2));
+                        const y = isTop ? (height - margin - size) : margin;
+                        page.drawText(text, { x, y, size, font: pnFont, color });
+                    }
+                }
+
                 const pdfBytes = await pdfDocLib.save();
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = 'edited_document.pdf';
+                link.download = filename;
                 document.body.appendChild(link);
                 link.click();
                 link.remove();
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
             } catch (err) {
-                console.error("Export PDF failed: ", err);
-                alert("Could not export the PDF. Please check the browser console for details.");
+                console.error('Export PDF failed:', err);
+                alert('Could not export the PDF. Please try again.');
             }
         }
+
+
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('export-modal');
+            if (!modal || !modal.classList.contains('show')) return;
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeExportModal();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                confirmExport();
+            }
+        });
+
     </script>
+
+
+    <!-- Page Numbers Modal -->
+    <div id="page-numbers-modal" aria-hidden="true">
+        <div class="page-numbers-dialog" role="dialog" aria-modal="true" aria-labelledby="page-numbers-title">
+            <div class="page-numbers-header">
+                <h3 id="page-numbers-title"><i class="fas fa-list-ol text-amber-400 mr-2"></i>Page Numbers</h3>
+                <button type="button" id="page-numbers-close" class="page-numbers-close"
+                    aria-label="Close page numbers dialog">&times;</button>
+            </div>
+            <div class="page-numbers-body">
+                <label class="pn-enable"><input type="checkbox" id="page-numbers-enabled"><span><strong>Show page
+                            numbers</strong><span>Previewed on the current page and included in PDF
+                            export.</span></span></label>
+                <div class="pn-grid">
+                    <div class="pn-field"><label for="page-number-position">Position</label><select
+                            id="page-number-position">
+                            <option value="top-left">Top left</option>
+                            <option value="top-center">Top center</option>
+                            <option value="top-right">Top right</option>
+                            <option value="bottom-left">Bottom left</option>
+                            <option value="bottom-center" selected>Bottom center</option>
+                            <option value="bottom-right">Bottom right</option>
+                        </select></div>
+                    <div class="pn-field"><label for="page-number-format">Format</label><select id="page-number-format">
+                            <option value="number">1</option>
+                            <option value="page-number">Page 1</option>
+                            <option value="number-of">1 of 10</option>
+                            <option value="page-of" selected>Page 1 of 10</option>
+                        </select></div>
+                    <div class="pn-field"><label for="page-number-start">Starting number</label><input
+                            id="page-number-start" type="number" min="0" max="999999" value="1"></div>
+                    <div class="pn-field"><label for="page-number-size">Font size</label><select id="page-number-size">
+                            <option value="8">8 pt</option>
+                            <option value="10" selected>10 pt</option>
+                            <option value="12">12 pt</option>
+                            <option value="14">14 pt</option>
+                            <option value="16">16 pt</option>
+                        </select></div>
+                    <div class="pn-field"><label>Color</label>
+                        <div class="pn-color-row"><input id="page-number-color" type="color" value="#555555"><span
+                                id="page-number-color-value" class="text-[11px] text-slate-400">#555555</span></div>
+                    </div>
+                    <div class="pn-field"><label for="page-number-margin">Margin</label><select id="page-number-margin">
+                            <option value="16">16 pt</option>
+                            <option value="24" selected>24 pt</option>
+                            <option value="32">32 pt</option>
+                            <option value="48">48 pt</option>
+                        </select></div>
+                </div>
+                <div class="pn-preview" id="page-number-preview-text">Preview: Page 1 of 1</div>
+            </div>
+            <div class="page-numbers-actions"><button type="button" id="page-numbers-remove"
+                    class="pn-remove">Remove</button><button type="button" id="page-numbers-cancel"
+                    class="pn-cancel">Cancel</button><button type="button" id="page-numbers-apply"
+                    class="pn-apply">Apply</button></div>
+        </div>
+    </div>
+
+    <!-- Split / Extract Pages Modal -->
+    <div id="extract-modal" class="extract-modal" aria-hidden="true">
+        <div class="extract-dialog" role="dialog" aria-modal="true" aria-labelledby="extract-dialog-title">
+            <div class="extract-header">
+                <h3 id="extract-dialog-title"><i class="fas fa-scissors text-emerald-400 mr-2"></i>Split / Extract Pages
+                </h3>
+                <button type="button" id="extract-close" class="extract-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="extract-body">
+                <div class="extract-field">
+                    <label for="extract-pages-input">Pages to extract</label>
+                    <input type="text" id="extract-pages-input" value="1" autocomplete="off"
+                        placeholder="Example: 1-3,5,7-9">
+                    <div class="extract-hint">Enter page numbers and ranges separated by commas.</div>
+                    <div id="extract-pages-summary" class="extract-summary">1 page selected: 1</div>
+                </div>
+                <div class="extract-field">
+                    <label for="extract-filename">Filename</label>
+                    <input type="text" id="extract-filename" value="extracted_pages.pdf" autocomplete="off">
+                </div>
+                <div class="extract-check">
+                    <input type="checkbox" id="extract-include-edits" checked>
+                    <div>
+                        <strong>Include edits in extracted PDF</strong>
+                        <span>Include text, drawings, shapes, images, signatures and page numbers for the selected
+                            pages.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="extract-actions">
+                <button type="button" id="extract-cancel" class="extract-cancel">Cancel</button>
+                <button type="button" id="extract-confirm" class="extract-confirm"><i
+                        class="fas fa-download mr-1"></i>Extract PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export-modal" aria-hidden="true">
+        <div class="export-dialog" role="dialog" aria-modal="true" aria-labelledby="export-dialog-title">
+            <div class="export-dialog-header">
+                <h3 id="export-dialog-title"><i class="fas fa-file-export text-violet-400 mr-2"></i>Export PDF</h3>
+                <button type="button" id="export-close" class="export-dialog-close"
+                    aria-label="Close export dialog">&times;</button>
+            </div>
+            <div class="export-dialog-body">
+                <div class="export-field">
+                    <label for="export-filename">Filename</label>
+                    <input type="text" id="export-filename" value="edited_document.pdf" autocomplete="off">
+                </div>
+                <div class="export-field">
+                    <label for="export-range">Export range</label>
+                    <select id="export-range">
+                        <option value="all">All pages</option>
+                        <option value="current">Current page only</option>
+                    </select>
+                </div>
+                <div class="export-field">
+                    <div class="export-check">
+                        <input type="checkbox" id="export-flatten" checked>
+                        <div>
+                            <strong>Include edits in PDF</strong>
+                            <span>Text, drawings, shapes, images and signatures are embedded into the exported
+                                PDF.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="export-dialog-actions">
+                <button type="button" id="export-cancel" class="export-cancel-btn">Cancel</button>
+                <button type="button" id="export-confirm" class="export-confirm-btn"><i
+                        class="fas fa-download mr-1"></i>Export PDF</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
