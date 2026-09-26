@@ -360,6 +360,14 @@
                 <span class="hidden md:inline">Blank Page</span>
             </button>
 
+            <!-- Duplicate Current Page -->
+            <button id="btn-duplicate-page"
+                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
+                title="Duplicate Current Page">
+                <i class="fas fa-copy text-violet-400"></i>
+                <span class="hidden md:inline">Duplicate</span>
+            </button>
+
             <!-- Merge PDF -->
             <label
                 class="cursor-pointer px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
@@ -528,6 +536,17 @@
                 <span id="stroke-width-value" class="text-[10px] text-slate-400 w-5 text-center">3</span>
             </div>
 
+            <!-- Shape Fill -->
+            <div id="shape-fill-control" class="hidden items-center space-x-1.5 border-l border-slate-700 pl-3">
+                <label class="flex items-center space-x-1 text-[11px] text-slate-400 font-medium cursor-pointer"
+                    title="Fill rectangle or circle interiors">
+                    <input type="checkbox" id="shape-fill-enabled" class="accent-violet-500">
+                    <span>Fill</span>
+                </label>
+                <input type="color" id="shape-fill-color" value="#8b5cf6"
+                    class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent p-0" title="Shape fill color">
+            </div>
+
             <!-- Font Size / Thickness -->
             <div class="flex items-center space-x-1.5">
                 <label class="text-[11px] text-slate-400 font-medium">Size</label>
@@ -691,6 +710,8 @@
         let brushSize = 3;
         let highlightOpacity = 0.35;
         let strokeWidth = 3;
+        let shapeFillColor = '#8b5cf6';
+        let shapeFillEnabled = false;
         let eraserMode = 'partial';
 
         // Page Elements & Undo/Redo History
@@ -726,6 +747,7 @@
 
             // Add Blank Page Button
             document.getElementById('btn-add-blank-page').addEventListener('click', addBlankPage);
+            document.getElementById('btn-duplicate-page').addEventListener('click', duplicateCurrentPage);
             document.getElementById('btn-create-blank-start').addEventListener('click', createBlankDocument);
 
             // Tool Switching buttons
@@ -800,6 +822,27 @@
                 }
             });
 
+            document.getElementById('shape-fill-enabled').addEventListener('change', (e) => {
+                shapeFillEnabled = e.target.checked;
+                syncShapeFillUI();
+                if (selectedElementId) {
+                    const el = (pageElements[currentPageNum] || []).find(item => item.id === selectedElementId);
+                    if (el && el.type === 'shape' && (el.shapeType === 'rectangle' || el.shapeType === 'circle')) {
+                        updateSelectedElementProperty('fillEnabled', shapeFillEnabled);
+                    }
+                }
+            });
+
+            document.getElementById('shape-fill-color').addEventListener('input', (e) => {
+                shapeFillColor = e.target.value;
+                if (selectedElementId) {
+                    const el = (pageElements[currentPageNum] || []).find(item => item.id === selectedElementId);
+                    if (el && el.type === 'shape' && (el.shapeType === 'rectangle' || el.shapeType === 'circle')) {
+                        updateSelectedElementProperty('fillColor', shapeFillColor);
+                    }
+                }
+            });
+
             document.getElementById('btn-clear-markings').addEventListener('click', clearCurrentPageMarkings);
 
             // Delete Selected Item Button
@@ -870,6 +913,7 @@
                 });
 
                 setTool('shape');
+                syncShapeFillUI();
                 closeShapesMenu();
             });
 
@@ -1013,6 +1057,14 @@
                 eraserModeControl.classList.toggle('hidden', tool !== 'eraser');
                 eraserModeControl.classList.toggle('flex', tool === 'eraser');
             }
+            const shapeFillControl = document.getElementById('shape-fill-control');
+            if (shapeFillControl) {
+                const selectedEl = (pageElements[currentPageNum] || []).find(item => item.id === selectedElementId);
+                const showShapeFill = tool === 'shape' || (selectedEl && selectedEl.type === 'shape');
+                shapeFillControl.classList.toggle('hidden', !showShapeFill);
+                shapeFillControl.classList.toggle('flex', !!showShapeFill);
+            }
+            syncShapeFillUI();
             const drawCanvases = document.querySelectorAll('.drawing-canvas');
             const overlayLayers = document.querySelectorAll('.overlay-layer');
 
@@ -1067,6 +1119,53 @@
                 }
             };
             reader.readAsArrayBuffer(file);
+        }
+
+        async function duplicateCurrentPage() {
+            if (!originalPdfBytes || !pdfDoc || !totalPages) {
+                return;
+            }
+
+            try {
+                const sourcePageNum = currentPageNum;
+                const newPageNum = totalPages + 1;
+
+                const pdfDocLib = await PDFLib.PDFDocument.load(originalPdfBytes);
+                const copiedPages = await pdfDocLib.copyPages(pdfDocLib, [sourcePageNum - 1]);
+                pdfDocLib.addPage(copiedPages[0]);
+
+                // Duplicate editor elements with fresh IDs so the copied page is independent.
+                if (pageElements[sourcePageNum]) {
+                    pageElements[newPageNum] = pageElements[sourcePageNum].map(el => ({
+                        ...JSON.parse(JSON.stringify(el)),
+                        id: 'el_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)
+                    }));
+                } else {
+                    pageElements[newPageNum] = [];
+                }
+
+                if (pageDrawings[sourcePageNum]) {
+                    pageDrawings[newPageNum] = JSON.parse(JSON.stringify(pageDrawings[sourcePageNum]));
+                } else {
+                    pageDrawings[newPageNum] = [];
+                }
+
+                originalPdfBytes = await pdfDocLib.save();
+                currentPageNum = newPageNum;
+                await loadPDFFromArrayBuffer(originalPdfBytes, true);
+
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = `Page ${sourcePageNum} duplicated as page ${newPageNum}.`;
+                    window.setTimeout(() => {
+                        if (status.textContent === `Page ${sourcePageNum} duplicated as page ${newPageNum}.`) {
+                            status.textContent = '';
+                        }
+                    }, 2500);
+                }
+            } catch (err) {
+                console.error('Failed to duplicate page:', err);
+            }
         }
 
         async function addBlankPage() {
@@ -1258,6 +1357,28 @@
             setTool('select');
         }
 
+        function syncShapeFillUI() {
+            const control = document.getElementById('shape-fill-control');
+            const checkbox = document.getElementById('shape-fill-enabled');
+            const color = document.getElementById('shape-fill-color');
+            if (!control || !checkbox || !color) return;
+
+            const elements = pageElements[currentPageNum] || [];
+            const selected = elements.find(item => item.id === selectedElementId);
+            const shapeType = selected && selected.type === 'shape' ? selected.shapeType : currentShape;
+            const supportsFill = shapeType === 'rectangle' || shapeType === 'circle';
+
+            checkbox.disabled = !supportsFill;
+            color.disabled = !supportsFill;
+            if (!supportsFill) {
+                checkbox.checked = false;
+                color.style.opacity = '0.45';
+            } else {
+                color.style.opacity = '1';
+                checkbox.checked = shapeFillEnabled;
+            }
+        }
+
         function addShapeElement(pageNum, x, y, shapeType) {
             const newEl = {
                 id: 'el_' + Date.now(),
@@ -1268,7 +1389,9 @@
                 width: shapeType === 'line' || shapeType === 'arrow' ? 150 : 120,
                 height: shapeType === 'line' || shapeType === 'arrow' ? 24 : 80,
                 color: shapeType === 'redact' ? '#ffffff' : primaryColor,
-                strokeWidth: strokeWidth
+                strokeWidth: strokeWidth,
+                fillColor: shapeFillColor,
+                fillEnabled: shapeType === 'rectangle' || shapeType === 'circle' ? shapeFillEnabled : false
             };
 
             if (!pageElements[pageNum]) pageElements[pageNum] = [];
@@ -1384,8 +1507,10 @@
             container.style.pointerEvents = 'auto';
 
             if (el.shapeType === 'rectangle') {
+                container.style.backgroundColor = el.fillEnabled ? (el.fillColor || '#8b5cf6') : 'rgba(255, 255, 255, 0.001)';
                 container.style.border = `${el.strokeWidth || 3}px solid ${el.color}`;
             } else if (el.shapeType === 'circle') {
+                container.style.backgroundColor = el.fillEnabled ? (el.fillColor || '#8b5cf6') : 'rgba(255, 255, 255, 0.001)';
                 container.style.border = `${el.strokeWidth || 3}px solid ${el.color}`;
                 container.style.borderRadius = '50%';
             } else if (el.shapeType === 'redact') {
@@ -1914,6 +2039,19 @@
                         document.getElementById('stroke-width-value').textContent = el.strokeWidth;
                         strokeWidth = el.strokeWidth;
                     }
+                    if (el.type === 'shape') {
+                        shapeFillColor = el.fillColor || '#8b5cf6';
+                        shapeFillEnabled = !!el.fillEnabled;
+                        document.getElementById('shape-fill-color').value = shapeFillColor;
+                        document.getElementById('shape-fill-enabled').checked = shapeFillEnabled;
+                    }
+                    const shapeFillControl = document.getElementById('shape-fill-control');
+                    if (shapeFillControl) {
+                        const showShapeFill = el.type === 'shape';
+                        shapeFillControl.classList.toggle('hidden', !showShapeFill);
+                        shapeFillControl.classList.toggle('flex', showShapeFill);
+                    }
+                    syncShapeFillUI();
                 }
             }
         }
@@ -2146,20 +2284,26 @@
                                     color: PDFLib.rgb(1, 1, 1)
                                 });
                             } else if (el.shapeType === 'rectangle') {
-                                page.drawRectangle({
+                                const fillColor = el.fillEnabled ? hexToRgb(el.fillColor || '#8b5cf6') : undefined;
+                                const options = {
                                     x: el.x, y: pdfY,
                                     width: el.width, height: el.height,
                                     borderColor: color, borderWidth: stroke
-                                });
+                                };
+                                if (fillColor) options.color = fillColor;
+                                page.drawRectangle(options);
                             } else if (el.shapeType === 'circle') {
-                                page.drawEllipse({
+                                const fillColor = el.fillEnabled ? hexToRgb(el.fillColor || '#8b5cf6') : undefined;
+                                const options = {
                                     x: el.x + el.width / 2,
                                     y: pdfY + el.height / 2,
                                     xScale: el.width / 2,
                                     yScale: el.height / 2,
                                     borderColor: color,
                                     borderWidth: stroke
-                                });
+                                };
+                                if (fillColor) options.color = fillColor;
+                                page.drawEllipse(options);
                             } else if (el.shapeType === 'line' || el.shapeType === 'arrow') {
                                 const start = { x: el.x, y: height - el.y - el.height / 2 };
                                 const end = { x: el.x + el.width, y: height - el.y - el.height / 2 };
