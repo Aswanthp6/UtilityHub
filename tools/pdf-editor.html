@@ -368,6 +368,14 @@
                 <span class="hidden md:inline">Duplicate</span>
             </button>
 
+            <!-- Delete Current Page -->
+            <button id="btn-delete-page"
+                class="px-3 py-1.5 bg-red-950/40 hover:bg-red-900/70 text-red-300 hover:text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-red-900/50"
+                title="Delete Current Page">
+                <i class="fas fa-trash text-red-400"></i>
+                <span class="hidden md:inline">Delete Page</span>
+            </button>
+
             <!-- Merge PDF -->
             <label
                 class="cursor-pointer px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5 border border-slate-600"
@@ -748,6 +756,7 @@
             // Add Blank Page Button
             document.getElementById('btn-add-blank-page').addEventListener('click', addBlankPage);
             document.getElementById('btn-duplicate-page').addEventListener('click', duplicateCurrentPage);
+            document.getElementById('btn-delete-page').addEventListener('click', deleteCurrentPage);
             document.getElementById('btn-create-blank-start').addEventListener('click', createBlankDocument);
 
             // Tool Switching buttons
@@ -1165,6 +1174,70 @@
                 }
             } catch (err) {
                 console.error('Failed to duplicate page:', err);
+            }
+        }
+
+        async function deleteCurrentPage() {
+            if (!originalPdfBytes || !pdfDoc || !totalPages) {
+                return;
+            }
+
+            if (totalPages === 1) {
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = 'The document must contain at least one page. Add a blank page before deleting this page.';
+                    window.setTimeout(() => {
+                        if (status.textContent === 'The document must contain at least one page. Add a blank page before deleting this page.') {
+                            status.textContent = '';
+                        }
+                    }, 3500);
+                }
+                return;
+            }
+
+            const pageToDelete = currentPageNum;
+            const confirmed = window.confirm(`Delete page ${pageToDelete}? This cannot be undone.`);
+            if (!confirmed) return;
+
+            try {
+                const pdfDocLib = await PDFLib.PDFDocument.load(originalPdfBytes);
+                pdfDocLib.removePage(pageToDelete - 1);
+                originalPdfBytes = await pdfDocLib.save();
+
+                // Shift per-page editor state so annotations stay attached to their pages.
+                const oldPageElements = pageElements;
+                const oldPageDrawings = pageDrawings;
+                pageElements = {};
+                pageDrawings = {};
+
+                for (let oldPage = 1; oldPage <= totalPages; oldPage++) {
+                    if (oldPage === pageToDelete) continue;
+                    const newPage = oldPage > pageToDelete ? oldPage - 1 : oldPage;
+
+                    pageElements[newPage] = (oldPageElements[oldPage] || []).map(el => ({
+                        ...el
+                    }));
+                    pageDrawings[newPage] = JSON.parse(JSON.stringify(oldPageDrawings[oldPage] || []));
+                }
+
+                selectedElementId = null;
+                totalPages -= 1;
+                currentPageNum = Math.min(pageToDelete, totalPages);
+
+                await loadPDFFromArrayBuffer(originalPdfBytes, true);
+                saveState();
+
+                const status = document.getElementById('status');
+                if (status) {
+                    status.textContent = `Page ${pageToDelete} deleted.`;
+                    window.setTimeout(() => {
+                        if (status.textContent === `Page ${pageToDelete} deleted.`) {
+                            status.textContent = '';
+                        }
+                    }, 2500);
+                }
+            } catch (err) {
+                console.error('Failed to delete page:', err);
             }
         }
 
