@@ -405,6 +405,260 @@
             display: none !important;
         }
 
+
+        .tool-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-bottom: 14px;
+        }
+
+        .tool-tab {
+            border: 1px solid var(--border-strong);
+            background: #20202d;
+            color: #d1d5db;
+            border-radius: 9px;
+            padding: 8px 11px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tool-tab.active,
+        .tool-tab:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .crop-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(6, 6, 12, .84);
+            backdrop-filter: blur(6px);
+        }
+
+        .crop-modal.open {
+            display: flex;
+        }
+
+        .crop-dialog {
+            width: min(1080px, 100%);
+            max-height: 92vh;
+            overflow: auto;
+            background: var(--panel);
+            border: 1px solid var(--border-strong);
+            border-radius: 18px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, .55);
+        }
+
+        .crop-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .crop-head h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .crop-head span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .crop-workspace {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 280px;
+            gap: 14px;
+            padding: 16px;
+        }
+
+        .crop-canvas-wrap {
+            min-height: 480px;
+            display: grid;
+            place-items: center;
+            padding: 14px;
+            border-radius: 12px;
+            background:
+                linear-gradient(45deg, #171722 25%, transparent 25%),
+                linear-gradient(-45deg, #171722 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #171722 75%),
+                linear-gradient(-45deg, transparent 75%, #171722 75%);
+            background-size: 24px 24px;
+            background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+            overflow: auto;
+        }
+
+        .crop-stage {
+            position: relative;
+            display: inline-block;
+            line-height: 0;
+            user-select: none;
+            touch-action: none;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, .4);
+        }
+
+        #cropImage {
+            display: block;
+            max-width: min(100%, 780px);
+            max-height: 68vh;
+            width: auto;
+            height: auto;
+            background: #fff;
+        }
+
+        .crop-selection {
+            position: absolute;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 0 99999px rgba(0, 0, 0, .5);
+            cursor: move;
+        }
+
+        .crop-selection::before,
+        .crop-selection::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .crop-selection::before {
+            inset: 0;
+            background:
+                linear-gradient(to right, transparent 32.9%, rgba(255, 255, 255, .35) 33%, transparent 33.1%, transparent 66.2%, rgba(255, 255, 255, .35) 66.3%, transparent 66.4%),
+                linear-gradient(to bottom, transparent 32.9%, rgba(255, 255, 255, .35) 33%, transparent 33.1%, transparent 66.2%, rgba(255, 255, 255, .35) 66.3%, transparent 66.4%);
+        }
+
+        .crop-handle {
+            position: absolute;
+            width: 13px;
+            height: 13px;
+            border: 2px solid #fff;
+            border-radius: 3px;
+            background: var(--accent);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .45);
+        }
+
+        .crop-handle.nw {
+            left: -7px;
+            top: -7px;
+            cursor: nwse-resize;
+        }
+
+        .crop-handle.ne {
+            right: -7px;
+            top: -7px;
+            cursor: nesw-resize;
+        }
+
+        .crop-handle.sw {
+            left: -7px;
+            bottom: -7px;
+            cursor: nesw-resize;
+        }
+
+        .crop-handle.se {
+            right: -7px;
+            bottom: -7px;
+            cursor: nwse-resize;
+        }
+
+        .crop-settings {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .crop-settings .section-title {
+            margin-bottom: 10px;
+        }
+
+        .crop-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .crop-preset {
+            border: 1px solid var(--border-strong);
+            background: #20202d;
+            color: #d1d5db;
+            border-radius: 8px;
+            padding: 7px 9px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .crop-preset:hover,
+        .crop-preset.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .crop-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .crop-actions .primary {
+            grid-column: 1 / -1;
+        }
+
+        .transform-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .transform-btn {
+            border: 1px solid var(--border-strong);
+            background: #20202d;
+            color: #d1d5db;
+            border-radius: 9px;
+            padding: 8px 9px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .transform-btn:hover {
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .crop-readout {
+            padding: 9px 10px;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #1b1b28;
+            color: #cbd5e1;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 820px) {
+            .crop-workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .crop-canvas-wrap {
+                min-height: 340px;
+            }
+        }
+
         @media (max-width: 900px) {
             .editor-grid {
                 grid-template-columns: 1fr;
@@ -499,6 +753,15 @@
                     <button class="secondary" id="changeImageBtn" type="button">Change Image</button>
                 </div>
 
+                <div class="tool-tabs">
+                    <button class="tool-tab active" id="resizeTab" type="button">↔ Resize</button>
+                    <button class="tool-tab" id="cropTab" type="button">✂ Crop</button>
+                    <button class="tool-tab" id="rotateLeftBtn" type="button">↶ Rotate Left</button>
+                    <button class="tool-tab" id="rotateRightBtn" type="button">↷ Rotate Right</button>
+                    <button class="tool-tab" id="flipHBtn" type="button">↔ Flip H</button>
+                    <button class="tool-tab" id="flipVBtn" type="button">↕ Flip V</button>
+                </div>
+
                 <div class="editor-grid">
                     <div class="preview-card">
                         <div class="preview-stage">
@@ -561,19 +824,69 @@
                             <div class="actions">
                                 <button class="primary" id="resizeDownloadBtn" type="button">Resize &amp;
                                     Download</button>
-                                <button class="secondary" id="resetBtn" type="button">Reset</button>
+                                <button class="secondary" id="resetBtn" type="button">Reset Settings</button>
+                                <button class="secondary" id="resetEditsBtn" type="button">Reset Edits</button>
                                 <button class="danger" id="clearBtn" type="button">Remove Image</button>
                             </div>
                         </div>
 
                         <div class="privacy">
-                            🔒 Your image is processed locally in your browser. No image is uploaded to UtilityHub.
+                            🔒 Your image and edits are processed locally in your browser. No image is uploaded to
+                            UtilityHub.
                         </div>
                     </aside>
                 </div>
             </div>
         </section>
     </main>
+
+
+    <div class="crop-modal" id="cropModal" aria-hidden="true">
+        <div class="crop-dialog" role="dialog" aria-modal="true" aria-labelledby="cropTitle">
+            <div class="crop-head">
+                <div>
+                    <h3 id="cropTitle">Crop Image</h3>
+                    <span>Drag the crop box or its corners to select the area.</span>
+                </div>
+                <button class="secondary" id="closeCropBtn" type="button">Close</button>
+            </div>
+            <div class="crop-workspace">
+                <div class="crop-canvas-wrap">
+                    <div class="crop-stage" id="cropStage">
+                        <img id="cropImage" alt="Crop preview">
+                        <div class="crop-selection" id="cropSelection">
+                            <div class="crop-handle nw" data-handle="nw"></div>
+                            <div class="crop-handle ne" data-handle="ne"></div>
+                            <div class="crop-handle sw" data-handle="sw"></div>
+                            <div class="crop-handle se" data-handle="se"></div>
+                        </div>
+                    </div>
+                </div>
+                <aside class="crop-settings">
+                    <h3 class="section-title">Crop Options</h3>
+                    <div class="field">
+                        <label>Aspect Ratio</label>
+                        <div class="crop-presets">
+                            <button class="crop-preset active" data-crop-ratio="free" type="button">Free</button>
+                            <button class="crop-preset" data-crop-ratio="1" type="button">1:1</button>
+                            <button class="crop-preset" data-crop-ratio="1.333333" type="button">4:3</button>
+                            <button class="crop-preset" data-crop-ratio="1.777778" type="button">16:9</button>
+                            <button class="crop-preset" data-crop-ratio="0.5625" type="button">9:16</button>
+                        </div>
+                    </div>
+                    <div class="field" style="margin-top:14px;">
+                        <label>Selected Area</label>
+                        <div class="crop-readout" id="cropReadout">—</div>
+                    </div>
+                    <div class="crop-actions">
+                        <button class="primary" id="applyCropBtn" type="button">Apply Crop</button>
+                        <button class="secondary" id="resetCropBtn" type="button">Reset Selection</button>
+                        <button class="secondary" id="cancelCropBtn" type="button">Cancel</button>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
 
     <script>
         (() => {
@@ -597,15 +910,37 @@
             const resizeStatus = document.getElementById('resizeStatus');
             const changeImageBtn = document.getElementById('changeImageBtn');
             const resetBtn = document.getElementById('resetBtn');
+            const resetEditsBtn = document.getElementById('resetEditsBtn');
             const clearBtn = document.getElementById('clearBtn');
             const resizeDownloadBtn = document.getElementById('resizeDownloadBtn');
+            const resizeTab = document.getElementById('resizeTab');
+            const cropTab = document.getElementById('cropTab');
+            const rotateLeftBtn = document.getElementById('rotateLeftBtn');
+            const rotateRightBtn = document.getElementById('rotateRightBtn');
+            const flipHBtn = document.getElementById('flipHBtn');
+            const flipVBtn = document.getElementById('flipVBtn');
+            const cropModal = document.getElementById('cropModal');
+            const cropImage = document.getElementById('cropImage');
+            const cropStage = document.getElementById('cropStage');
+            const cropSelection = document.getElementById('cropSelection');
+            const cropReadout = document.getElementById('cropReadout');
+            const closeCropBtn = document.getElementById('closeCropBtn');
+            const cancelCropBtn = document.getElementById('cancelCropBtn');
+            const resetCropBtn = document.getElementById('resetCropBtn');
+            const applyCropBtn = document.getElementById('applyCropBtn');
 
             let sourceFile = null;
             let sourceBitmap = null;
+            let originalFile = null;
+            let originalBitmap = null;
             let objectUrl = null;
             let baseWidth = 0;
             let baseHeight = 0;
             let ratio = 1;
+
+            let cropRatio = null;
+            let cropState = null;
+            let cropInteraction = null;
 
             const isValidDimension = (value) => Number.isFinite(value) && value >= 1;
 
@@ -662,6 +997,228 @@
                 updateSizePreview();
             };
 
+
+
+            const syncWorkingImage = (bitmap, file, name, message) => {
+                if (sourceBitmap && sourceBitmap !== originalBitmap) sourceBitmap.close?.();
+                if (objectUrl) URL.revokeObjectURL(objectUrl);
+                sourceBitmap = bitmap;
+                sourceFile = file;
+                objectUrl = URL.createObjectURL(file);
+                baseWidth = bitmap.width;
+                baseHeight = bitmap.height;
+                ratio = baseWidth / baseHeight;
+                fileName.textContent = name;
+                fileMeta.textContent = `${baseWidth} × ${baseHeight} px • ${formatBytes(file.size)}`;
+                preview.src = objectUrl;
+                widthInput.value = String(baseWidth);
+                heightInput.value = String(baseHeight);
+                updateSizePreview();
+                setStatus(message, 'success');
+            };
+
+            const canvasToBlob = (canvas, type = 'image/png', quality = 1) => new Promise((resolve, reject) => {
+                canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Could not create image data.')), type, quality);
+            });
+
+            const bitmapToFile = async (bitmap, name) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = bitmap.width;
+                canvas.height = bitmap.height;
+                const ctx = canvas.getContext('2d', { alpha: true });
+                ctx.drawImage(bitmap, 0, 0);
+                const blob = await canvasToBlob(canvas, 'image/png');
+                return new File([blob], name, { type: 'image/png', lastModified: Date.now() });
+            };
+
+            const transformCurrent = async ({ rotation = 0, flipX = false, flipY = false } = {}) => {
+                if (!sourceBitmap) return;
+                const swap = Math.abs(rotation) % 180 === 90;
+                const outW = swap ? sourceBitmap.height : sourceBitmap.width;
+                const outH = swap ? sourceBitmap.width : sourceBitmap.height;
+                const canvas = document.createElement('canvas');
+                canvas.width = outW;
+                canvas.height = outH;
+                const ctx = canvas.getContext('2d', { alpha: true });
+                ctx.save();
+                ctx.translate(outW / 2, outH / 2);
+                ctx.rotate(rotation * Math.PI / 180);
+                ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+                ctx.drawImage(sourceBitmap, -sourceBitmap.width / 2, -sourceBitmap.height / 2);
+                ctx.restore();
+
+                const blob = await canvasToBlob(canvas, 'image/png');
+                const bitmap = await createImageBitmap(blob);
+                const suffix = rotation ? (rotation > 0 ? '-rotated-right' : '-rotated-left') : flipX ? '-flipped-h' : '-flipped-v';
+                const baseName = sourceFile.name.replace(/\.[^.]+$/, '') || 'image';
+                const file = new File([blob], `${baseName}${suffix}.png`, { type: 'image/png', lastModified: Date.now() });
+                syncWorkingImage(bitmap, file, file.name, 'Transformation applied.');
+            };
+
+            const openCrop = () => {
+                if (!sourceBitmap) return;
+                cropImage.src = objectUrl;
+                cropImage.onload = () => resetCropSelection();
+                cropModal.classList.add('open');
+                cropModal.setAttribute('aria-hidden', 'false');
+                requestAnimationFrame(() => resetCropSelection());
+            };
+
+            const closeCrop = () => {
+                cropModal.classList.remove('open');
+                cropModal.setAttribute('aria-hidden', 'true');
+                cropInteraction = null;
+            };
+
+            const getCropBounds = () => ({
+                width: cropImage.clientWidth,
+                height: cropImage.clientHeight
+            });
+
+            const renderCropSelection = () => {
+                if (!cropState) return;
+                cropSelection.style.left = `${cropState.x}px`;
+                cropSelection.style.top = `${cropState.y}px`;
+                cropSelection.style.width = `${cropState.w}px`;
+                cropSelection.style.height = `${cropState.h}px`;
+                const b = getCropBounds();
+                const scaleX = sourceBitmap ? sourceBitmap.width / Math.max(1, b.width) : 1;
+                const scaleY = sourceBitmap ? sourceBitmap.height / Math.max(1, b.height) : 1;
+                const x = Math.round(cropState.x * scaleX);
+                const y = Math.round(cropState.y * scaleY);
+                const w = Math.round(cropState.w * scaleX);
+                const h = Math.round(cropState.h * scaleY);
+                cropReadout.textContent = `${x}, ${y} • ${w} × ${h} px`;
+            };
+
+            const resetCropSelection = () => {
+                const b = getCropBounds();
+                if (!b.width || !b.height) return;
+                const margin = Math.max(6, Math.round(Math.min(b.width, b.height) * 0.08));
+                cropState = { x: margin, y: margin, w: Math.max(10, b.width - margin * 2), h: Math.max(10, b.height - margin * 2) };
+                if (cropRatio) enforceCropRatio('se');
+                renderCropSelection();
+            };
+
+            const setCropRatio = (value) => {
+                cropRatio = value === 'free' ? null : Number(value);
+                document.querySelectorAll('[data-crop-ratio]').forEach(btn => btn.classList.toggle('active', btn.dataset.cropRatio === value));
+                if (cropRatio && cropState) enforceCropRatio('se');
+                renderCropSelection();
+            };
+
+            const enforceCropRatio = (handle = 'se') => {
+                if (!cropRatio || !cropState) return;
+                const b = getCropBounds();
+                let { x, y, w, h } = cropState;
+                if (handle === 'e' || handle === 'w') {
+                    h = w / cropRatio;
+                } else {
+                    w = h * cropRatio;
+                }
+                if (w > b.width) { w = b.width; h = w / cropRatio; }
+                if (h > b.height) { h = b.height; w = h * cropRatio; }
+                if (x + w > b.width) x = Math.max(0, b.width - w);
+                if (y + h > b.height) y = Math.max(0, b.height - h);
+                cropState = { x, y, w, h };
+            };
+
+            const applyCrop = async () => {
+                if (!sourceBitmap || !cropState) return;
+                const b = getCropBounds();
+                if (!b.width || !b.height) return;
+                const scaleX = sourceBitmap.width / b.width;
+                const scaleY = sourceBitmap.height / b.height;
+                const sx = Math.max(0, Math.round(cropState.x * scaleX));
+                const sy = Math.max(0, Math.round(cropState.y * scaleY));
+                const sw = Math.min(sourceBitmap.width - sx, Math.max(1, Math.round(cropState.w * scaleX)));
+                const sh = Math.min(sourceBitmap.height - sy, Math.max(1, Math.round(cropState.h * scaleY)));
+                if (sw < 1 || sh < 1) return;
+
+                applyCropBtn.disabled = true;
+                applyCropBtn.textContent = 'Cropping…';
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = sw;
+                    canvas.height = sh;
+                    const ctx = canvas.getContext('2d', { alpha: true });
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(sourceBitmap, sx, sy, sw, sh, 0, 0, sw, sh);
+                    const blob = await canvasToBlob(canvas, 'image/png');
+                    const bitmap = await createImageBitmap(blob);
+                    const baseName = sourceFile.name.replace(/\.[^.]+$/, '') || 'image';
+                    const file = new File([blob], `${baseName}-cropped.png`, { type: 'image/png', lastModified: Date.now() });
+                    syncWorkingImage(bitmap, file, file.name, `Crop applied • ${sw} × ${sh} px`);
+                    closeCrop();
+                } catch (error) {
+                    console.error(error);
+                    cropReadout.textContent = 'Could not apply crop.';
+                } finally {
+                    applyCropBtn.disabled = false;
+                    applyCropBtn.textContent = 'Apply Crop';
+                }
+            };
+
+            const beginCropInteraction = (event, mode, handle = null) => {
+                if (!cropState) return;
+                event.preventDefault();
+                const point = event.touches ? event.touches[0] : event;
+                cropInteraction = {
+                    mode, handle,
+                    startX: point.clientX,
+                    startY: point.clientY,
+                    state: { ...cropState }
+                };
+                event.currentTarget?.setPointerCapture?.(event.pointerId);
+            };
+
+            const moveCropInteraction = (event) => {
+                if (!cropInteraction) return;
+                const point = event.touches ? event.touches[0] : event;
+                const b = getCropBounds();
+                const dx = point.clientX - cropInteraction.startX;
+                const dy = point.clientY - cropInteraction.startY;
+                const s = cropInteraction.state;
+
+                if (cropInteraction.mode === 'move') {
+                    cropState = {
+                        ...s,
+                        x: Math.min(Math.max(0, s.x + dx), Math.max(0, b.width - s.w)),
+                        y: Math.min(Math.max(0, s.y + dy), Math.max(0, b.height - s.h))
+                    };
+                } else {
+                    let left = s.x;
+                    let top = s.y;
+                    let right = s.x + s.w;
+                    let bottom = s.y + s.h;
+                    const minSize = 24;
+                    const h = cropInteraction.handle;
+                    if (h.includes('w')) left = Math.min(Math.max(0, s.x + dx), right - minSize);
+                    if (h.includes('e')) right = Math.max(Math.min(b.width, s.x + s.w + dx), left + minSize);
+                    if (h.includes('n')) top = Math.min(Math.max(0, s.y + dy), bottom - minSize);
+                    if (h.includes('s')) bottom = Math.max(Math.min(b.height, s.y + s.h + dy), top + minSize);
+
+                    cropState = { x: left, y: top, w: right - left, h: bottom - top };
+                    if (cropRatio) {
+                        let targetW = cropState.w;
+                        let targetH = cropState.h;
+                        if (targetW / targetH > cropRatio) targetW = targetH * cropRatio;
+                        else targetH = targetW / cropRatio;
+                        if (h.includes('w')) left = right - targetW;
+                        else if (h.includes('e')) right = left + targetW;
+                        if (h.includes('n')) top = bottom - targetH;
+                        else if (h.includes('s')) bottom = top + targetH;
+                        cropState = { x: left, y: top, w: right - left, h: bottom - top };
+                        if (cropState.x < 0) { cropState.x = 0; }
+                        if (cropState.y < 0) { cropState.y = 0; }
+                        if (cropState.x + cropState.w > b.width) cropState.w = b.width - cropState.x;
+                        if (cropState.y + cropState.h > b.height) cropState.h = b.height - cropState.y;
+                    }
+                }
+                renderCropSelection();
+            };
+
             const loadImage = async (file) => {
                 if (!file || !file.type.startsWith('image/')) {
                     uploadStatus.textContent = 'Please choose a valid image file.';
@@ -674,7 +1231,11 @@
 
                 try {
                     const bitmap = await createImageBitmap(file);
-                    sourceBitmap = bitmap;
+                    if (originalBitmap && originalBitmap !== sourceBitmap) originalBitmap.close?.();
+                    if (sourceBitmap) sourceBitmap.close?.();
+                    originalBitmap = bitmap;
+                    originalFile = file;
+                    sourceBitmap = await createImageBitmap(file);
                     sourceFile = file;
                     baseWidth = bitmap.width;
                     baseHeight = bitmap.height;
@@ -700,6 +1261,26 @@
                 }
             };
 
+
+
+            const resetEdits = async () => {
+                if (!originalFile) return;
+                if (sourceBitmap && sourceBitmap !== originalBitmap) sourceBitmap.close?.();
+                const bitmap = await createImageBitmap(originalFile);
+                sourceBitmap = bitmap;
+                sourceFile = originalFile;
+                if (objectUrl) URL.revokeObjectURL(objectUrl);
+                objectUrl = URL.createObjectURL(originalFile);
+                baseWidth = bitmap.width;
+                baseHeight = bitmap.height;
+                ratio = baseWidth / baseHeight;
+                fileName.textContent = originalFile.name;
+                fileMeta.textContent = `${baseWidth} × ${baseHeight} px • ${formatBytes(originalFile.size)}`;
+                preview.src = objectUrl;
+                resetSettings();
+                setStatus('Image edits reset to the original.');
+            };
+
             const resetSettings = () => {
                 if (!sourceFile) return;
                 widthInput.value = String(baseWidth);
@@ -716,9 +1297,12 @@
             const removeImage = () => {
                 if (objectUrl) URL.revokeObjectURL(objectUrl);
                 if (sourceBitmap) sourceBitmap.close?.();
+                if (originalBitmap && originalBitmap !== sourceBitmap) originalBitmap.close?.();
                 objectUrl = null;
                 sourceBitmap = null;
+                originalBitmap = null;
                 sourceFile = null;
+                originalFile = null;
                 preview.removeAttribute('src');
                 fileInput.value = '';
                 editor.style.display = 'none';
@@ -799,8 +1383,47 @@
 
             changeImageBtn.addEventListener('click', () => fileInput.click());
             resetBtn.addEventListener('click', resetSettings);
+            resetEditsBtn.addEventListener('click', resetEdits);
             clearBtn.addEventListener('click', removeImage);
             resizeDownloadBtn.addEventListener('click', resizeAndDownload);
+
+            resizeTab.addEventListener('click', () => {
+                resizeTab.classList.add('active');
+                cropTab.classList.remove('active');
+                setStatus('Resize mode ready.');
+            });
+            cropTab.addEventListener('click', openCrop);
+            rotateLeftBtn.addEventListener('click', () => transformCurrent({ rotation: -90 }));
+            rotateRightBtn.addEventListener('click', () => transformCurrent({ rotation: 90 }));
+            flipHBtn.addEventListener('click', () => transformCurrent({ flipX: true }));
+            flipVBtn.addEventListener('click', () => transformCurrent({ flipY: true }));
+
+            closeCropBtn.addEventListener('click', closeCrop);
+            cancelCropBtn.addEventListener('click', closeCrop);
+            resetCropBtn.addEventListener('click', resetCropSelection);
+            applyCropBtn.addEventListener('click', applyCrop);
+            cropModal.addEventListener('click', (event) => {
+                if (event.target === cropModal) closeCrop();
+            });
+
+            document.querySelectorAll('[data-crop-ratio]').forEach((button) => {
+                button.addEventListener('click', () => setCropRatio(button.dataset.cropRatio));
+            });
+
+            cropSelection.addEventListener('pointerdown', (event) => {
+                if (event.target.closest('.crop-handle')) return;
+                beginCropInteraction(event, 'move');
+            });
+            cropSelection.querySelectorAll('.crop-handle').forEach((handle) => {
+                handle.addEventListener('pointerdown', (event) => {
+                    event.stopPropagation();
+                    beginCropInteraction(event, 'resize', handle.dataset.handle);
+                });
+            });
+            cropStage.addEventListener('pointermove', moveCropInteraction);
+            cropStage.addEventListener('pointerup', () => { cropInteraction = null; });
+            cropStage.addEventListener('pointercancel', () => { cropInteraction = null; });
+
 
             widthInput.addEventListener('input', () => setDimensions(parseInt(widthInput.value, 10) || 1, parseInt(heightInput.value, 10) || 1, 'width'));
             heightInput.addEventListener('input', () => setDimensions(parseInt(widthInput.value, 10) || 1, parseInt(heightInput.value, 10) || 1, 'height'));
@@ -841,6 +1464,11 @@
             window.addEventListener('beforeunload', () => {
                 if (objectUrl) URL.revokeObjectURL(objectUrl);
                 sourceBitmap?.close?.();
+                if (originalBitmap && originalBitmap !== sourceBitmap) originalBitmap.close?.();
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && cropModal.classList.contains('open')) closeCrop();
             });
 
             setQualityVisibility();
