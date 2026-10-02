@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoder / Decoder - UtilityHub</title>
+    <style>
+        :root {
+            --bg: #0b0b12;
+            --panel: #11111a;
+            --panel2: #151520;
+            --border: #292939;
+            --border2: #343448;
+            --accent: #8b5cf6;
+            --accent2: #7c3aed;
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --success: #86efac;
+            --danger: #fca5a5;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text)
+        }
+
+        a {
+            color: inherit
+        }
+
+        header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            background: #101018;
+            border-bottom: 1px solid #242432
+        }
+
+        .brand {
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .brand span {
+            color: var(--accent)
+        }
+
+        .back {
+            margin-left: auto;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px
+        }
+
+        .back:hover {
+            color: #fff
+        }
+
+        main {
+            width: min(1100px, calc(100% - 32px));
+            margin: auto;
+            padding: 34px 0 50px
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 24px
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 4vw, 38px)
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .app {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 14px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .tab {
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #d1d5db;
+            border-radius: 9px;
+            padding: 9px 13px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .tab:hover,
+        .tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .panel {
+            display: none;
+            padding: 18px
+        }
+
+        .panel.active {
+            display: block
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+            gap: 18px
+        }
+
+        .card {
+            background: var(--panel2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px
+        }
+
+        .title {
+            margin: 0 0 12px;
+            font-size: 14px;
+            font-weight: 700
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 360px;
+            resize: vertical;
+            border: 1px solid #3a3a4d;
+            border-radius: 10px;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+            padding: 12px;
+            font: 13px ui-monospace, SFMono-Regular, Consolas, monospace;
+            line-height: 1.55
+        }
+
+        textarea:focus,
+        input:focus,
+        select:focus {
+            border-color: var(--accent)
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .field {
+            margin-top: 12px
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 6px;
+            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em
+        }
+
+        input,
+        select {
+            width: 100%;
+            border: 1px solid #3a3a4d;
+            border-radius: 10px;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+            padding: 10px;
+            font: inherit
+        }
+
+        .check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #1b1b28;
+            font-size: 12px;
+            color: #d1d5db
+        }
+
+        .check input {
+            width: auto;
+            accent-color: var(--accent)
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px
+        }
+
+        .btn {
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #e5e7eb;
+            border-radius: 9px;
+            padding: 9px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn:hover {
+            background: #2a2a3a
+        }
+
+        .primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .primary:hover {
+            background: var(--accent2);
+            border-color: var(--accent2)
+        }
+
+        .result {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #0d0d15;
+            min-height: 120px
+        }
+
+        .result pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font: 12px ui-monospace, SFMono-Regular, Consolas, monospace;
+            color: #e5e7eb
+        }
+
+        .statgrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            margin-top: 10px
+        }
+
+        .stat {
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #1b1b28
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 17px
+        }
+
+        .stat span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 10px
+        }
+
+        .status {
+            min-height: 18px;
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: 11px
+        }
+
+        .examples {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6
+        }
+
+        .privacy {
+            margin: 0 18px 18px;
+            padding: 11px 12px;
+            border-left: 3px solid var(--accent);
+            background: rgba(139, 92, 246, .07);
+            color: #aeb4c0;
+            font-size: 11px;
+            line-height: 1.5
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        @media(max-width:840px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            textarea {
+                min-height: 280px
+            }
+        }
+
+        @media(max-width:640px) {
+            header {
+                height: 62px;
+                padding: 0 14px
+            }
+
+            .brand {
+                font-size: 20px
+            }
+
+            .back {
+                font-size: 12px
+            }
+
+            main {
+                width: min(100% - 20px, 1100px);
+                padding-top: 22px
+            }
+
+            .panel {
+                padding: 12px
+            }
+
+            .row {
+                grid-template-columns: 1fr
+            }
+
+            .tabs {
+                overflow: auto;
+                white-space: nowrap
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="../index.html">Utility<span>Hub</span></a>
+        <a class="back" href="../index.html">← Back to Tools</a>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>URL Encoder / Decoder</h1>
+            <p>Encode or decode URLs and text safely in your browser.</p>
+        </section>
+
+        <section class="app">
+            <div class="tabs">
+                <button class="tab active" data-tab="encode">Encode</button>
+                <button class="tab" data-tab="decode">Decode</button>
+            </div>
+
+            <section class="panel active" id="panel-encode">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="title">Input</h2>
+                        <textarea id="encodeInput"
+                            placeholder="https://example.com/search?q=hello world&city=Kozhikode"></textarea>
+
+                        <div class="row">
+                            <div class="field">
+                                <label for="encodeMode">Encoding Mode</label>
+                                <select id="encodeMode">
+                                    <option value="component">Encode Component</option>
+                                    <option value="uri">Encode Full URI</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Quick option</label>
+                                <label class="check"><input type="checkbox" id="encodeSpaces" checked> Encode spaces as
+                                    %20</label>
+                            </div>
+                        </div>
+
+                        <div class="buttons">
+                            <button class="btn primary" id="encodeBtn" type="button">Encode</button>
+                            <button class="btn" id="encodeCopy" type="button">Copy Result</button>
+                            <button class="btn" id="encodeSwap" type="button">Use Result as Input</button>
+                            <button class="btn" id="encodeClear" type="button">Clear</button>
+                        </div>
+                        <div class="status" id="encodeStatus"></div>
+                    </div>
+
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="result">
+                            <pre id="encodeResult">Your encoded text will appear here.</pre>
+                        </div>
+                        <div class="statgrid">
+                            <div class="stat"><strong id="encodeInputLength">0</strong><span>Input characters</span>
+                            </div>
+                            <div class="stat"><strong id="encodeResultLength">0</strong><span>Output characters</span>
+                            </div>
+                        </div>
+                        <div class="examples">
+                            <strong>Encode Component</strong> is useful for individual query values or path
+                            fragments.<br>
+                            <strong>Encode Full URI</strong> preserves URI syntax such as <code>://</code>,
+                            <code>?</code> and <code>&amp;</code>.
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="panel-decode">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="title">Encoded Input</h2>
+                        <textarea id="decodeInput"
+                            placeholder="https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dhello%20world"></textarea>
+
+                        <div class="field">
+                            <label for="decodeMode">Decoding Mode</label>
+                            <select id="decodeMode">
+                                <option value="component">Decode Component</option>
+                                <option value="uri">Decode Full URI</option>
+                            </select>
+                        </div>
+
+                        <div class="buttons">
+                            <button class="btn primary" id="decodeBtn" type="button">Decode</button>
+                            <button class="btn" id="decodeCopy" type="button">Copy Result</button>
+                            <button class="btn" id="decodeSwap" type="button">Use Result as Input</button>
+                            <button class="btn" id="decodeClear" type="button">Clear</button>
+                        </div>
+                        <div class="status" id="decodeStatus"></div>
+                    </div>
+
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="result">
+                            <pre id="decodeResult">Your decoded text will appear here.</pre>
+                        </div>
+                        <div class="statgrid">
+                            <div class="stat"><strong id="decodeInputLength">0</strong><span>Input characters</span>
+                            </div>
+                            <div class="stat"><strong id="decodeResultLength">0</strong><span>Output characters</span>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <div class="privacy">🔒 Text is processed entirely in your browser. UtilityHub does not upload or store your
+                URLs or text.</div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            "use strict";
+
+            const $ = id => document.getElementById(id);
+
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.addEventListener("click", () => {
+                    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+                    document.querySelectorAll(".panel").forEach(p =>
+                        p.classList.toggle("active", p.id === `panel-${tab.dataset.tab}`)
+                    );
+                });
+            });
+
+            const setStatus = (id, message, type = "normal") => {
+                const el = $(id);
+                el.textContent = message;
+                el.style.color = type === "error" ? "var(--danger)" :
+                    type === "success" ? "var(--success)" : "var(--muted)";
+            };
+
+            const encodeText = () => {
+                const input = $("encodeInput").value;
+                if (!input) {
+                    $("encodeResult").textContent = "Your encoded text will appear here.";
+                    $("encodeInputLength").textContent = "0";
+                    $("encodeResultLength").textContent = "0";
+                    return;
+                }
+
+                try {
+                    let result = $("encodeMode").value === "uri"
+                        ? encodeURI(input)
+                        : encodeURIComponent(input);
+
+                    if (!$("encodeSpaces").checked) {
+                        result = result.replace(/%20/g, "+");
+                    }
+
+                    $("encodeResult").textContent = result;
+                    $("encodeInputLength").textContent = input.length;
+                    $("encodeResultLength").textContent = result.length;
+                    setStatus("encodeStatus", "Encoded successfully.", "success");
+                } catch {
+                    $("encodeResult").textContent = "Could not encode this input.";
+                    setStatus("encodeStatus", "Encoding failed.", "error");
+                }
+            };
+
+            const decodeText = () => {
+                const input = $("decodeInput").value;
+                if (!input) {
+                    $("decodeResult").textContent = "Your decoded text will appear here.";
+                    $("decodeInputLength").textContent = "0";
+                    $("decodeResultLength").textContent = "0";
+                    return;
+                }
+
+                try {
+                    // Support form-style + as space.
+                    const prepared = input.replace(/\+/g, " ");
+                    const result = $("decodeMode").value === "uri"
+                        ? decodeURI(prepared)
+                        : decodeURIComponent(prepared);
+
+                    $("decodeResult").textContent = result;
+                    $("decodeInputLength").textContent = input.length;
+                    $("decodeResultLength").textContent = result.length;
+                    setStatus("decodeStatus", "Decoded successfully.", "success");
+                } catch {
+                    $("decodeResult").textContent = "Invalid or incomplete encoded text.";
+                    setStatus("decodeStatus", "Decoding failed. Check the encoded input.", "error");
+                }
+            };
+
+            const copyResult = async (resultId, statusId) => {
+                const value = $(resultId).textContent;
+                if (!value || /^(Your encoded text|Your decoded text|Could not|Invalid)/.test(value)) return;
+                try {
+                    await navigator.clipboard.writeText(value);
+                    setStatus(statusId, "Result copied to clipboard.", "success");
+                } catch {
+                    setStatus(statusId, "Copy failed in this browser.", "error");
+                }
+            };
+
+            $("encodeBtn").addEventListener("click", encodeText);
+            $("decodeBtn").addEventListener("click", decodeText);
+
+            $("encodeCopy").addEventListener("click", () => copyResult("encodeResult", "encodeStatus"));
+            $("decodeCopy").addEventListener("click", () => copyResult("decodeResult", "decodeStatus"));
+
+            $("encodeSwap").addEventListener("click", () => {
+                const result = $("encodeResult").textContent;
+                if (result && !result.startsWith("Your encoded")) {
+                    $("encodeInput").value = result;
+                    setStatus("encodeStatus", "Result moved to input.");
+                }
+            });
+
+            $("decodeSwap").addEventListener("click", () => {
+                const result = $("decodeResult").textContent;
+                if (result && !result.startsWith("Your decoded")) {
+                    $("decodeInput").value = result;
+                    setStatus("decodeStatus", "Result moved to input.");
+                }
+            });
+
+            $("encodeClear").addEventListener("click", () => {
+                $("encodeInput").value = "";
+                $("encodeResult").textContent = "Your encoded text will appear here.";
+                $("encodeInputLength").textContent = "0";
+                $("encodeResultLength").textContent = "0";
+                setStatus("encodeStatus", "");
+            });
+
+            $("decodeClear").addEventListener("click", () => {
+                $("decodeInput").value = "";
+                $("decodeResult").textContent = "Your decoded text will appear here.";
+                $("decodeInputLength").textContent = "0";
+                $("decodeResultLength").textContent = "0";
+                setStatus("decodeStatus", "");
+            });
+
+            $("encodeInput").addEventListener("input", encodeText);
+            $("decodeInput").addEventListener("input", decodeText);
+        })();
+    </script>
+</body>
+
+</html>
