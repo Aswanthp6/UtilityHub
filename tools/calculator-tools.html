@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Tools - UtilityHub</title>
+    <style>
+        :root {
+            --bg: #0b0b12;
+            --panel: #11111a;
+            --panel2: #151520;
+            --border: #292939;
+            --border2: #343448;
+            --accent: #8b5cf6;
+            --accent2: #7c3aed;
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --success: #86efac;
+            --danger: #fca5a5;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text)
+        }
+
+        a {
+            color: inherit
+        }
+
+        header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            background: #101018;
+            border-bottom: 1px solid #242432
+        }
+
+        .brand {
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .brand span {
+            color: var(--accent)
+        }
+
+        .back {
+            margin-left: auto;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px
+        }
+
+        .back:hover {
+            color: #fff
+        }
+
+        main {
+            width: min(1180px, calc(100% - 32px));
+            margin: auto;
+            padding: 34px 0 50px
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 24px
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 4vw, 38px)
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .app {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            overflow: auto
+        }
+
+        .tab {
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #d1d5db;
+            border-radius: 9px;
+            padding: 9px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap
+        }
+
+        .tab:hover,
+        .tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .panel {
+            display: none;
+            padding: 20px
+        }
+
+        .panel.active {
+            display: block
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(290px, .8fr);
+            gap: 18px
+        }
+
+        .card {
+            background: var(--panel2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px
+        }
+
+        .title {
+            margin: 0 0 12px;
+            font-size: 14px;
+            font-weight: 700
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .field label {
+            display: block;
+            margin: 0 0 6px;
+            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em
+        }
+
+        input,
+        select {
+            width: 100%;
+            border: 1px solid #3a3a4d;
+            border-radius: 10px;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+            padding: 11px;
+            font: inherit
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent)
+        }
+
+        .stack {
+            display: grid;
+            gap: 12px
+        }
+
+        .btn {
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #e5e7eb;
+            border-radius: 9px;
+            padding: 9px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn:hover {
+            background: #2a2a3a
+        }
+
+        .primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .primary:hover {
+            background: var(--accent2);
+            border-color: var(--accent2)
+        }
+
+        .result {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #0d0d15
+        }
+
+        .result .big {
+            font-size: 28px;
+            font-weight: 800
+        }
+
+        .result .small {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5
+        }
+
+        .status {
+            min-height: 18px;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 11px
+        }
+
+        .modebar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .modebar button {
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #d1d5db;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: 11px;
+            cursor: pointer
+        }
+
+        .modebar button.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .calc-display {
+            width: 100%;
+            text-align: right;
+            font-size: 26px;
+            font-weight: 700;
+            padding: 15px;
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            background: #0d0d15;
+            overflow: auto
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        .calc-grid button {
+            min-height: 48px;
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #fff;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .calc-grid button:hover {
+            background: #2a2a3a
+        }
+
+        .calc-grid .operator {
+            background: #27223a
+        }
+
+        .calc-grid .equals {
+            background: var(--accent);
+            border-color: var(--accent)
+        }
+
+        .privacy {
+            margin-top: 14px;
+            padding: 11px 12px;
+            border-left: 3px solid var(--accent);
+            background: rgba(139, 92, 246, .07);
+            color: #aeb4c0;
+            font-size: 11px;
+            line-height: 1.5
+        }
+
+        @media(max-width:860px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:640px) {
+            header {
+                height: 62px;
+                padding: 0 14px
+            }
+
+            .brand {
+                font-size: 20px
+            }
+
+            .back {
+                font-size: 12px
+            }
+
+            main {
+                width: min(100% - 20px, 1180px);
+                padding-top: 22px
+            }
+
+            .panel {
+                padding: 12px
+            }
+
+            .row {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="../index.html">Utility<span>Hub</span></a>
+        <a class="back" href="../index.html">← Back to Tools</a>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Calculator Tools</h1>
+            <p>Everyday calculators for percentages, age, discounts, tips and quick math.</p>
+        </section>
+
+        <section class="app">
+            <div class="tabs">
+                <button class="tab active" data-tab="percentage">%</button>
+                <button class="tab" data-tab="age">🎂 Age</button>
+                <button class="tab" data-tab="discount">🏷️ Discount</button>
+                <button class="tab" data-tab="tip">💵 Tip</button>
+                <button class="tab" data-tab="basic">🧮 Calculator</button>
+            </div>
+
+            <section class="panel active" id="panel-percentage">
+                <div class="grid">
+                    <div class="card stack">
+                        <h2 class="title">Percentage Calculator</h2>
+                        <div class="modebar">
+                            <button class="active" data-percent-mode="of">What is X% of Y?</button>
+                            <button data-percent-mode="change">Percentage change</button>
+                            <button data-percent-mode="difference">What percent is X of Y?</button>
+                        </div>
+                        <div id="percentInputs"></div>
+                        <button class="btn primary" id="percentCalculate">Calculate</button>
+                        <div class="status" id="percentStatus"></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="result">
+                            <div class="big" id="percentResult">0</div>
+                            <div class="small" id="percentExplain">Enter values and calculate.</div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="panel-age">
+                <div class="grid">
+                    <div class="card stack">
+                        <h2 class="title">Age Calculator</h2>
+                        <div class="field">
+                            <label for="dob">Date of birth</label>
+                            <input id="dob" type="date">
+                        </div>
+                        <div class="field">
+                            <label for="ageAsOf">Calculate age on</label>
+                            <input id="ageAsOf" type="date">
+                        </div>
+                        <button class="btn primary" id="ageCalculate">Calculate Age</button>
+                        <div class="status" id="ageStatus"></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="result">
+                            <div class="big" id="ageResult">—</div>
+                            <div class="small" id="ageExplain">Your exact age will appear here.</div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="panel-discount">
+                <div class="grid">
+                    <div class="card stack">
+                        <h2 class="title">Discount Calculator</h2>
+                        <div class="row">
+                            <div class="field"><label for="discountPrice">Original price</label><input
+                                    id="discountPrice" type="number" min="0" step="0.01" placeholder="1000"></div>
+                            <div class="field"><label for="discountPercent">Discount %</label><input
+                                    id="discountPercent" type="number" min="0" max="100" step="0.01" placeholder="20">
+                            </div>
+                        </div>
+                        <button class="btn primary" id="discountCalculate">Calculate</button>
+                        <div class="status" id="discountStatus"></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="result">
+                            <div class="big" id="discountResult">—</div>
+                            <div class="small" id="discountExplain">Enter an original price and discount.</div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="panel-tip">
+                <div class="grid">
+                    <div class="card stack">
+                        <h2 class="title">Tip Calculator</h2>
+                        <div class="row">
+                            <div class="field"><label for="tipBill">Bill amount</label><input id="tipBill" type="number"
+                                    min="0" step="0.01" placeholder="1000"></div>
+                            <div class="field"><label for="tipPercent">Tip %</label><input id="tipPercent" type="number"
+                                    min="0" step="0.01" value="10"></div>
+                        </div>
+                        <div class="row">
+                            <div class="field"><label for="tipPeople">People</label><input id="tipPeople" type="number"
+                                    min="1" step="1" value="1"></div>
+                            <div class="field"><label for="currency">Currency</label>
+                                <select id="currency">
+                                    <option value="₹">₹ INR</option>
+                                    <option value="$">$ USD</option>
+                                    <option value="€">€ EUR</option>
+                                    <option value="£">£ GBP</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn primary" id="tipCalculate">Calculate</button>
+                        <div class="status" id="tipStatus"></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="result">
+                            <div class="big" id="tipResult">—</div>
+                            <div class="small" id="tipExplain">Enter the bill amount and tip.</div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="panel-basic">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="title">Basic Calculator</h2>
+                        <div class="calc-display" id="calcDisplay">0</div>
+                        <div class="calc-grid">
+                            <button data-calc="clear">AC</button><button data-calc="back">⌫</button><button
+                                data-calc="sign">±</button><button class="operator" data-calc="op"
+                                data-op="/">÷</button>
+                            <button data-calc="digit">7</button><button data-calc="digit">8</button><button
+                                data-calc="digit">9</button><button class="operator" data-calc="op"
+                                data-op="*">×</button>
+                            <button data-calc="digit">4</button><button data-calc="digit">5</button><button
+                                data-calc="digit">6</button><button class="operator" data-calc="op"
+                                data-op="-">−</button>
+                            <button data-calc="digit">1</button><button data-calc="digit">2</button><button
+                                data-calc="digit">3</button><button class="operator" data-calc="op"
+                                data-op="+">+</button>
+                            <button data-calc="digit">0</button><button data-calc="digit">.</button><button
+                                data-calc="equals" class="equals">=</button>
+                        </div>
+                        <div class="status" id="calcStatus"></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">How it works</h2>
+                        <p class="muted">Supports addition, subtraction, multiplication and division. Use the keyboard
+                            number keys, Enter, Backspace and Escape too.</p>
+                    </aside>
+                </div>
+            </section>
+
+            <div class="privacy">🔒 All calculations run locally in your browser. Nothing is uploaded to UtilityHub.
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            "use strict";
+            const $ = id => document.getElementById(id);
+
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.addEventListener("click", () => {
+                    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+                    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === `panel-${tab.dataset.tab}`));
+                });
+            });
+
+            // Percentage
+            let percentMode = "of";
+            const renderPercentInputs = () => {
+                if (percentMode === "of") {
+                    $("percentInputs").innerHTML = `
+        <div class="row">
+          <div class="field"><label for="p1">Percentage</label><input id="p1" type="number" step="any" placeholder="20"></div>
+          <div class="field"><label for="p2">Number</label><input id="p2" type="number" step="any" placeholder="500"></div>
+        </div>`;
+                } else if (percentMode === "change") {
+                    $("percentInputs").innerHTML = `
+        <div class="row">
+          <div class="field"><label for="p1">Original value</label><input id="p1" type="number" step="any" placeholder="500"></div>
+          <div class="field"><label for="p2">New value</label><input id="p2" type="number" step="any" placeholder="600"></div>
+        </div>`;
+                } else {
+                    $("percentInputs").innerHTML = `
+        <div class="row">
+          <div class="field"><label for="p1">Part</label><input id="p1" type="number" step="any" placeholder="20"></div>
+          <div class="field"><label for="p2">Whole</label><input id="p2" type="number" step="any" placeholder="100"></div>
+        </div>`;
+                }
+            };
+            document.querySelectorAll("[data-percent-mode]").forEach(btn => {
+                btn.onclick = () => {
+                    percentMode = btn.dataset.percentMode;
+                    document.querySelectorAll("[data-percent-mode]").forEach(b => b.classList.toggle("active", b === btn));
+                    renderPercentInputs();
+                    $("percentResult").textContent = "0";
+                    $("percentExplain").textContent = "Enter values and calculate.";
+                };
+            });
+            $("percentCalculate").onclick = () => {
+                const a = Number($("p1").value), b = Number($("p2").value);
+                if (!Number.isFinite(a) || !Number.isFinite(b)) {
+                    $("percentStatus").textContent = "Enter valid numbers.";
+                    return;
+                }
+                let result, explanation;
+                if (percentMode === "of") {
+                    result = a * b / 100;
+                    explanation = `${a}% of ${b} = ${result}`;
+                } else if (percentMode === "change") {
+                    if (a === 0) { $("percentStatus").textContent = "Original value cannot be zero."; return; }
+                    result = ((b - a) / Math.abs(a)) * 100;
+                    explanation = `${a} → ${b} = ${result.toFixed(2)}% change`;
+                } else {
+                    if (b === 0) { $("percentStatus").textContent = "Whole value cannot be zero."; return; }
+                    result = (a / b) * 100;
+                    explanation = `${a} is ${result.toFixed(2)}% of ${b}`;
+                }
+                $("percentResult").textContent = Number(result.toFixed(10)).toLocaleString();
+                $("percentExplain").textContent = explanation;
+                $("percentStatus").textContent = "Calculated.";
+            };
+            renderPercentInputs();
+
+            // Age
+            const todayISO = () => new Date().toISOString().slice(0, 10);
+            $("ageAsOf").value = todayISO();
+            $("ageCalculate").onclick = () => {
+                const dobVal = $("dob").value, asOfVal = $("ageAsOf").value;
+                if (!dobVal || !asOfVal) { $("ageStatus").textContent = "Select both dates."; return; }
+                const dob = new Date(`${dobVal}T00:00:00`), asOf = new Date(`${asOfVal}T00:00:00`);
+                if (dob > asOf) { $("ageStatus").textContent = "Date of birth cannot be after the calculation date."; return; }
+                let years = asOf.getFullYear() - dob.getFullYear();
+                let months = asOf.getMonth() - dob.getMonth();
+                let days = asOf.getDate() - dob.getDate();
+                if (days < 0) { months--; const lastMonthDays = new Date(asOf.getFullYear(), asOf.getMonth(), 0).getDate(); days += lastMonthDays; }
+                if (months < 0) { years--; months += 12; }
+                $("ageResult").textContent = `${years}y ${months}m ${days}d`;
+                $("ageExplain").textContent = `Age on ${asOfVal}: ${years} years, ${months} months and ${days} days.`;
+                $("ageStatus").textContent = "Calculated.";
+            };
+
+            // Discount
+            $("discountCalculate").onclick = () => {
+                const price = Number($("discountPrice").value), pct = Number($("discountPercent").value);
+                if (!Number.isFinite(price) || !Number.isFinite(pct) || price < 0 || pct < 0 || pct > 100) {
+                    $("discountStatus").textContent = "Enter a valid price and a discount between 0% and 100%.";
+                    return;
+                }
+                const saved = price * pct / 100;
+                const final = price - saved;
+                $("discountResult").textContent = final.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                $("discountExplain").textContent = `You save ${saved.toLocaleString(undefined, { maximumFractionDigits: 2 })}. Final price: ${final.toLocaleString(undefined, { maximumFractionDigits: 2 })}.`;
+                $("discountStatus").textContent = "Calculated.";
+            };
+
+            // Tip
+            $("tipCalculate").onclick = () => {
+                const bill = Number($("tipBill").value), pct = Number($("tipPercent").value), people = Number($("tipPeople").value);
+                if (!Number.isFinite(bill) || !Number.isFinite(pct) || !Number.isFinite(people) || bill < 0 || pct < 0 || people < 1) {
+                    $("tipStatus").textContent = "Enter valid bill, tip and people values.";
+                    return;
+                }
+                const tip = bill * pct / 100, total = bill + tip, each = total / people;
+                const cur = $("currency").value;
+                $("tipResult").textContent = `${cur}${each.toFixed(2)} / person`;
+                $("tipExplain").textContent = `Tip: ${cur}${tip.toFixed(2)} • Total: ${cur}${total.toFixed(2)} • ${people} ${people === 1 ? "person" : "people"}.`;
+                $("tipStatus").textContent = "Calculated.";
+            };
+
+            // Basic calculator
+            let calcDisplay = "0", calcStored = null, calcOperator = null, waiting = false;
+            const showCalc = () => $("calcDisplay").textContent = calcDisplay;
+            const inputDigit = d => {
+                if (waiting || calcDisplay === "Error") { calcDisplay = d; waiting = false; }
+                else calcDisplay = calcDisplay === "0" ? d : calcDisplay + d;
+                showCalc();
+            };
+            const inputDot = () => {
+                if (waiting || calcDisplay === "Error") { calcDisplay = "0."; waiting = false; }
+                else if (!calcDisplay.includes(".")) calcDisplay += ".";
+                showCalc();
+            };
+            const operate = op => {
+                const current = Number(calcDisplay);
+                if (!Number.isFinite(current)) return;
+                if (calcStored === null) calcStored = current;
+                else if (calcOperator) {
+                    const result = doCalc(calcStored, current, calcOperator);
+                    if (result === null) { calcDisplay = "Error"; calcStored = null; calcOperator = null; showCalc(); return; }
+                    calcStored = result; calcDisplay = String(result);
+                }
+                calcOperator = op; waiting = true; showCalc();
+            };
+            const doCalc = (a, b, op) => {
+                if (op === "+") return a + b;
+                if (op === "-") return a - b;
+                if (op === "*") return a * b;
+                if (op === "/") return b === 0 ? null : a / b;
+                return b;
+            };
+            const equals = () => {
+                if (calcStored === null || !calcOperator) return;
+                const result = doCalc(calcStored, Number(calcDisplay), calcOperator);
+                if (result === null) calcDisplay = "Error";
+                else calcDisplay = String(result);
+                calcStored = null; calcOperator = null; waiting = true; showCalc();
+            };
+            document.querySelectorAll("[data-calc]").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const type = btn.dataset.calc;
+                    if (type === "digit") btn.textContent === "." ? inputDot() : inputDigit(btn.textContent);
+                    else if (type === "clear") { calcDisplay = "0"; calcStored = null; calcOperator = null; waiting = false; showCalc(); }
+                    else if (type === "back") { if (!waiting && calcDisplay.length > 1) calcDisplay = calcDisplay.slice(0, -1); else calcDisplay = "0"; showCalc(); }
+                    else if (type === "sign") { if (calcDisplay !== "0" && calcDisplay !== "Error") calcDisplay = String(Number(calcDisplay) * -1); showCalc(); }
+                    else if (type === "op") operate(btn.dataset.op);
+                    else if (type === "equals") equals();
+                });
+            });
+            document.addEventListener("keydown", e => {
+                const active = document.activeElement;
+                const isTyping = active && ["INPUT", "SELECT", "TEXTAREA"].includes(active.tagName);
+                if (isTyping) return;
+                if (/^\d$/.test(e.key)) inputDigit(e.key);
+                else if (e.key === ".") inputDot();
+                else if (["+", "-", "*", "/"].includes(e.key)) operate(e.key);
+                else if (e.key === "Enter" || e.key === "=") equals();
+                else if (e.key === "Backspace") { if (calcDisplay.length > 1) calcDisplay = calcDisplay.slice(0, -1); else calcDisplay = "0"; showCalc(); }
+                else if (e.key === "Escape") { calcDisplay = "0"; calcStored = null; calcOperator = null; waiting = false; showCalc(); }
+            });
+        })();
+    </script>
+</body>
+
+</html>
