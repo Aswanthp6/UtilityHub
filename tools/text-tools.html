@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Tools - UtilityHub</title>
+    <style>
+        :root {
+            --bg: #0b0b12;
+            --panel: #11111a;
+            --panel2: #151520;
+            --border: #292939;
+            --border2: #343448;
+            --accent: #8b5cf6;
+            --accent2: #7c3aed;
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --success: #86efac;
+            --danger: #fca5a5
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text)
+        }
+
+        a {
+            color: inherit
+        }
+
+        header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            background: #101018;
+            border-bottom: 1px solid #242432
+        }
+
+        .brand {
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 700
+        }
+
+        .brand span {
+            color: var(--accent)
+        }
+
+        .back {
+            margin-left: auto;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px
+        }
+
+        .back:hover {
+            color: #fff
+        }
+
+        main {
+            width: min(1180px, calc(100% - 32px));
+            margin: auto;
+            padding: 34px 0 50px
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 24px
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 4vw, 38px)
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .app {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            overflow: auto
+        }
+
+        .tab {
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #d1d5db;
+            border-radius: 9px;
+            padding: 9px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap
+        }
+
+        .tab:hover,
+        .tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .panel {
+            display: none;
+            padding: 20px
+        }
+
+        .panel.active {
+            display: block
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(280px, .8fr);
+            gap: 18px
+        }
+
+        .card {
+            background: var(--panel2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px
+        }
+
+        .title {
+            margin: 0 0 10px;
+            font-size: 14px;
+            font-weight: 700
+        }
+
+        textarea,
+        input {
+            width: 100%;
+            border: 1px solid #3a3a4d;
+            border-radius: 10px;
+            background: #20202d;
+            color: #fff;
+            outline: none;
+            padding: 12px;
+            font: inherit
+        }
+
+        textarea {
+            min-height: 420px;
+            resize: vertical;
+            line-height: 1.55
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--accent)
+        }
+
+        .row,
+        .replace-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .btn {
+            border: 1px solid var(--border2);
+            background: #20202d;
+            color: #e5e7eb;
+            border-radius: 9px;
+            padding: 9px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn:hover {
+            background: #2a2a3a
+        }
+
+        .primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .primary:hover {
+            background: var(--accent2);
+            border-color: var(--accent2)
+        }
+
+        .danger {
+            color: var(--danger);
+            background: rgba(127, 29, 29, .22);
+            border-color: rgba(127, 29, 29, .55)
+        }
+
+        .statgrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 9px
+        }
+
+        .stat {
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #1b1b28
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 18px
+        }
+
+        .stat span {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5
+        }
+
+        .status {
+            min-height: 18px;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 11px
+        }
+
+        .check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #1b1b28;
+            font-size: 12px;
+            color: #d1d5db
+        }
+
+        .check input {
+            width: auto;
+            accent-color: var(--accent)
+        }
+
+        .resultbox {
+            min-height: 420px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #0d0d15;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            line-height: 1.55
+        }
+
+        .privacy {
+            margin-top: 14px;
+            padding: 11px 12px;
+            border-left: 3px solid var(--accent);
+            background: rgba(139, 92, 246, .07);
+            color: #aeb4c0;
+            font-size: 11px;
+            line-height: 1.5
+        }
+
+        @media(max-width:900px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            .resultbox,
+            textarea {
+                min-height: 320px
+            }
+        }
+
+        @media(max-width:640px) {
+            header {
+                height: 62px;
+                padding: 0 14px
+            }
+
+            .brand {
+                font-size: 20px
+            }
+
+            .back {
+                font-size: 12px
+            }
+
+            main {
+                width: min(100% - 20px, 1180px);
+                padding-top: 22px
+            }
+
+            .panel {
+                padding: 12px
+            }
+
+            .row,
+            .replace-grid {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header><a class="brand" href="../index.html">Utility<span>Hub</span></a><a class="back" href="../index.html">← Back
+            to Tools</a></header>
+    <main>
+        <section class="hero">
+            <h1>Text Tools</h1>
+            <p>Count, convert, clean and transform text in one place. Everything runs in your browser.</p>
+        </section>
+        <section class="app">
+            <div class="tabs"><button class="tab active" data-tab="counter">🔢 Counter</button><button class="tab"
+                    data-tab="case">Aa Case Converter</button><button class="tab" data-tab="cleaner">🧹 Clean
+                    Text</button><button class="tab" data-tab="find">🔎 Find & Replace</button></div>
+            <section class="panel active" id="panel-counter">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="title">Text</h2><textarea id="counterText"
+                            placeholder="Type or paste your text here..."></textarea>
+                        <div class="buttons" style="margin-top:10px"><button class="btn primary" id="copyCounter">Copy
+                                Text</button><button class="btn" id="clearCounter">Clear</button></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Statistics</h2>
+                        <div class="statgrid">
+                            <div class="stat"><strong id="words">0</strong><span>Words</span></div>
+                            <div class="stat"><strong id="chars">0</strong><span>Characters</span></div>
+                            <div class="stat"><strong id="charsNoSpace">0</strong><span>Characters without spaces</span>
+                            </div>
+                            <div class="stat"><strong id="lines">0</strong><span>Lines</span></div>
+                            <div class="stat"><strong id="sentences">0</strong><span>Sentences</span></div>
+                            <div class="stat"><strong id="paragraphs">0</strong><span>Paragraphs</span></div>
+                        </div>
+                        <div class="muted" style="margin-top:12px">Reading time is approximate and based on 200 words
+                            per minute.</div>
+                        <div class="stat" style="margin-top:9px"><strong id="readingTime">0 min</strong><span>Estimated
+                                reading time</span></div>
+                    </aside>
+                </div>
+            </section>
+            <section class="panel" id="panel-case">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="title">Input</h2><textarea id="caseText"
+                            placeholder="Enter text to convert..."></textarea>
+                        <div class="buttons" style="margin-top:10px"><button class="btn"
+                                data-case="upper">UPPERCASE</button><button class="btn"
+                                data-case="lower">lowercase</button><button class="btn" data-case="title">Title
+                                Case</button><button class="btn" data-case="sentence">Sentence case</button><button
+                                class="btn" data-case="toggle">tOGGLE cASE</button><button class="btn"
+                                data-case="reverse">Reverse</button><button class="btn primary" id="copyCase">Copy
+                                Result</button></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="resultbox" id="caseResult">Your converted text will appear here.</div>
+                        <div class="status" id="caseStatus"></div>
+                    </aside>
+                </div>
+            </section>
+            <section class="panel" id="panel-cleaner">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="title">Input</h2><textarea id="cleanText"
+                            placeholder="Paste text here..."></textarea>
+                        <div class="buttons" style="margin-top:10px"><button class="btn" id="trimLines">Trim line
+                                spaces</button><button class="btn" id="removeEmpty">Remove empty lines</button><button
+                                class="btn" id="removeDuplicates">Remove duplicates</button><button class="btn"
+                                id="sortLines">Sort A → Z</button><button class="btn" id="sortLinesDesc">Sort Z →
+                                A</button><button class="btn primary" id="copyClean">Copy Result</button><button
+                                class="btn danger" id="clearClean">Clear</button></div>
+                        <div class="status" id="cleanStatus"></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Options</h2><label class="check"><input type="checkbox" id="ignoreCase"
+                                checked> Ignore letter case when removing duplicates</label><label class="check"
+                            style="margin-top:8px"><input type="checkbox" id="preserveEmpty"> Preserve empty lines while
+                            sorting</label>
+                        <p class="muted" style="margin-top:12px">All operations modify the text locally. Nothing is
+                            uploaded.</p>
+                    </aside>
+                </div>
+            </section>
+            <section class="panel" id="panel-find">
+                <div class="grid">
+                    <div class="card">
+                        <h2 class="title">Text</h2><textarea id="findText" placeholder="Paste text here..."></textarea>
+                        <div class="replace-grid" style="margin-top:10px">
+                            <div>
+                                <div class="muted" style="margin-bottom:6px">Find</div><input id="findValue" type="text"
+                                    placeholder="Text to find">
+                            </div>
+                            <div>
+                                <div class="muted" style="margin-bottom:6px">Replace with</div><input id="replaceValue"
+                                    type="text" placeholder="Replacement">
+                            </div>
+                        </div>
+                        <div class="buttons" style="margin-top:10px"><label class="check"><input type="checkbox"
+                                    id="matchCase"> Match case</label><label class="check"><input type="checkbox"
+                                    id="wholeWords"> Whole words</label><button class="btn primary"
+                                id="replaceOne">Replace Next</button><button class="btn" id="replaceAll">Replace
+                                All</button><button class="btn" id="findNext">Find Next</button><button class="btn"
+                                id="clearFind">Clear</button></div>
+                        <div class="status" id="findStatus"></div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Matches</h2>
+                        <div class="stat"><strong id="matchCount">0</strong><span>Matches found</span></div>
+                        <p class="muted" style="margin-top:12px">Use Find Next to move the selection through the text.
+                            Replace All updates every match.</p>
+                    </aside>
+                </div>
+            </section>
+            <div class="privacy">🔒 Your text is processed entirely in your browser. UtilityHub does not upload or store
+                your text.</div>
+        </section>
+    </main>
+    <script>
+        (() => {
+            'use strict';
+            const $ = id => document.getElementById(id);
+            const copy = async text => { try { await navigator.clipboard.writeText(text); return true } catch { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok } };
+            document.querySelectorAll('.tab').forEach(t => t.onclick = () => { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t)); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === `panel-${t.dataset.tab}`)) });
+            function updateCounter() { const text = $('counterText').value.trim(); const raw = $('counterText').value; const words = text ? text.split(/\s+/u).length : 0; $('words').textContent = words; $('chars').textContent = raw.length; $('charsNoSpace').textContent = raw.replace(/\s/gu, '').length; $('lines').textContent = raw ? raw.split(/\r?\n/u).length : 0; $('sentences').textContent = text ? (text.match(/[.!?]+(?=\s|$)/gu) || []).length : 0; $('paragraphs').textContent = text ? text.split(/\n\s*\n+/u).length : 0; $('readingTime').textContent = words ? `${Math.max(1, Math.ceil(words / 200))} min` : '0 min' }
+            $('counterText').oninput = updateCounter; $('clearCounter').onclick = () => { $('counterText').value = ''; updateCounter() }; $('copyCounter').onclick = async () => { $('copyCounter').textContent = await copy($('counterText').value) ? 'Copied' : 'Copy failed'; setTimeout(() => $('copyCounter').textContent = 'Copy Text', 1000) };
+            const titleCase = s => s.toLowerCase().replace(/\b[\p{L}\p{N}]/gu, c => c.toUpperCase()); const sentenceCase = s => s.toLowerCase().replace(/(^|[.!?]\s+)([\p{L}\p{N}])/gu, (_, a, b) => a + b.toUpperCase()); const toggle = s => [...s].map(c => c === c.toUpperCase() && c !== c.toLowerCase() ? c.toLowerCase() : c === c.toLowerCase() && c !== c.toUpperCase() ? c.toUpperCase() : c).join('');
+            document.querySelectorAll('[data-case]').forEach(b => b.onclick = () => { const s = $('caseText').value; let r = s; switch (b.dataset.case) { case 'upper': r = s.toUpperCase(); break; case 'lower': r = s.toLowerCase(); break; case 'title': r = titleCase(s); break; case 'sentence': r = sentenceCase(s); break; case 'toggle': r = toggle(s); break; case 'reverse': r = [...s].reverse().join(''); } $('caseResult').textContent = r || 'Your converted text will appear here.'; $('caseStatus').textContent = r ? 'Converted.' : '' });
+            $('copyCase').onclick = async () => { const s = $('caseResult').textContent; if (!s || s === 'Your converted text will appear here.') return; $('caseStatus').textContent = await copy(s) ? 'Copied.' : 'Copy failed.' };
+            const applyClean = (fn, msg) => { const r = fn($('cleanText').value); $('cleanText').value = r; $('cleanStatus').textContent = msg }; $('trimLines').onclick = () => applyClean(s => s.split(/\r?\n/u).map(x => x.trim()).join('\n'), 'Trimmed line spaces.'); $('removeEmpty').onclick = () => applyClean(s => s.split(/\r?\n/u).filter(x => x.trim()).join('\n'), 'Removed empty lines.'); $('removeDuplicates').onclick = () => applyClean(s => { const seen = new Set(), out = [], ic = $('ignoreCase').checked; for (const line of s.split(/\r?\n/u)) { const k = ic ? line.toLocaleLowerCase() : line; if (!seen.has(k)) { seen.add(k); out.push(line) } } return out.join('\n') }, 'Removed duplicate lines.'); $('sortLines').onclick = () => applyClean(s => { let a = s.split(/\r?\n/u); if (!$('preserveEmpty').checked) a = a.filter(x => x.trim()); return a.sort((x, y) => x.localeCompare(y)).join('\n') }, 'Sorted A → Z.'); $('sortLinesDesc').onclick = () => applyClean(s => { let a = s.split(/\r?\n/u); if (!$('preserveEmpty').checked) a = a.filter(x => x.trim()); return a.sort((x, y) => y.localeCompare(x)).join('\n') }, 'Sorted Z → A.'); $('copyClean').onclick = async () => { $('cleanStatus').textContent = await copy($('cleanText').value) ? 'Copied.' : 'Copy failed.' }; $('clearClean').onclick = () => { $('cleanText').value = ''; $('cleanStatus').textContent = '' };
+            let cursor = -1; const matches = () => { const text = $('findText').value, find = $('findValue').value; if (!find) return []; const e = find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); const pat = $('wholeWords').checked ? `\\b${e}\\b` : e; let re; try { re = new RegExp(pat, $('matchCase').checked ? 'g' : 'gi') } catch { return [] } const a = []; let m; while ((m = re.exec(text)) !== null) { a.push({ i: m.index, l: m[0].length }); if (m[0].length === 0) re.lastIndex++ } return a }; const refresh = () => { const a = matches(); $('matchCount').textContent = a.length; if (!a.length) cursor = -1; return a };['input', 'change'].forEach(ev => { $('findValue').addEventListener(ev, refresh); $('findText').addEventListener(ev, refresh); $('matchCase').addEventListener(ev, refresh); $('wholeWords').addEventListener(ev, refresh) });
+            $('findNext').onclick = () => { const a = refresh(); if (!a.length) { $('findStatus').textContent = 'No matches found.'; return } cursor = (cursor + 1) % a.length; const m = a[cursor]; $('findText').focus(); $('findText').setSelectionRange(m.i, m.i + m.l); $('findStatus').textContent = `Match ${cursor + 1} of ${a.length}` };
+            $('replaceOne').onclick = () => { const a = refresh(); if (!a.length) { $('findStatus').textContent = 'No matches found.'; return } const i = cursor < 0 ? 0 : cursor % a.length, m = a[i], t = $('findText').value; $('findText').value = t.slice(0, m.i) + $('replaceValue').value + t.slice(m.i + m.l); cursor = -1; refresh(); $('findStatus').textContent = 'Replaced one match.' };
+            $('replaceAll').onclick = () => { const find = $('findValue').value; if (!find) return; const e = find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), pat = $('wholeWords').checked ? `\\b${e}\\b` : e; try { const re = new RegExp(pat, $('matchCase').checked ? 'g' : 'gi'), t = $('findText').value, r = t.replace(re, $('replaceValue').value); $('findText').value = r; cursor = -1; refresh(); $('findStatus').textContent = t === r ? 'No matches found.' : 'All matches replaced.' } catch { $('findStatus').textContent = 'Invalid search pattern.' } };
+            $('clearFind').onclick = () => { $('findText').value = ''; $('findValue').value = ''; $('replaceValue').value = ''; cursor = -1; refresh(); $('findStatus').textContent = '' }; updateCounter();
+        })();
+    </script>
+</body>
+
+</html>
