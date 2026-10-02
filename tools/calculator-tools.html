@@ -376,6 +376,7 @@
                 <button class="tab" data-tab="age">🎂 Age</button>
                 <button class="tab" data-tab="discount">🏷️ Discount</button>
                 <button class="tab" data-tab="tip">💵 Tip</button>
+                <button class="tab" data-tab="gst">GST</button>
                 <button class="tab" data-tab="basic">🧮 Calculator</button>
             </div>
 
@@ -481,6 +482,51 @@
                         <div class="result">
                             <div class="big" id="tipResult">—</div>
                             <div class="small" id="tipExplain">Enter the bill amount and tip.</div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="panel-gst">
+                <div class="grid">
+                    <div class="card stack">
+                        <h2 class="title">GST Calculator</h2>
+                        <div class="modebar">
+                            <button class="active" data-gst-mode="exclusive">Exclusive — add GST</button>
+                            <button data-gst-mode="inclusive">Inclusive — remove GST</button>
+                        </div>
+                        <div class="row">
+                            <div class="field">
+                                <label for="gstAmount">Amount</label>
+                                <input id="gstAmount" type="number" min="0" step="0.01" placeholder="1000">
+                            </div>
+                            <div class="field">
+                                <label for="gstRate">GST rate %</label>
+                                <input id="gstRate" type="number" min="0" max="100" step="0.01" value="18">
+                            </div>
+                        </div>
+                        <div class="modebar">
+                            <button type="button" class="gst-rate" data-gst-rate="5">5%</button>
+                            <button type="button" class="gst-rate" data-gst-rate="12">12%</button>
+                            <button type="button" class="gst-rate active" data-gst-rate="18">18%</button>
+                            <button type="button" class="gst-rate" data-gst-rate="28">28%</button>
+                        </div>
+                        <button class="btn primary" id="gstCalculate">Calculate GST</button>
+                        <div class="status" id="gstStatus"></div>
+                        <div class="muted">Enter the applicable GST rate for the transaction. The calculator does not
+                            determine which rate applies.</div>
+                    </div>
+                    <aside class="card">
+                        <h2 class="title">Result</h2>
+                        <div class="result">
+                            <div class="big" id="gstTotal">₹0.00</div>
+                            <div class="small" id="gstExplain">Enter an amount and GST rate.</div>
+                        </div>
+                        <div class="statgrid" style="margin-top:10px">
+                            <div class="stat"><strong id="gstBase">₹0.00</strong><span>Amount before GST</span></div>
+                            <div class="stat"><strong id="gstTax">₹0.00</strong><span>GST amount</span></div>
+                            <div class="stat"><strong id="gstFinal">₹0.00</strong><span>Total amount</span></div>
+                            <div class="stat"><strong id="gstRateOut">0%</strong><span>GST rate</span></div>
                         </div>
                     </aside>
                 </div>
@@ -635,6 +681,53 @@
                 $("tipResult").textContent = `${cur}${each.toFixed(2)} / person`;
                 $("tipExplain").textContent = `Tip: ${cur}${tip.toFixed(2)} • Total: ${cur}${total.toFixed(2)} • ${people} ${people === 1 ? "person" : "people"}.`;
                 $("tipStatus").textContent = "Calculated.";
+            };
+
+            // GST calculator
+            let gstMode = "exclusive";
+            const money = value => `₹${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.querySelectorAll("[data-gst-mode]").forEach(btn => {
+                btn.onclick = () => {
+                    gstMode = btn.dataset.gstMode;
+                    document.querySelectorAll("[data-gst-mode]").forEach(b => b.classList.toggle("active", b === btn));
+                    $("gstStatus").textContent = "";
+                    $("gstExplain").textContent = gstMode === "exclusive" ? "Enter the amount before GST." : "Enter the total amount including GST.";
+                };
+            });
+            document.querySelectorAll(".gst-rate").forEach(btn => {
+                btn.onclick = () => {
+                    $("gstRate").value = btn.dataset.gstRate;
+                    document.querySelectorAll(".gst-rate").forEach(b => b.classList.toggle("active", b === btn));
+                };
+            });
+            $("gstRate").addEventListener("input", () => {
+                document.querySelectorAll(".gst-rate").forEach(b => b.classList.remove("active"));
+            });
+            $("gstCalculate").onclick = () => {
+                const amount = Number($("gstAmount").value);
+                const rate = Number($("gstRate").value);
+                if (!Number.isFinite(amount) || !Number.isFinite(rate) || amount < 0 || rate < 0 || rate > 100) {
+                    $("gstStatus").textContent = "Enter a valid amount and GST rate between 0% and 100%.";
+                    return;
+                }
+                let base, tax, total;
+                if (gstMode === "exclusive") {
+                    base = amount;
+                    tax = base * rate / 100;
+                    total = base + tax;
+                    $("gstExplain").textContent = `${money(base)} + ${money(tax)} GST = ${money(total)}`;
+                } else {
+                    total = amount;
+                    base = rate === 0 ? total : total / (1 + rate / 100);
+                    tax = total - base;
+                    $("gstExplain").textContent = `${money(total)} including GST contains ${money(tax)} GST`;
+                }
+                $("gstBase").textContent = money(base);
+                $("gstTax").textContent = money(tax);
+                $("gstFinal").textContent = money(total);
+                $("gstTotal").textContent = money(total);
+                $("gstRateOut").textContent = `${rate}%`;
+                $("gstStatus").textContent = "Calculated.";
             };
 
             // Basic calculator
