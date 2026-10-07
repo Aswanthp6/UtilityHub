@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free JSON Formatter & Validator Online | UtilityHub</title>
+    <link rel="canonical" href="https://tools.aspmovies.dpdns.org/tools/json-formatter.html">
+    <meta property="og:url" content="https://tools.aspmovies.dpdns.org/tools/json-formatter.html">
+    <meta name="description" content="Format, minify, sort and validate JSON online. Shows the exact line and column of errors. Free and runs in your browser.">
+    <meta name="theme-color" content="#08090d">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="UtilityHub">
+    <meta property="og:title" content="Free JSON Formatter & Validator Online | UtilityHub">
+    <meta property="og:description" content="Format, minify, sort and validate JSON online. Shows the exact line and column of errors. Free and runs in your browser.">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/tool.css">
+    <style>
+:root { --bg: #0b0b12; --panel: #11111a; --panel2: #151520; --border: #292939; --border2: #343448; --accent: #8b5cf6; --accent2: #7c3aed; --text: #f8fafc; --muted: #9ca3af; --success: #86efac; --danger: #fca5a5; }
+.brand{text-decoration:none;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.back{margin-left:auto;color:var(--muted);text-decoration:none;font-size:14px}
+main{max-width:1000px;margin:0 auto;padding:34px 20px 60px}
+.app{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:20px}
+textarea,input,select{width:100%;background:#0d0d15;border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:11px 12px;font:inherit;font-size:14px}
+textarea:focus,input:focus,select:focus{outline:0;border-color:var(--accent)}
+textarea{min-height:280px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+label{display:block;margin:0 0 6px;color:#cbd5e1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.buttons{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.btn{border:1px solid var(--border2);background:#20202d;color:#e5e7eb;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.btn:hover{background:#2a2a3a}
+.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.msg{min-height:22px;font-size:13px;color:var(--muted)}
+.msg.ok{color:#4ade80}.msg.bad{color:#f87171}.msg.warn{color:#fbbf24}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.seo{margin-top:26px;color:var(--muted);font-size:13px;line-height:1.7}
+.seo h2{font-size:15px;color:var(--text);margin:0 0 6px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}header{padding:0 16px}}
+</style>
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="../index.html">Utility<span>Hub</span></a>
+        <a class="back" href="../index.html">← Back to Tools</a>
+    </header>
+    <main>
+        <section class="hero">
+            <h1>JSON Formatter</h1>
+            <p>Format, minify, sort and validate JSON in your browser.</p>
+        </section>
+        <div class="app">
+            <div class="grid2">
+                <div><label for="input">Input</label><textarea id="input" spellcheck="false" placeholder='{"paste":"your JSON here"}'></textarea></div>
+                <div><label for="output">Output</label><textarea id="output" spellcheck="false" readonly></textarea></div>
+            </div>
+            <div class="buttons">
+                <button class="btn primary" id="fmt">Format</button>
+                <button class="btn" id="min">Minify</button>
+                <button class="btn" id="sort">Sort keys</button>
+                <button class="btn" id="val">Validate</button>
+                <select id="indent" style="width:auto" aria-label="Indentation"><option value="2">2 spaces</option><option value="4">4 spaces</option><option value="tab">Tab</option></select>
+                <button class="btn" id="copy">Copy output</button>
+                <button class="btn" id="dl">Download</button>
+                <button class="btn" id="sample">Sample</button>
+                <button class="btn" id="clear">Clear</button>
+            </div>
+            <div class="msg" id="msg" role="status"></div>
+        </div>
+        <section class="seo"><h2>About this JSON formatter</h2><p>Paste JSON to pretty-print, minify, sort keys or validate it. Errors show the line and column so you can fix them fast. Everything runs in your browser.</p></section>
+    </main>
+    <script>
+const $=id=>document.getElementById(id),inp=$('input'),out=$('output'),msg=$('msg');
+const bytes=s=>new TextEncoder().encode(s).length;
+const kb=n=>n<1024?n+' B':(n/1024).toFixed(1)+' KB';
+const ind=()=>$('indent').value==='tab'?'\t':Number($('indent').value);
+function say(t,c){msg.textContent=t;msg.className='msg '+(c||'')}
+function errPos(s){
+  let i=0;const ws=()=>{while(i<s.length&&' \t\n\r'.includes(s[i]))i++};
+  function str(){i++;while(i<s.length){const c=s[i];if(c==='"'){i++;return true}if(c==='\\'){i+=2;continue}if(c<' ')return false;i++}return false}
+  function val(){ws();const c=s[i];
+    if(c==='{'){i++;ws();if(s[i]==='}'){i++;return true}
+      for(;;){ws();if(s[i]!=='"'||!str())return false;ws();if(s[i]!==':')return false;i++;if(!val())return false;ws();if(s[i]===','){i++;continue}if(s[i]==='}'){i++;return true}return false}}
+    if(c==='['){i++;ws();if(s[i]===']'){i++;return true}
+      for(;;){if(!val())return false;ws();if(s[i]===','){i++;continue}if(s[i]===']'){i++;return true}return false}}
+    if(c==='"')return str();
+    const m=/^(-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?|true|false|null)/.exec(s.slice(i));
+    if(m){i+=m[0].length;return true}return false}
+  if(!val())return i;ws();return i<s.length?i:-1}
+function parse(){
+  const raw=inp.value;
+  if(!raw.trim()){say('Paste some JSON first.','warn');out.value='';return null}
+  try{return {v:JSON.parse(raw),raw}}catch(e){
+    const n=errPos(raw);let loc='';
+    if(n>=0){const pre=raw.slice(0,n).split('\n');loc=` at line ${pre.length}, column ${pre[pre.length-1].length+1}`}
+    const why=e.message.replace(/,? ?".*" is not valid JSON.*/s,'').replace(/ in JSON at position \d+.*/s,'').replace(/ \(line \d+ column \d+\)/,'');
+    out.value='';say('Invalid JSON'+loc+' — '+why,'bad');return null}
+}
+function sortKeys(v){
+  if(Array.isArray(v))return v.map(sortKeys);
+  if(v&&typeof v==='object')return Object.keys(v).sort().reduce((o,k)=>(o[k]=sortKeys(v[k]),o),{});
+  return v}
+function run(mode){
+  const r=parse();if(!r)return;
+  let v=r.v;if(mode==='sort')v=sortKeys(v);
+  const text=mode==='min'?JSON.stringify(v):JSON.stringify(v,null,ind());
+  if(mode==='val'){say('Valid JSON · '+kb(bytes(r.raw)),'ok');return}
+  out.value=text;say(`Valid JSON · ${kb(bytes(r.raw))} → ${kb(bytes(text))}`,'ok')}
+$('fmt').onclick=()=>run('fmt');$('min').onclick=()=>run('min');$('sort').onclick=()=>run('sort');$('val').onclick=()=>run('val');
+$('indent').onchange=()=>{if(out.value)run('fmt')};
+$('copy').onclick=async()=>{if(!out.value)return say('Nothing to copy yet.','warn');
+  try{await navigator.clipboard.writeText(out.value);say('Copied to clipboard.','ok')}catch{out.select();document.execCommand('copy');say('Copied to clipboard.','ok')}};
+$('dl').onclick=()=>{if(!out.value)return say('Nothing to download yet.','warn');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out.value],{type:'application/json'}));a.download='data.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$('sample').onclick=()=>{inp.value='{"name":"UtilityHub","tools":["image","pdf","text"],"free":true,"meta":{"version":1,"tags":[]}}';run('fmt')};
+$('clear').onclick=()=>{inp.value='';out.value='';say('')};
+    </script>
+</body>
+
+</html>

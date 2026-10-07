@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF Files Online — Combine PDFs for Free | UtilityHub</title>
+    <link rel="canonical" href="https://tools.aspmovies.dpdns.org/tools/pdf-merge.html">
+    <meta property="og:url" content="https://tools.aspmovies.dpdns.org/tools/pdf-merge.html">
+    <meta name="description" content="Combine multiple PDF files into one document. Reorder files, then merge and download. Free, private and processed in your browser.">
+    <meta name="theme-color" content="#08090d">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="UtilityHub">
+    <meta property="og:title" content="Merge PDF Files Online — Combine PDFs for Free | UtilityHub">
+    <meta property="og:description" content="Combine multiple PDF files into one document. Reorder files, then merge and download. Free, private and processed in your browser.">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/tool.css">
+    <style>
+:root { --bg: #0b0b12; --panel: #11111a; --panel2: #151520; --border: #292939; --border2: #343448; --accent: #8b5cf6; --accent2: #7c3aed; --text: #f8fafc; --muted: #9ca3af; --success: #86efac; --danger: #fca5a5; }
+.brand{text-decoration:none;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.back{margin-left:auto;color:var(--muted);text-decoration:none;font-size:14px}
+main{max-width:1000px;margin:0 auto;padding:34px 20px 60px}
+.app{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:20px}
+textarea,input,select{width:100%;background:#0d0d15;border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:11px 12px;font:inherit;font-size:14px}
+textarea:focus,input:focus,select:focus{outline:0;border-color:var(--accent)}
+textarea{min-height:280px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+label{display:block;margin:0 0 6px;color:#cbd5e1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.buttons{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.btn{border:1px solid var(--border2);background:#20202d;color:#e5e7eb;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.btn:hover{background:#2a2a3a}
+.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.msg{min-height:22px;font-size:13px;color:var(--muted)}
+.msg.ok{color:#4ade80}.msg.bad{color:#f87171}.msg.warn{color:#fbbf24}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.seo{margin-top:26px;color:var(--muted);font-size:13px;line-height:1.7}
+.seo h2{font-size:15px;color:var(--text);margin:0 0 6px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}header{padding:0 16px}}
+</style>
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="../index.html">Utility<span>Hub</span></a>
+        <a class="back" href="../index.html">← Back to Tools</a>
+    </header>
+    <main>
+        <section class="hero">
+            <h1>Merge PDF</h1>
+            <p>Combine several PDF files into one, in the order you choose.</p>
+        </section>
+        <div class="app">
+            <div id="drop" style="border:2px dashed var(--border2);border-radius:14px;padding:34px 16px;text-align:center;cursor:pointer;color:var(--muted)" tabindex="0" role="button" aria-label="Choose PDF files">
+                <strong style="color:var(--text)">Drop PDF files here</strong><br>or click to choose files
+            </div>
+            <input id="pick" type="file" accept="application/pdf,.pdf" multiple hidden>
+            <div id="list" style="margin-top:14px;display:grid;gap:8px"></div>
+            <div class="buttons">
+                <button class="btn primary" id="merge" disabled>Merge PDFs</button>
+                <button class="btn" id="clear" disabled>Clear all</button>
+            </div>
+            <div class="msg" id="msg" role="status"></div>
+        </div>
+        <section class="seo"><h2>About this PDF merger</h2><p>Combine several PDF files into one. Add files, reorder them with the arrows, then merge. Files are processed in your browser and are not uploaded anywhere.</p></section>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script>
+const $=id=>document.getElementById(id);let files=[];
+const say=(t,c)=>{$('msg').textContent=t;$('msg').className='msg '+(c||'')};
+const size=n=>n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(1)+' MB';
+async function add(list){
+  if(typeof PDFLib==='undefined')return say('PDF library failed to load. Check your connection and reload.','bad');
+  const bad=[];
+  for(const f of list){
+    if(!/\.pdf$/i.test(f.name)&&f.type!=='application/pdf'){bad.push(f.name+' (not a PDF)');continue}
+    try{const buf=await f.arrayBuffer();const d=await PDFLib.PDFDocument.load(buf);files.push({name:f.name,size:f.size,buf,pages:d.getPageCount()})}
+    catch{bad.push(f.name+' (unreadable or password-protected)')}}
+  say(bad.length?'Skipped: '+bad.join(', '):'',bad.length?'warn':'');draw()}
+function draw(){
+  const L=$('list');L.innerHTML='';
+  files.forEach((f,i)=>{
+    const r=document.createElement('div');r.style.cssText='display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px';
+    const n=document.createElement('div');n.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';n.textContent=`${i+1}. ${f.name}`;
+    const m=document.createElement('span');m.style.color='var(--muted)';m.textContent=`${f.pages} page${f.pages===1?'':'s'} · ${size(f.size)}`;
+    const mk=(t,l,fn,dis)=>{const b=document.createElement('button');b.className='btn';b.style.padding='5px 9px';b.textContent=t;b.setAttribute('aria-label',l);b.disabled=dis;b.onclick=fn;return b};
+    r.append(n,m,mk('↑','Move up',()=>{[files[i-1],files[i]]=[files[i],files[i-1]];draw()},i===0),mk('↓','Move down',()=>{[files[i+1],files[i]]=[files[i],files[i+1]];draw()},i===files.length-1),mk('✕','Remove',()=>{files.splice(i,1);draw()}));
+    L.append(r)});
+  $('merge').disabled=files.length<2;$('clear').disabled=!files.length}
+$('drop').onclick=()=>$('pick').click();
+$('drop').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('pick').click()}};
+$('pick').onchange=e=>{add([...e.target.files]);e.target.value=''};
+$('drop').ondragover=e=>{e.preventDefault();$('drop').style.borderColor='var(--accent)'};
+$('drop').ondragleave=()=>$('drop').style.borderColor='';
+$('drop').ondrop=e=>{e.preventDefault();$('drop').style.borderColor='';add([...e.dataTransfer.files])};
+$('clear').onclick=()=>{files=[];say('');draw()};
+$('merge').onclick=async()=>{
+  $('merge').disabled=true;say('Merging…');
+  try{
+    const out=await PDFLib.PDFDocument.create();
+    for(const f of files){const src=await PDFLib.PDFDocument.load(f.buf);(await out.copyPages(src,src.getPageIndices())).forEach(p=>out.addPage(p))}
+    const data=await out.save();
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/pdf'}));a.download='merged.pdf';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    say(`Done — merged ${files.length} files (${out.getPageCount()} pages) into merged.pdf.`,'ok')
+  }catch(e){say('Merge failed: '+e.message,'bad')}
+  $('merge').disabled=files.length<2};
+    </script>
+</body>
+
+</html>

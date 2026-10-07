@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Unit Converter — Length, Weight, Temperature & More | UtilityHub</title>
+    <link rel="canonical" href="https://tools.aspmovies.dpdns.org/tools/unit-converter.html">
+    <meta property="og:url" content="https://tools.aspmovies.dpdns.org/tools/unit-converter.html">
+    <meta name="description" content="Convert length, weight, temperature, area, volume, speed, time and data units instantly. Free online unit converter.">
+    <meta name="theme-color" content="#08090d">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="UtilityHub">
+    <meta property="og:title" content="Free Unit Converter — Length, Weight, Temperature & More | UtilityHub">
+    <meta property="og:description" content="Convert length, weight, temperature, area, volume, speed, time and data units instantly. Free online unit converter.">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/tool.css">
+    <style>
+:root { --bg: #0b0b12; --panel: #11111a; --panel2: #151520; --border: #292939; --border2: #343448; --accent: #8b5cf6; --accent2: #7c3aed; --text: #f8fafc; --muted: #9ca3af; --success: #86efac; --danger: #fca5a5; }
+.brand{text-decoration:none;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.back{margin-left:auto;color:var(--muted);text-decoration:none;font-size:14px}
+main{max-width:1000px;margin:0 auto;padding:34px 20px 60px}
+.app{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:20px}
+textarea,input,select{width:100%;background:#0d0d15;border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:11px 12px;font:inherit;font-size:14px}
+textarea:focus,input:focus,select:focus{outline:0;border-color:var(--accent)}
+textarea{min-height:280px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+label{display:block;margin:0 0 6px;color:#cbd5e1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.buttons{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.btn{border:1px solid var(--border2);background:#20202d;color:#e5e7eb;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.btn:hover{background:#2a2a3a}
+.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.msg{min-height:22px;font-size:13px;color:var(--muted)}
+.msg.ok{color:#4ade80}.msg.bad{color:#f87171}.msg.warn{color:#fbbf24}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.seo{margin-top:26px;color:var(--muted);font-size:13px;line-height:1.7}
+.seo h2{font-size:15px;color:var(--text);margin:0 0 6px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}header{padding:0 16px}}
+</style>
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="../index.html">Utility<span>Hub</span></a>
+        <a class="back" href="../index.html">← Back to Tools</a>
+    </header>
+    <main>
+        <section class="hero">
+            <h1>Unit Converter</h1>
+            <p>Length, weight, temperature, area, volume, speed, time and data.</p>
+        </section>
+        <div class="app">
+            <div class="buttons" id="cats" role="tablist" aria-label="Category" style="margin-top:0"></div>
+            <div class="grid2" style="align-items:end">
+                <div><label for="val">Value</label><input id="val" type="number" step="any" value="1" inputmode="decimal"></div>
+                <div></div>
+                <div><label for="from">From</label><select id="from"></select></div>
+                <div><label for="to">To</label><select id="to"></select></div>
+            </div>
+            <div class="buttons"><button class="btn" id="swap">⇄ Swap</button></div>
+            <div style="font-size:26px;font-weight:700;margin:6px 0 18px" id="result" aria-live="polite">—</div>
+            <label>All conversions</label>
+            <div id="table" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px"></div>
+        </div>
+        <section class="seo"><h2>About this unit converter</h2><p>Convert length, weight, temperature, area, volume, speed, time and data sizes instantly. Pick a category, enter a value and see every unit at once.</p></section>
+    </main>
+    <script>
+const U={
+ Length:{Millimeter:.001,Centimeter:.01,Meter:1,Kilometer:1000,Inch:.0254,Foot:.3048,Yard:.9144,Mile:1609.344},
+ Weight:{Milligram:1e-6,Gram:.001,Kilogram:1,Tonne:1000,Ounce:.028349523125,Pound:.45359237,Stone:6.35029318},
+ Temperature:null,
+ Area:{'Square meter':1,'Square kilometer':1e6,'Square foot':.09290304,'Square yard':.83612736,Acre:4046.8564224,Hectare:1e4,'Square mile':2589988.110336},
+ Volume:{Milliliter:.001,Liter:1,'Cubic meter':1000,Teaspoon:.00492892159375,Tablespoon:.01478676478125,'Cup (US)':.2365882365,'Gallon (US)':3.785411784,'Fluid ounce (US)':.0295735295625},
+ Speed:{'Meter/second':1,'Kilometer/hour':1/3.6,'Mile/hour':.44704,Knot:1852/3600},
+ Time:{Second:1,Minute:60,Hour:3600,Day:86400,Week:604800},
+ Data:{Bit:.125,Byte:1,Kilobyte:1e3,Megabyte:1e6,Gigabyte:1e9,Terabyte:1e12,Kibibyte:1024,Mebibyte:1048576,Gibibyte:1073741824}
+};
+const T={Celsius:[c=>c,c=>c],Fahrenheit:[f=>(f-32)*5/9,c=>c*9/5+32],Kelvin:[k=>k-273.15,c=>c+273.15]};
+const $=id=>document.getElementById(id);let cat='Length';
+const units=()=>Object.keys(cat==='Temperature'?T:U[cat]);
+function conv(v,f,t){
+  if(cat==='Temperature')return T[t][1](T[f][0](v));
+  return v*U[cat][f]/U[cat][t]}
+function fmt(n){
+  if(!isFinite(n))return '—';if(n===0)return '0';const a=Math.abs(n);
+  if(a>=1e12||a<1e-6)return n.toExponential(6).replace(/\.?0+e/,'e');
+  return Number(n.toPrecision(10)).toLocaleString('en-US',{maximumFractionDigits:10})}
+function render(){
+  const v=parseFloat($('val').value),f=$('from').value,t=$('to').value;
+  if(isNaN(v)){$('result').textContent='—';$('table').innerHTML='';return}
+  $('result').textContent=`${fmt(v)} ${f} = ${fmt(conv(v,f,t))} ${t}`;
+  $('table').innerHTML='';
+  units().forEach(u=>{const d=document.createElement('div');d.style.cssText='background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px';
+    const s=document.createElement('span');s.style.color='var(--muted)';s.textContent=u;d.append(fmt(conv(v,f,u))+' ',s);$('table').append(d)})}
+function fill(){
+  const opts=units().map(u=>`<option>${u}</option>`).join('');
+  $('from').innerHTML=opts;$('to').innerHTML=opts;$('from').selectedIndex=0;$('to').selectedIndex=Math.min(1,units().length-1);render()}
+Object.keys(U).forEach(c=>{const b=document.createElement('button');b.className='btn'+(c===cat?' primary':'');b.textContent=c;b.setAttribute('role','tab');
+  b.onclick=()=>{cat=c;[...$('cats').children].forEach(x=>x.classList.toggle('primary',x===b));fill()};$('cats').append(b)});
+['val','from','to'].forEach(id=>$(id).addEventListener('input',render));
+$('swap').onclick=()=>{const f=$('from').value;$('from').value=$('to').value;$('to').value=f;render()};
+fill();
+    </script>
+</body>
+
+</html>
