@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>UtilityHub — Simple Tools for Everyday Tasks</title>
+    <meta name="theme-color" content="#08090d">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="UtilityHub">
+    <meta property="og:title" content="UtilityHub — Simple Tools for Everyday Tasks">
+    <meta property="og:description" content="Free online tools for images, text, calculators, QR codes and more.">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta name="description" content="Free online tools for images, text, calculators, QR codes and more.">
 
     <link rel="stylesheet" href="style.css">
@@ -19,7 +26,7 @@
                 Utility<span>Hub</span>
             </a>
 
-            <nav>
+            <nav aria-label="Main">
                 <a href="#tools">Tools</a>
                 <a href="#categories">Categories</a>
                 <a href="#about">About</a>
@@ -49,8 +56,8 @@
                 </p>
 
                 <div class="search-box">
-                    <span>⌕</span>
-                    <input type="text" id="searchInput" placeholder="Search for a tool..." autocomplete="off">
+                    <span aria-hidden="true">⌕</span>
+                    <input type="text" id="searchInput" aria-label="Search tools" placeholder="Search tools…  ( / )" autocomplete="off">
                 </div>
 
             </div>
@@ -66,31 +73,31 @@
                 </div>
 
                 <div class="category-list">
-                    <button class="category active" data-category="all">
+                    <button class="category active" aria-pressed="true" data-category="all">
                         All Tools
                     </button>
 
-                    <button class="category" data-category="image">
+                    <button class="category" aria-pressed="false" data-category="image">
                         🖼️ Image
                     </button>
 
-                    <button class="category" data-category="pdf">
+                    <button class="category" aria-pressed="false" data-category="pdf">
                         📄 PDF
                     </button>
 
-                    <button class="category" data-category="text">
+                    <button class="category" aria-pressed="false" data-category="text">
                         📝 Text
                     </button>
 
-                    <button class="category" data-category="calculator">
+                    <button class="category" aria-pressed="false" data-category="calculator">
                         🧮 Calculators
                     </button>
 
-                    <button class="category" data-category="developer">
+                    <button class="category" aria-pressed="false" data-category="developer">
                         💻 Developer
                     </button>
 
-                    <button class="category" data-category="generator">
+                    <button class="category" aria-pressed="false" data-category="generator">
                         ✨ Generators
                     </button>
 
@@ -107,10 +114,10 @@
                 <div class="section-heading">
                     <div>
                         <p class="eyebrow">EXPLORE</p>
-                        <h2>Popular tools</h2>
+                        <h2>All tools</h2>
                     </div>
 
-                    <span id="toolCount">08 tools</span>
+                    <span id="toolCount" aria-live="polite">8 tools</span>
                 </div>
 
 
@@ -120,14 +127,14 @@
                     <a href="tools/image-compressor.html" class="tool-card" data-category="image"
                         data-name="image compressor compress image">
 
-                        <div class="tool-icon">🗜️</div>
+                        <div class="tool-icon" aria-hidden="true">🗜️</div>
 
                         <div class="tool-info">
                             <h3>Image Compressor</h3>
                             <p>Reduce image file size without unnecessary quality loss.</p>
                         </div>
 
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
                     </a>
 
 
@@ -135,14 +142,14 @@
                     <a href="tools/image-resizer.html" class="tool-card" data-category="image"
                         data-name="image resizer resize image">
 
-                        <div class="tool-icon">📐</div>
+                        <div class="tool-icon" aria-hidden="true">📐</div>
 
                         <div class="tool-info">
                             <h3>Image Resizer</h3>
                             <p>Resize images to your required dimensions.</p>
                         </div>
 
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
                     </a>
 
 
@@ -150,7 +157,7 @@
                     <a href="tools/pdf-editor.html" class="tool-card" data-category="pdf"
                         data-name="pdf editor edit pdf annotate pdf">
 
-                        <div class="tool-icon">📄</div>
+                        <div class="tool-icon" aria-hidden="true">📄</div>
 
                         <div class="tool-info">
                             <h3>PDF Editor</h3>
@@ -160,7 +167,7 @@
 
 
 
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
 
                     </a>
 
@@ -169,26 +176,26 @@
                     <a href="tools/qr-generator.html" class="tool-card" data-category="generator"
                         data-name="qr generator qr code">
 
-                        <div class="tool-icon">▦</div>
+                        <div class="tool-icon" aria-hidden="true">▦</div>
 
                         <div class="tool-info">
                             <h3>QR Generator</h3>
                             <p>Create QR codes for links, text and more.</p>
                         </div>
 
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
                     </a>
 
 
                     <!-- Text Tools -->
                     <a href="tools/text-tools.html" class="tool-card" data-category="text"
                         data-name="text tools text editor word counter character counter case converter duplicate lines find replace">
-                        <div class="tool-icon">📝</div>
+                        <div class="tool-icon" aria-hidden="true">📝</div>
                         <div class="tool-info">
                             <h3>Text Tools</h3>
                             <p>Count, convert, clean and transform text in one place.</p>
                         </div>
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
                     </a>
 
 
@@ -197,14 +204,14 @@
                     <a href="tools/password-generator.html" class="tool-card" data-category="generator"
                         data-name="password generator secure password">
 
-                        <div class="tool-icon">🔐</div>
+                        <div class="tool-icon" aria-hidden="true">🔐</div>
 
                         <div class="tool-info">
                             <h3>Password Generator</h3>
                             <p>Generate strong random passwords instantly.</p>
                         </div>
 
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
                     </a>
 
 
@@ -212,27 +219,27 @@
                     <a href="tools/url-encoder-decoder.html" class="tool-card" data-category="developer"
                         data-name="url encoder decoder encode decode">
 
-                        <div class="tool-icon">🔗</div>
+                        <div class="tool-icon" aria-hidden="true">🔗</div>
 
                         <div class="tool-info">
                             <h3>URL Encoder / Decoder</h3>
                             <p>Encode or decode URLs and special characters.</p>
                         </div>
 
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
                     </a>
                     <!-- Calculator Tools -->
                     <a href="tools/calculator-tools.html" class="tool-card" data-category="calculator"
                         data-name="calculator percentage percent age discount tip basic calculator">
 
-                        <div class="tool-icon">🧮</div>
+                        <div class="tool-icon" aria-hidden="true">🧮</div>
 
                         <div class="tool-info">
                             <h3>Calculator Tools</h3>
                             <p>Percentage, age, discount, tip and everyday calculations.</p>
                         </div>
 
-                        <span class="arrow">→</span>
+                        <span class="arrow" aria-hidden="true">→</span>
                     </a>
 
 
