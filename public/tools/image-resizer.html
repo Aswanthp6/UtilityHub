@@ -1404,6 +1404,14 @@
             const setDimensions = (width, height, changed = 'width') => {
                 let w = Math.max(1, Math.round(width));
                 let h = Math.max(1, Math.round(height));
+                const MAX_SIDE = 10000;
+                if (w > MAX_SIDE || h > MAX_SIDE) {
+                    const k = MAX_SIDE / Math.max(w, h);
+                    w = Math.max(1, Math.floor(w * k));
+                    h = Math.max(1, Math.floor(h * k));
+                    const st = document.getElementById('resizeStatus');
+                    if (st) st.textContent = 'Maximum output size is 10,000 px per side.';
+                }
 
                 if (aspectLock.checked && ratio > 0) {
                     if (changed === 'height') {

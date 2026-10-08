@@ -473,6 +473,7 @@
                     <div class="buttons">
                         <button class="btn primary" id="generateBtn" type="button">Generate QR</button>
                         <button class="btn" id="downloadBtn" type="button" disabled>Download PNG</button>
+                        <button class="btn" id="downloadSvgBtn" type="button" disabled>Download SVG</button>
                         <button class="btn" id="copyBtn" type="button" disabled>Copy Image</button>
                         <button class="btn" id="clearBtn" type="button">Clear</button>
                     </div>
@@ -515,6 +516,8 @@
             const clearBtn = $("clearBtn");
 
             let currentCanvas = null;
+            let currentQr = null;
+            const downloadSvgBtn = $("downloadSvgBtn");
 
             const setStatus = (message, type = "normal") => {
                 status.textContent = message;
@@ -611,7 +614,9 @@
                 qrcodeBox.classList.add("hidden");
                 emptyState.classList.remove("hidden");
                 currentCanvas = null;
+                currentQr = null;
                 downloadBtn.disabled = true;
+                downloadSvgBtn.disabled = true;
                 copyBtn.disabled = true;
             };
 
@@ -622,7 +627,7 @@
                     qrcodeBox.style.padding = `${Number($("qrMargin").value)}px`;
                     const options = getQrOptions();
 
-                    new QRCode(qrcodeBox, {
+                    currentQr = new QRCode(qrcodeBox, {
                         text: content,
                         width: options.width,
                         height: options.height,
@@ -638,11 +643,12 @@
                     qrcodeBox.classList.remove("hidden");
                     emptyState.classList.add("hidden");
                     downloadBtn.disabled = false;
+                    downloadSvgBtn.disabled = false;
                     copyBtn.disabled = !navigator.clipboard;
                     setStatus("QR code generated.", "success");
                 } catch (error) {
                     clearQr();
-                    setStatus(error.message || "Could not generate QR code.", "error");
+                    setStatus(/overflow/i.test(error.message || "") ? "Too much data for a QR code. Shorten the text or choose a lower error-correction level." : (error.message || "Could not generate QR code."), "error");
                 }
             };
 
@@ -688,6 +694,29 @@
                 }
             });
 
+            downloadSvgBtn.addEventListener("click", () => {
+                const model = currentQr && currentQr._oQRCode;
+                if (!model || typeof model.getModuleCount !== "function") {
+                    setStatus("SVG export is not available. Download the PNG instead.", "error");
+                    return;
+                }
+                const n = model.getModuleCount(), quiet = 4, total = n + quiet * 2;
+                const fg = validHex($("fgHex").value) ? $("fgHex").value : "#000000";
+                const bg = validHex($("bgHex").value) ? $("bgHex").value : "#ffffff";
+                const px = Number($("qrSize").value);
+                let path = "";
+                for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (model.isDark(r, col)) path += `M${col + quiet} ${r + quiet}h1v1h-1z`;
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="${px}" height="${px}" shape-rendering="crispEdges"><rect width="${total}" height="${total}" fill="${bg}"/><path d="${path}" fill="${fg}"/></svg>`;
+                const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "utilityhub-qr.svg";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1500);
+                setStatus("QR SVG downloaded.", "success");
+            });
             clearBtn.addEventListener("click", () => {
                 textInput.value = "";
                 $("wifiSsid").value = "";

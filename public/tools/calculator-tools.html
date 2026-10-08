@@ -552,6 +552,7 @@
         (() => {
             "use strict";
             const $ = id => document.getElementById(id);
+            const num = id => { const v = $(id).value.trim(); return v === "" ? NaN : Number(v); };
 
             document.querySelectorAll(".tab").forEach(tab => {
                 tab.addEventListener("click", () => {
@@ -593,7 +594,7 @@
                 };
             });
             $("percentCalculate").onclick = () => {
-                const a = Number($("p1").value), b = Number($("p2").value);
+                const a = num("p1"), b = num("p2");
                 if (!Number.isFinite(a) || !Number.isFinite(b)) {
                     $("percentStatus").textContent = "Enter valid numbers.";
                     return;
@@ -611,14 +612,14 @@
                     result = (a / b) * 100;
                     explanation = `${a} is ${result.toFixed(2)}% of ${b}`;
                 }
-                $("percentResult").textContent = Number(result.toFixed(10)).toLocaleString();
+                $("percentResult").textContent = Number(result.toFixed(10)).toLocaleString(undefined, { maximumFractionDigits: 6 });
                 $("percentExplain").textContent = explanation;
                 $("percentStatus").textContent = "Calculated.";
             };
             renderPercentInputs();
 
             // Age
-            const todayISO = () => new Date().toISOString().slice(0, 10);
+            const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
             $("ageAsOf").value = todayISO();
             $("ageCalculate").onclick = () => {
                 const dobVal = $("dob").value, asOfVal = $("ageAsOf").value;
@@ -631,13 +632,18 @@
                 if (days < 0) { months--; const lastMonthDays = new Date(asOf.getFullYear(), asOf.getMonth(), 0).getDate(); days += lastMonthDays; }
                 if (months < 0) { years--; months += 12; }
                 $("ageResult").textContent = `${years}y ${months}m ${days}d`;
-                $("ageExplain").textContent = `Age on ${asOfVal}: ${years} years, ${months} months and ${days} days.`;
+                const totalDays = Math.round((asOf - dob) / 86400000);
+                let nextBirthday = new Date(asOf.getFullYear(), dob.getMonth(), dob.getDate());
+                if (nextBirthday < asOf) nextBirthday = new Date(asOf.getFullYear() + 1, dob.getMonth(), dob.getDate());
+                const toNext = Math.round((nextBirthday - asOf) / 86400000);
+                const birthdayText = toNext === 0 ? "Today is a birthday! 🎉" : `Next birthday in ${toNext} day${toNext === 1 ? "" : "s"}.`;
+                $("ageExplain").textContent = `Age on ${asOfVal}: ${years} years, ${months} months and ${days} days (${totalDays.toLocaleString()} days in total). ${birthdayText}`;
                 $("ageStatus").textContent = "Calculated.";
             };
 
             // Discount
             $("discountCalculate").onclick = () => {
-                const price = Number($("discountPrice").value), pct = Number($("discountPercent").value);
+                const price = num("discountPrice"), pct = num("discountPercent");
                 if (!Number.isFinite(price) || !Number.isFinite(pct) || price < 0 || pct < 0 || pct > 100) {
                     $("discountStatus").textContent = "Enter a valid price and a discount between 0% and 100%.";
                     return;
@@ -651,7 +657,7 @@
 
             // Tip
             $("tipCalculate").onclick = () => {
-                const bill = Number($("tipBill").value), pct = Number($("tipPercent").value), people = Number($("tipPeople").value);
+                const bill = num("tipBill"), pct = num("tipPercent"), people = num("tipPeople");
                 if (!Number.isFinite(bill) || !Number.isFinite(pct) || !Number.isFinite(people) || bill < 0 || pct < 0 || people < 1) {
                     $("tipStatus").textContent = "Enter valid bill, tip and people values.";
                     return;
@@ -684,8 +690,8 @@
                 document.querySelectorAll(".gst-rate").forEach(b => b.classList.remove("active"));
             });
             $("gstCalculate").onclick = () => {
-                const amount = Number($("gstAmount").value);
-                const rate = Number($("gstRate").value);
+                const amount = num("gstAmount");
+                const rate = num("gstRate");
                 if (!Number.isFinite(amount) || !Number.isFinite(rate) || amount < 0 || rate < 0 || rate > 100) {
                     $("gstStatus").textContent = "Enter a valid amount and GST rate between 0% and 100%.";
                     return;
@@ -734,11 +740,12 @@
                 }
                 calcOperator = op; waiting = true; showCalc();
             };
+            const clean = n => Number(n.toPrecision(12));
             const doCalc = (a, b, op) => {
-                if (op === "+") return a + b;
-                if (op === "-") return a - b;
-                if (op === "*") return a * b;
-                if (op === "/") return b === 0 ? null : a / b;
+                if (op === "+") return clean(a + b);
+                if (op === "-") return clean(a - b);
+                if (op === "*") return clean(a * b);
+                if (op === "/") return b === 0 ? null : clean(a / b);
                 return b;
             };
             const equals = () => {
@@ -753,7 +760,7 @@
                     const type = btn.dataset.calc;
                     if (type === "digit") btn.textContent === "." ? inputDot() : inputDigit(btn.textContent);
                     else if (type === "clear") { calcDisplay = "0"; calcStored = null; calcOperator = null; waiting = false; showCalc(); }
-                    else if (type === "back") { if (!waiting && calcDisplay.length > 1) calcDisplay = calcDisplay.slice(0, -1); else calcDisplay = "0"; showCalc(); }
+                    else if (type === "back") { calcDisplay = (!waiting && calcDisplay !== "Error" && calcDisplay.length > 1) ? calcDisplay.slice(0, -1).replace(/^-$/, "0") : "0"; showCalc(); }
                     else if (type === "sign") { if (calcDisplay !== "0" && calcDisplay !== "Error") calcDisplay = String(Number(calcDisplay) * -1); showCalc(); }
                     else if (type === "op") operate(btn.dataset.op);
                     else if (type === "equals") equals();
@@ -762,12 +769,14 @@
             document.addEventListener("keydown", e => {
                 const active = document.activeElement;
                 const isTyping = active && ["INPUT", "SELECT", "TEXTAREA"].includes(active.tagName);
-                if (isTyping) return;
+                if (isTyping || e.ctrlKey || e.metaKey || e.altKey) return;
+                if (!$("panel-basic").classList.contains("active")) return;
+                if (/^\d$/.test(e.key) || [".", "+", "-", "*", "/", "Enter", "=", "Backspace", "Escape"].includes(e.key)) e.preventDefault();
                 if (/^\d$/.test(e.key)) inputDigit(e.key);
                 else if (e.key === ".") inputDot();
                 else if (["+", "-", "*", "/"].includes(e.key)) operate(e.key);
                 else if (e.key === "Enter" || e.key === "=") equals();
-                else if (e.key === "Backspace") { if (calcDisplay.length > 1) calcDisplay = calcDisplay.slice(0, -1); else calcDisplay = "0"; showCalc(); }
+                else if (e.key === "Backspace") { calcDisplay = (!waiting && calcDisplay !== "Error" && calcDisplay.length > 1) ? calcDisplay.slice(0, -1).replace(/^-$/, "0") : "0"; showCalc(); }
                 else if (e.key === "Escape") { calcDisplay = "0"; calcStored = null; calcOperator = null; waiting = false; showCalc(); }
             });
         })();

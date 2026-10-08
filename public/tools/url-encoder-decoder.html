@@ -431,6 +431,8 @@
                             </select>
                         </div>
 
+                        <label style="display:flex;gap:8px;align-items:center;margin:14px 0 14px;font-size:13px;color:var(--muted);text-transform:none;letter-spacing:0"><input type="checkbox" id="plusAsSpace" checked style="width:auto"> Treat “+” as a space (form encoding)</label>
+
                         <div class="buttons">
                             <button class="btn primary" id="decodeBtn" type="button">Decode</button>
                             <button class="btn" id="decodeCopy" type="button">Copy Result</button>
@@ -510,7 +512,33 @@
                 }
             };
 
+            const partsBox = document.createElement("div");
+            partsBox.style.cssText = "margin-top:14px;font-size:13px;display:none";
+            $("decodeResult").parentElement.insertAdjacentElement("afterend", partsBox);
+            const renderParts = text => {
+                partsBox.innerHTML = "";
+                partsBox.style.display = "none";
+                if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(text.trim())) return;
+                let u;
+                try { u = new URL(text.trim()); } catch { return; }
+                const rows = [["Protocol", u.protocol], ["Host", u.hostname], ["Port", u.port || "(default)"], ["Path", u.pathname]];
+                [...u.searchParams].forEach(([k, v]) => rows.push([`Param “${k}”`, v]));
+                if (u.hash) rows.push(["Hash", u.hash]);
+                const title = document.createElement("div");
+                title.textContent = "URL breakdown";
+                title.style.cssText = "font-weight:700;margin-bottom:6px";
+                partsBox.append(title);
+                rows.forEach(([k, v]) => {
+                    const row = document.createElement("div");
+                    row.style.cssText = "display:flex;gap:10px;padding:5px 0;border-top:1px solid var(--border);word-break:break-all";
+                    const a = document.createElement("span"); a.style.cssText = "flex:0 0 110px;color:var(--muted)"; a.textContent = k;
+                    const b = document.createElement("span"); b.textContent = v;
+                    row.append(a, b); partsBox.append(row);
+                });
+                partsBox.style.display = "block";
+            };
             const decodeText = () => {
+                renderParts("");
                 const input = $("decodeInput").value;
                 if (!input) {
                     $("decodeResult").textContent = "Your decoded text will appear here.";
@@ -521,12 +549,13 @@
 
                 try {
                     // Support form-style + as space.
-                    const prepared = input.replace(/\+/g, " ");
+                    const prepared = $("plusAsSpace").checked ? input.replace(/\+/g, " ") : input;
                     const result = $("decodeMode").value === "uri"
                         ? decodeURI(prepared)
                         : decodeURIComponent(prepared);
 
                     $("decodeResult").textContent = result;
+                    renderParts(result);
                     $("decodeInputLength").textContent = input.length;
                     $("decodeResultLength").textContent = result.length;
                     setStatus("decodeStatus", "Decoded successfully.", "success");
@@ -587,6 +616,8 @@
 
             $("encodeInput").addEventListener("input", encodeText);
             $("decodeInput").addEventListener("input", decodeText);
+            $("plusAsSpace").addEventListener("change", decodeText);
+            $("decodeClear").addEventListener("click", () => renderParts(""));
         })();
     </script>
 </body>
